@@ -9,16 +9,16 @@ Last updated: 2026-10-16. This record separates source files, project derivative
 - `manifests/`: URLs, retrieval dates, sizes, hashes, transformations and validation results.
 - Do not treat a file ending in `.incomplete` as data.
 
-## Current US pilot inventory
+## Current US input inventory
 
 | Input | Selected source | Current status | Model role |
 | --- | --- | --- | --- |
-| Land cover | GLC_FCS30D v2, Zenodo record 15063683 | One annual source tile and its 2019 band are ready for tile W75N40 | Baseline land-cover classes; later mapped to NDVI |
-| Urban polygons | NASA SEDAC GUPPD v1, DOI 10.7927/brq1-xc29 | User is copying a local GeoPackage; validation and US subset pending | Urban aggregation units and country/ISO labels |
+| Land cover | GLC_FCS30D v2, Zenodo record 15063683 | US queue: 114 annual tiles, 12.93 GB compressed transfer; downloading; Hawaii gap found | Baseline land-cover classes; later mapped to NDVI |
+| Urban polygons | NASA SEDAC GUPPD v1, DOI 10.7927/brq1-xc29 | Local GeoPackage verified: 3,337 USA polygons; derivative and QC generated | Urban aggregation units and country/ISO labels |
 | Population | WorldPop 2019 | Complete raster still pending; interrupted transfers are labelled `.incomplete` | Population counts on the reference grid |
 | Effect estimate | User-supplied workbook | Present and schema-validated | Depression OR 0.931, 95% CI 0.887-0.977 per 0.1 NDVI |
 | Country prevalence | IHME GBD 2023 estimates for 2019 | Present in `../depression_prevalence_review/` | Country baseline prevalence |
-| Treatment cost | User-supplied workbook | Pending copy and validation | Cost per case in 2019 USD, without PPP adjustment |
+| Treatment cost | User-supplied CSV | Present, but identifies 2018 USD PPP and total societal costs for mood disorders; fails required cost basis | Cost per case in 2019 USD, without PPP adjustment |
 | Land-cover/NDVI lookup | Original project input | Missing; derivation is not in Git history | Maps `lc_code` to `lc_ndvi` |
 
 ## 1. GLC_FCS30D land cover
@@ -29,11 +29,22 @@ Last updated: 2026-10-16. This record separates source files, project derivative
 
 `GLC_FCS30D_19852022maps_W75-W80/GLC_FCS30D_20002022_W75N40_Annual_V1.1.tif`
 
-Its bounds are longitude -75 to approximately -70 and latitude approximately 35 to 40 degrees, so it covers Washington, DC and Philadelphia but not New York City. The source tile has 23 annual bands ordered 2000, 2001, ..., 2022. Band 20 is therefore 2019.
+Its bounds are longitude -75 to approximately -70 and latitude approximately 35 to 40 degrees, so it does not cover Washington, DC, Philadelphia or New York City. Earlier notes incorrectly identified its coverage; those statements are superseded. The source tile has 23 annual bands ordered 2000, 2001, ..., 2022. Band 20 is therefore 2019.
 
 **Preprocessing.** The script copies band 20 to a one-band, tiled, deflate-compressed GeoTIFF without reprojection or resampling. The output retains EPSG:4326, the source transform, uint8 class codes and source-year tags. In a model run, this categorical raster must subsequently be warped to the population grid with nearest-neighbor resampling. Bilinear or cubic resampling must not be used for class codes.
 
 **Observed 2019 values in the pilot tile.** `0, 10, 11, 20, 51, 52, 61, 62, 71, 72, 81, 82, 91, 120, 121, 130, 140, 150, 153, 181, 182, 183, 186, 187, 190, 200, 210`. Code 0 is a fill value in the product guide and should become nodata, not an NDVI value.
+
+
+### Whole-US acquisition (2026-10-16)
+
+The user requires land cover for the whole US. Scope is all 50 states and DC, including Alaska, the Aleutian Islands on both sides of the antimeridian, and Hawaii including its northwestern islands. US territories are not included in this scope. **Coverage gap:** 25 of the 3,337 USA GUPPD polygons fall outside the available tile extents, all in Hawaii (including Honolulu, Hilo and Kailua-Kona). The official W155-W160 archive index contains Alaska tiles but no W155/W160 N20/N25 annual tiles. Thus this acquisition is not yet complete whole-US coverage. Obtain missing same-product Hawaii tiles from the provider, or review a separately labelled 2019 alternative with an explicit class/NDVI crosswalk; do not fill Hawaii with zero or silently omit it. The remaining 3,312 polygon geometries are covered by planned nominal extents, pending actual raster QC.
+
+The download uses conservative geographic envelopes and consequently includes some neighboring-country and ocean pixels; it is not a national land mask.
+
+`scripts/fetch_glc_fcs30d_us.py DATA_ROOT` selects 114 available annual tiles from the official ZIP central directories (12.93 GB compressed transfer), retrieves only these members with resumable 8 MiB ranges, checks member size and CRC, and extracts band 20. Outputs are under `processed/lulc_2019_us/`; per-tile checksums and source/raster metadata are under `manifests/glc_us_tiles/`. `manifests/glc_us_download_plan.json` records the complete queue and envelopes. Re-running skips verified outputs and resumes partial compressed members. A failed tile is recorded and must be retried; queue completion alone does not establish full coverage.
+
+The extracted tiles retain source fill values 0/250 and native grids. Before modelling, mask both fill codes, build regional virtual mosaics (separate Alaska across the antimeridian to avoid an almost-global dense raster), and align classes to the population grid using nearest neighbor. Verify actual valid-data coverage against all retained US urban polygons; the planned nominal extents alone are insufficient. A single national dense GeoTIFF is not required to preserve complete US coverage.
 
 ## 2. GUPPD urban polygons
 
@@ -41,7 +52,9 @@ Its bounds are longitude -75 to approximately -70 and latitude approximately 35 
 
 GUPPD contains 123,034 named urban settlements and builds on the GHSL settlement hierarchy. It includes urban centres (level 30), dense urban clusters (level 23) and semi-dense urban clusters (level 22), with population attributes for 1975-2030 at five-year intervals. It is the boundary source named by the original model author. The repository filename `urban_boundaries_2019.gpkg` should not be interpreted as polygons observed in 2019; the exact geometry epoch and level selection must be recorded from GUPPD metadata.
 
-**Required preprocessing after the local copy arrives.**
+**Local check (2026-10-16).** The supplied GeoPackage contains 123,034 features in each of its point and polygon layers. Filtering the polygon layer on `ISO = USA` gives 3,337 polygons: 324 level 30, 1,748 level 23 and 1,265 level 22. All are valid geometries and `SMOD_ID` is unique in this subset. `scripts/prepare_guppd_us.py DATA_ROOT` preserves all source attributes and adds stable `id`, `source_fid`, `country` and `iso3` fields. It writes `processed/guppd_us.gpkg` and `manifests/guppd_us_qc.json`. Settlement overlap and the model's FID join remain separate checks.
+
+**Preprocessing checklist.**
 
 1. Inventory all GeoPackage layers, feature counts, CRS, geometry types and attribute fields.
 2. Select the polygon layer and filter to the United States using the authoritative ISO/country field.
@@ -49,7 +62,7 @@ GUPPD contains 123,034 named urban settlements and builds on the GHSL settlement
 4. Preserve the original GUPPD identifier, name, settlement level, ISO code and country name.
 5. Repair invalid geometry only when necessary, recording the count and method.
 6. Add the model fields `id`, `country` and `iso3` without replacing source identifiers. Use a country label that is explicitly crosswalked to IHME and the cost workbook.
-7. Clip or select the Washington, DC pilot polygons whose geometries intersect both the land-cover and population pilot extents.
+7. Use the full US subset for coverage checks, then select a small overlapping city only for the initial technical run.
 8. Verify that feature identifiers returned by zonal statistics map to the intended GeoPackage records. The current code's sequential-FID assumption requires an explicit test.
 
 ## 3. WorldPop population
@@ -60,15 +73,15 @@ The original code points to a custom `100m_2019_global-mosaic.tif`. The email ch
 
 `https://data.worldpop.org/GIS/Population/Global_2000_2020/2019/USA/usa_ppp_2019.tif`
 
-This is a 2019, approximately 100 m, EPSG:4326 population-count raster. The archive path is the unconstrained Global 2000-2020 product; the filename without `_UNadj` indicates the UN-adjusted variant. This identification should be confirmed against the original owner's mosaic manifest before claiming exact reproduction.
+This is a 2019, approximately 100 m, EPSG:4326 population-count raster. The archive path is the unconstrained Global 2000-2020 product; `_UNadj` denotes a UN-adjusted variant; do not label the unsuffixed file as UN-adjusted. The exact adjustment basis remains to be confirmed with the source metadata. This identification should be confirmed against the original owner's mosaic manifest before claiming exact reproduction.
 
-### Current-release alternative
+### User-selected current release
 
 WorldPop Global 2 R2025A v1 supplies a retrospective 2019 constrained raster at 100 m:
 
 `https://data.worldpop.org/GIS/Population/Global_2015_2030/R2025A/2019/USA/v1/100m/constrained/usa_pop_2019_CN_100m_R2025A_v1.tif`
 
-It is smaller and uses a newer modelling release, but it is not the same population surface as the original pipeline. Use it as an explicitly labelled updated-input scenario, not as an unnoticed replacement. A 1 km constrained version is available for low-resolution technical testing.
+The user-selected [WorldPop page 75977](https://hub.worldpop.org/geodata/summary?id=75977) links to this exact 2019 file (despite a 2024 preview-image filename). It describes R2025A as an alpha release. It is smaller and uses a newer modelling release, but it is not the same population surface as the original pipeline. Use it as an explicitly labelled updated-input scenario, not as an unnoticed replacement. A 1 km constrained version is available for low-resolution technical testing.
 
 **Download status.** The WorldPop file host stalled during this session and rejected byte-range resume. Partial files are retained only with an `.incomplete` suffix. A complete file must match the remote `Content-Length`, open successfully with GDAL/rasterio, have EPSG:4326 and plausible nonnegative counts after masking nodata. Record SHA-256 and the raster sum before use.
 
@@ -83,6 +96,8 @@ The present workbook has one depression row with OR `0.931` and 95% CI `0.887-0.
 The primary prevalence source is the locally validated GBD 2023 table for 2019, both sexes, all ages, crude prevalence of depressive disorders. The US polygon label must resolve to its GBD location ID; do not silently fall back to a global 5% rate.
 
 The treatment-cost workbook must contain one unique row per included country with `country`, finite nonnegative `cost_per_case`, `currency = USD`, `price_year = 2019`, and Excel Boolean `ppp_adjusted = FALSE`. These declarations are a validation gate. The source rate, cost components, original currency/year, market exchange rate and inflation conversion still require independent provenance.
+
+**Supplied cost CSV audit (2026-10-16).** `processed/data_cost_mental_health.csv` contains 33 country rows, all with `year = 2018`, `Price_USD_PPP`, `dx_broad = mood disorders`, and `cost_broad_type = total societal cost`. The US value is 10,803.426 per patient. This is not an approved 2019 USD non-PPP depression treatment-cost input. Preserve the CSV unchanged; do not relabel it or merely inflate it to 2019. Obtain original local-currency costs, original price years, the PPP conversion source/factors if reversal is needed, market exchange rates, and the intended cost components. Broader mood-disorder societal costs need a separate endpoint/component justification even after currency conversion. Monetary output remains blocked pending this reconciliation.
 
 ## 6. Land-cover/NDVI lookup: unresolved provenance
 

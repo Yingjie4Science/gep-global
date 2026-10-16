@@ -58,3 +58,16 @@ For any stronger synthesis:
 ## Reporting language
 
 Describe results as conditional model estimates of additional depression-related cases and associated 2019 USD costs under a zero-positive-NDVI counterfactual. Do not describe them as observed diagnoses, validated causal effects, comprehensive uncertainty intervals, or verified societal savings until the corresponding evidence and input checks are complete.
+
+
+## US input acquisition update — 2026-10-16
+
+- Scope: acquire 2019 LULC for all 50 states and DC, including Alaska and Hawaii; a single-city tile is insufficient. Territories are outside this stated scope.
+- Started an official GLC_FCS30D queue of 114 available annual tiles (12.93 GB compressed transfer), with resumable downloads, ZIP CRC verification, 2019 band extraction and checksums. Completion is pending.
+- Coverage gate: 3,312 of 3,337 US GUPPD polygons fall within planned tile extents. The 25 uncovered polygons are Hawaiian; the inspected W155-W160 official archive lacks the required Hawaii tiles. Resolve same-product availability or explicitly approve and document an alternative 2019 product and class/NDVI crosswalk. Whole-US coverage remains open.
+- GUPPD is supplied and the US derivative has 3,337 features, no invalid geometry and no duplicate SMOD_ID. Preserve all settlement levels pending overlap review; verify zonal-statistic FID joins before a model run.
+- Retrying the exact WorldPop page 75977 download: 2019, 100 m, constrained R2025A v1. This is an updated-input scenario relative to the original archived WorldPop mosaic. Partial downloads are not usable inputs.
+- Cost CSV is supplied but all 33 rows identify 2018 USD PPP, mood disorders, total societal cost per patient. It fails the agreed 2019 USD non-PPP treatment-cost basis. Recover original currency/year and conversion provenance and resolve cost-component/endpoint scope before monetary output.
+- Still needed from the original owner: land-cover/NDVI table and its derivation, original population mosaic details, and cost conversion ledger. Raster alignment, valid-data coverage, settlement overlap, test run and final output review remain open.
+
+Reproduction commands are documented in `DATA_SOURCES_AND_PREPROCESSING.md`; large data and local acquisition status remain outside Git.
