@@ -8,7 +8,19 @@
 - Lowest feature support is 99.7147% for Pataskala (22_16529); the largest affected feature total is 133.997 people for Philadelphia (30_12532). These are source fill/edge findings, not missing downloads. Treat the affected cells as missing exposure pending an explicit exclusion or sensitivity rule; do not assign built-up or zero NDVI silently.
 - Completion evidence is outside Git under `data/urban_mental_health/manifests/us_local_completion.json` and `data/urban_mental_health/pilots/us_local_qc_2019_v1/`. The four expanded source-comparison tests remain complete.
 
-Current local priorities are: select and document the source-fill treatment; derive or validate an NDVI lookup against the chosen production land-cover snapshot; reconcile the small Python/GEE boundary-cell membership differences; retain the p0, endpoint, cost-proxy and conditional-uncertainty limitations; then run the national model and review its outputs.
+Current local priorities are: choose the production exposure strategy (direct NDVI or validated regional lookups); reconcile the small Python/GEE boundary-cell membership differences with a shared native-grid mask; retain the p0, endpoint, cost-proxy and conditional-uncertainty limitations; then rerun and review production outputs.
+
+## Nationwide windowed technical run — 17 October 2026
+
+- Implemented a windowed runner over all 3,312 retained GUPPD features. It avoids a dense national raster, preserves the WorldPop centre-cell rule, reads only intersecting verified land-cover tiles, and records input/output/source and tile-manifest hashes.
+- The three positive-area GUPPD overlap pairs contain zero shared WorldPop cell centres. Feature sums therefore do not double count under the declared local membership rule.
+- Primary missing-data decision: exclude source fill codes and unrepresented lookup classes. Retain a structural sensitivity from zero added cases to the result obtained by assigning the maximum positive pooled class NDVI. Do not call this a confidence interval.
+- Technical totals: 194,367,282.999126 people in scope; 194,359,293.686528 modelled; 2,522,626.767 point case equivalents with conditional effect limits 742,974.978–4,696,553.345; 2019 USD societal-value proxy 27.747 billion. These are not production results.
+- Missing support comprises 459.093 people on source fill code 0 and 7,530.220 people on unrepresented mangrove class 185. The conservative missing-exposure upper adds 209.488 cases.
+- A five-region pooled lookup is not accepted for production. Against city-specific lookups it changes Anchorage −12.2%, Portland −14.7%, New York −7.1%, and Tucson +136.2%.
+- A same-grid paired-source diagnostic derived separate Zenodo/community class means from identical 2019 Landsat pixels. Paired case differences range from −1.15% to +0.22% across the four cities. Direct pixel NDVI versus the Zenodo class lookup differs by +33.81% in New York, identifying lookup aggregation/transfer as the larger unresolved issue.
+
+Decision: retain the national run as technical integration evidence only. The preferred next scientific path is direct 2019 NDVI exposure or explicitly regionalized lookups with held-out validation. A single pooled class lookup must not be used for published national estimates. See `docs/evidence/us_national_technical_run.md`.
 
 ## Full US app scope — 16 October 2026
 
