@@ -1,5 +1,10 @@
 # Urban mental health model: decisions and open work
 
+## Executed pilot — 16 October 2026
+
+The population file has arrived. Local Python and GEE Fort Morgan pilots are complete; all 877 modeled city cells pass the matched-input comparison. The real NDVI lookup and private pilot boundary asset are available. **Land-cover sources differ at native resolution**, so national expansion requires an explicit source choice. See [pilot evidence, reproduction and remaining work](evidence/fort_morgan_pilot.md). This supersedes earlier missing-population, unexecuted-lookup and runtime-blocked entries below. Public Bhutan app integration and scientific validation remain pending.
+
+
 Updated 16 October 2026. The current readiness checklist below supersedes historical acquisition notes later in this file.
 
 This record separates implemented behavior, accepted modelling decisions, evidence limitations, and work that still requires unpublished inputs. It should be read with the main [README](../README.md) and the [Liu NDVI evidence audit](evidence/liu_2023_ndvi_p0_review.md).

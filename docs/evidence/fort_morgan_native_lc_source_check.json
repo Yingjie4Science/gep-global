@@ -1,0 +1,21 @@
+{
+  "native_shape": [
+    119,
+    168
+  ],
+  "native_grid_transform": [
+    0.00026949458523585663,
+    0.0,
+    -103.8169187708146,
+    0.0,
+    -0.00026949458523585663,
+    40.267675083258354
+  ],
+  "compared_cells": 19992,
+  "different_classes": 2818,
+  "fraction_different": 0.1409563825530212,
+  "local_source": "GLC_FCS30D_2019_W105N45_Annual_V1.1.tif",
+  "cloud_asset": "projects/sat-io/open-datasets/GLC-FCS30D/annual/GLC_FCS30D_20002022_W105N45_Annual",
+  "cloud_band": "b20",
+  "conclusion": "Native-grid values differ; population-grid resampling alone does not explain the mismatch. Source-release equivalence is not established."
+}

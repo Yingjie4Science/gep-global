@@ -1,0 +1,49 @@
+{
+  "inputs": {
+    "population_2019": {
+      "same_grid": true,
+      "masks_equal": true,
+      "valid_cells": 1860,
+      "different_values": 0,
+      "max_absolute_difference": 0.0
+    },
+    "land_cover_2019": {
+      "same_grid": true,
+      "masks_equal": true,
+      "valid_cells": 2052,
+      "different_values": 408,
+      "max_absolute_difference": 199.0
+    }
+  },
+  "outputs": {
+    "additional_cases": {
+      "compared_city_cells": 877,
+      "max_absolute_pixel_difference": 2.9706541532226183e-08,
+      "same_input_local_total": 63.096900400530416,
+      "gee_total": 63.096894846814926,
+      "total_difference": 5.553715489270417e-06,
+      "pixel_tolerance": "rtol=2e-6,atol=1e-7 case equivalents",
+      "passed": true
+    },
+    "additional_cases_lower": {
+      "compared_city_cells": 877,
+      "max_absolute_pixel_difference": 5.19177079452704e-08,
+      "same_input_local_total": 19.28221147156503,
+      "gee_total": 19.282191355709877,
+      "total_difference": 2.0115855154045903e-05,
+      "pixel_tolerance": "rtol=2e-6,atol=1e-7 case equivalents",
+      "passed": true
+    },
+    "additional_cases_upper": {
+      "compared_city_cells": 877,
+      "max_absolute_pixel_difference": 1.780009081797651e-07,
+      "same_input_local_total": 112.89457024767351,
+      "gee_total": 112.89455967126803,
+      "total_difference": 1.0576405486517615e-05,
+      "pixel_tolerance": "rtol=2e-6,atol=1e-7 case equivalents",
+      "passed": true
+    }
+  },
+  "scope": "877 city population cells; one 2019 city; not national parity or empirical epidemiological validation",
+  "data_difference_percent_point_estimate": 1.101268426380675
+}

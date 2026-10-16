@@ -1,5 +1,7 @@
 # Global GEP Urban Mental Health Service
 
+**First real-data pilot completed (16 October 2026):** local Python and Earth Engine agree for Fort Morgan when given identical inputs. Population was verified; land-cover source differences remain a scaling decision. See [pilot results, reproduction and next steps](docs/evidence/fort_morgan_pilot.md).
+
 This repository estimates additional depression-related cases under a built-up-like, zero-positive-NDVI counterfactual relative to estimated observed 2019 cases. It uses 2019 country-specific, all-age GBD depressive-disorders prevalence with 2019 all-age WorldPop. The resulting cases and costs are conditional model estimates, not observed avoided diagnoses or validated societal savings.
 
 ## Status and evidence boundary
