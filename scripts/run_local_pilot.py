@@ -53,6 +53,7 @@ def main():
   for name in ['additional_cases','additional_cases_lower','additional_cases_upper']:summary[name+'_societal_value_proxy_2019_usd']=summary[name]*price
  pd.DataFrame([summary]).to_csv(o/'pilot_summary.csv',index=False)
  sources=[args.lookup,args.effects,args.prevalence,args.crosswalk,d/'population_2019.tif',land_path,d/'city.gpkg']
+ if args.cost:sources.append(args.cost)
  report={'summary':summary,'inputs':{str(x):sha(x) for x in sources},'python':platform.python_version(),'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=Path(__file__).resolve().parents[1],text=True).strip(),'source_hashes':{n:sha(Path(__file__).resolve().parents[1]/n) for n in ['urban_mental_health_functions.py','effect_size_uncertainty.py','scripts/run_local_pilot.py']},'outputs':{x.name:sha(x) for x in o.iterdir() if x.suffix in ['.tif','.csv']}}
  (o/'run_record.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(summary,indent=2))
 if __name__=='__main__':main()
