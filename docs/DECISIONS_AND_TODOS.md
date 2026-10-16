@@ -5,6 +5,14 @@ Updated 16 October 2026. The current readiness checklist below supersedes histor
 This record separates implemented behavior, accepted modelling decisions, evidence limitations, and work that still requires unpublished inputs. It should be read with the main [README](../README.md) and the [Liu NDVI evidence audit](evidence/liu_2023_ndvi_p0_review.md).
 
 
+## Latest retry status — 16 October 2026
+
+- Source-script blocker resolved: user pasted the Landsat code. See `evidence/shared_ndvi_script_review.md`; adaptation now uses merged L7/L8 2019 annual medians with documented QA changes. No numeric lookup CSV has been exported.
+- Land cover: 8/114 tiles verified. Retrying the remaining queue with 1 MiB ranges is retaining new chunks; national coverage and regional mosaics remain pending.
+- Runtime: stopped stalled Conda solve; isolated pilot venv setup is being verified. Do not infer runtime readiness from installed-package names alone.
+- Population: no completed raster found in the project WorldPop folder or matching US-2019 file in Downloads at this check; user download remains separate.
+- Remaining run gates: finish/validate lookup and rasters; verify runtime imports; check population-grid overlaps; approve and package the societal-cost proxy as an explicit scenario; perform a small-city run and inspect outputs.
+
 ## Implementation progress — 16 October 2026
 
 - Added explicit input flags to the runner: `--land-cover`, `--population`, `--ndvi-lookup`, `--effects`, `--urban-boundaries`, `--costs`. Explicit files are checked before execution; source files need not be renamed to historical global-input filenames.
@@ -23,8 +31,8 @@ Scope: **49 states plus DC, including Alaska; Hawaii and US territories excluded
 | Item | Verified state | Remaining action | Responsibility |
 | --- | --- | --- | --- |
 | 2019 population | User download underway | Check complete file, year/release, count units, nodata, CRS, extent, checksum and raster population sum | User supplies file; agent validates |
-| 2019 GLC_FCS30D | Latest snapshot: 7 of 114 planned tiles verified; 0 recorded failures | Finish/resume acquisition, inspect all status files, assemble regional mosaics, mask fill codes 0/250, verify valid coverage and align classes to population by nearest neighbor | Agent |
-| Land-cover-to-NDVI lookup | No derived lookup CSV yet | Retrieve and review the shared Landsat script; generate the 2019 class lookup with explicit temporal/QA/statistical choices; validate class coverage before use | Agent; script contents needed if browser remains inaccessible |
+| 2019 GLC_FCS30D | Latest retry checkpoint: 8 of 114 verified; prior 106 TLS failures are being retried with smaller chunks | Finish/resume acquisition, inspect all status files, assemble regional mosaics, mask fill codes 0/250, verify valid coverage and align classes to population by nearest neighbor | Agent |
+| Land-cover-to-NDVI lookup | No derived lookup CSV yet | Shared script text reviewed and adaptation updated; execute 2019 L7/L8 lookup exports and validate class coverage before use | Agent; Earth Engine execution remains blocked by access/timeouts |
 | Urban polygons | 3,312 GUPPD polygons after Hawaii exclusion; valid geometries and unique source IDs; all within planned nominal tile extents | Check overlap between settlements, actual raster coverage and source-FID joins | Agent |
 | Effect estimates | Workbook supplied: depression OR 0.931, limits 0.887–0.977 per 0.1 NDVI | Validate workbook loading in the model environment and record its hash | Agent |
 | Country prevalence | Country GBD 2023 release / 2019 all-age depressive-disorder table already present | Confirm exact US country crosswalk and applied rate; no silent scalar fallback | Agent |

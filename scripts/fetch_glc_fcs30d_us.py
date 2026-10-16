@@ -50,7 +50,7 @@ def download(row,root):
             if offset>row['compressed_size']: raise ValueError('Oversized partial file')
             with part.open('ab') as f:
                 while offset<row['compressed_size']:
-                    end=min(offset+8*1024*1024,row['compressed_size'])
+                    end=min(offset+1024*1024,row['compressed_size'])
                     for attempt in range(5):
                         try: data=request_bytes(row['url'],start+offset,start+end-1); break
                         except Exception:
