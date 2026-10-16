@@ -47,7 +47,9 @@ def _download(row,root):
             if fields[0]!=b'PK\x03\x04': raise ValueError('Invalid ZIP header')
             start=row['offset']+30+fields[-2]+fields[-1]
             offset=part.stat().st_size if part.exists() else 0
-            if offset>row['compressed_size']: raise ValueError('Oversized partial file')
+            if offset>row['compressed_size']:
+                part.rename(part.with_name(part.name+'.oversized_preserved_'+str(time.time_ns())))
+                raise ValueError('Oversized partial preserved; restart required')
             chunk=int(os.environ.get('GEP_DOWNLOAD_CHUNK_BYTES',1024*1024))
             parallel=int(os.environ.get('GEP_DOWNLOAD_RANGES',4))
             def fetch_interval(bounds):
@@ -84,6 +86,9 @@ def _download(row,root):
         status.write_text(json.dumps(dict(**row,status='verified',source_year=2019,source_band=20,raw_sha256=sha(raw),output=str(out.relative_to(root)),output_sha256=sha(out),raster=metadata),indent=2))
         return name+' verified'
     except Exception as e:
+        if isinstance(e,zlib.error) and part.exists():
+            part.rename(part.with_name(part.name+'.deflate_failed_'+str(time.time_ns())))
+            e=ValueError(str(e)+'; invalid deflate preserved; restart required')
         status.write_text(json.dumps(dict(**row,status='failed',error=str(e)),indent=2)); return name+' FAILED '+str(e)
 
 def download(row,root):
@@ -92,7 +97,10 @@ def download(row,root):
     lock.parent.mkdir(parents=True,exist_ok=True)
     with lock.open('a') as handle:
         fcntl.flock(handle,fcntl.LOCK_EX)
-        return _download(row,root)
+        result=_download(row,root)
+        if 'restart required' in result or 'next attempt restarts' in result:
+            result=_download(row,root)
+        return result
 
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('data_root',type=Path); ap.add_argument('--workers',type=int,default=3); ap.add_argument('--plan-only',action='store_true'); ap.add_argument('--priority-tiles',nargs='*',default=[]); args=ap.parse_args()
