@@ -2,6 +2,8 @@
 
 Last updated: 2026-10-16. **Current scope: 49 states plus DC; Hawaii excluded by user. See the latest decisions section below for superseding status.** This record separates source files, project derivatives, unresolved owner inputs and model-ready validation. Large rasters and licensed source files are kept outside Git under `../data/urban_mental_health/`.
 
+For the authoritative current missing-input and validation checklist, see [test-run readiness](DECISIONS_AND_TODOS.md#current-us-test-run-readiness--16-october-2026). Download counts are snapshots, not completion claims.
+
 ## Directory convention
 
 - `raw/`: unchanged downloads or unchanged copies supplied by collaborators.

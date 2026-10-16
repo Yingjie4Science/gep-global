@@ -1,8 +1,52 @@
 # Urban mental health model: decisions and open work
 
-Updated 8 October 2026.
+Updated 16 October 2026. The current readiness checklist below supersedes historical acquisition notes later in this file.
 
 This record separates implemented behavior, accepted modelling decisions, evidence limitations, and work that still requires unpublished inputs. It should be read with the main [README](../README.md) and the [Liu NDVI evidence audit](evidence/liu_2023_ndvi_p0_review.md).
+
+
+## Current US test-run readiness — 16 October 2026
+
+Scope: **49 states plus DC, including Alaska; Hawaii and US territories excluded**. No complete model run or validated monetary result has been produced. Population is being downloaded by the user; no further agent download is needed.
+
+| Item | Verified state | Remaining action | Responsibility |
+| --- | --- | --- | --- |
+| 2019 population | User download underway | Check complete file, year/release, count units, nodata, CRS, extent, checksum and raster population sum | User supplies file; agent validates |
+| 2019 GLC_FCS30D | Latest snapshot: 7 of 114 planned tiles verified; 0 recorded failures | Finish/resume acquisition, inspect all status files, assemble regional mosaics, mask fill codes 0/250, verify valid coverage and align classes to population by nearest neighbor | Agent |
+| Land-cover-to-NDVI lookup | No derived lookup CSV yet | Retrieve and review the shared Landsat script; generate the 2019 class lookup with explicit temporal/QA/statistical choices; validate class coverage before use | Agent; script contents needed if browser remains inaccessible |
+| Urban polygons | 3,312 GUPPD polygons after Hawaii exclusion; valid geometries and unique source IDs; all within planned nominal tile extents | Check overlap between settlements, actual raster coverage and source-FID joins | Agent |
+| Effect estimates | Workbook supplied: depression OR 0.931, limits 0.887–0.977 per 0.1 NDVI | Validate workbook loading in the model environment and record its hash | Agent |
+| Country prevalence | Country GBD 2023 release / 2019 all-age depressive-disorder table already present | Confirm exact US country crosswalk and applied rate; no silent scalar fallback | Agent |
+| US cost | 2019 USD conversion saved: 10,999.206774445318 per patient | Retain mood-disorder societal-cost label; review its use as a depression proxy; build the model-readable cost workbook or add CSV support with explicit status checks | Agent; scientific interpretation remains open |
+| Runtime | Inspected invest environment has rasterio/geopandas; lacks hazelbean, rasterstats, dask, distributed, rioxarray and openpyxl | Build a separate environment from the repository specification; record resolved versions and test imports | Agent |
+| Local input configuration | Runner still expects historical filenames/layout and an XLSX cost input | Add explicit path configuration or a documented input staging layout; point to the Hawaii-excluded polygons and reviewed derivatives | Agent |
+| End-to-end verification | Pending | Fresh small-city run first; compare population/zonal sums, maps, country joins, case formulas and output bounds; then expand to the 49-state scope | Agent |
+
+The **NDVI lookup is the main uncreated scientific input besides population**. Land cover is partially downloaded. The other rows are integration, validation or interpretation work, not requests for additional user files.
+
+### Lookup derivation to document before execution
+
+- Source script: `https://code.earthengine.google.com/70c17ec2df3486da1c0013e3967c3619?accept_repo`. Its contents remain unverified because browser access has not succeeded reliably, even though the user opened it.
+- Land-cover asset: `projects/sat-io/open-datasets/GLC-FCS30D/annual`, with 2019 selected as annual band 20. Record the community asset snapshot and compare class codes against the downloaded Zenodo release before assuming equivalence.
+- Use the screenshot only as a format illustration: it shows NLCD classes. Derive GLC_FCS30D class values instead of copying NLCD codes or NDVI numbers.
+- Proposed temporal basis: observations from calendar year 2019, with a per-pixel annual median followed by a declared area-weighted class mean. This is a proposed replacement method, not a verified description of the shared script or original lookup. Review seasonal coverage, especially Alaska; annual clear-sky observations are not evenly distributed through the year.
+- Record sensor/collection, reflectance scaling, red/NIR bands, cloud/shadow/snow/saturation masks, minimum valid observation count, study extent, grid/resolution, sample design or full-pixel reduction, class counts, missing-data fraction, class spread and mean/median differences. Preserve valid negative NDVI values; mask fill codes 0/250 separately.
+- Export model columns `lc_code` and `lc_ndvi`, with descriptions and quality/provenance columns alongside them. Water/wetland exclusion is a separate modelling decision. The current reclassification code does not consume an `exclude` column, so an annotation alone cannot implement exclusion.
+- Compare the class lookup with direct Landsat NDVI in held-out urban areas. US-derived class means must not be silently reused as a validated global lookup.
+
+### Reproducible run record and acceptance gates
+
+1. Preserve original inputs; generate separately named derivatives. Save acquisition URL, product version, retrieval time, byte size and SHA-256 for each input; preserve raw conversion-factor snapshots.
+2. Capture the Git commit, complete command/configuration, resolved environment/package versions, geographic exclusions, country crosswalk, source asset IDs, preprocessing operations and any random seed. Hash both input and output files.
+3. Keep the cost conversion ledger: 2018 international dollars × original/matched PPP factor × country CPI2019/CPI2018 ÷ market FX2019. Distinguish the US reference-currency conversion from provisional non-US reconstructions. Do not label societal costs as direct treatment costs.
+4. Record raster CRS, transform, shape, nodata, valid-data coverage, population totals before/after spatial operations, polygon counts/IDs and join failures. Fix the current sequential-FID assumption before relying on zonal joins.
+5. Use a fresh output directory. Preserve logs and failure states; do not treat a partial download, skipped task or stale output as success. Resume downloads from their recorded queue/status, and do not overwrite source data.
+6. Inspect small-city maps and numeric summaries before a national run. A technical test may assess mechanics with explicitly labelled scenarios, but cannot establish predictive or causal validity.
+7. Report propagated effect-size limits as conditional intervals. The p0 sensitivity range is not a 95% CI, and full Monte Carlo uncertainty has not yet been implemented or validated.
+
+### Work that does not block a first US technical test
+
+Exact PPP-vintage recovery for non-US costs, Bulgaria reconciliation and the Europe aggregate can wait for expansion beyond the US. Stronger study-specific p0 synthesis, an adult-MDD endpoint and final Google Doc reconciliation remain research/reporting tasks. Their limitations must stay visible in any provisional output.
 
 ## Implemented and retained
 
