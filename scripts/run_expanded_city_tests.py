@@ -87,6 +87,9 @@ def process(c,a):
  classes=np.unique(np.stack([lc[both],glc[both]],axis=1),axis=0,return_counts=True)
  pd.DataFrame({'local_class':classes[0][:,0],'gee_class':classes[0][:,1],'cells':classes[1]}).to_csv(d/'land_cover_confusion.csv',index=False)
  report={'city':c,'scope':'Native population-grid complete city; identical-input implementation check, not epidemiological validation. GUPPD feature may be only part of named settlement.','population_cells':int(validpop.sum()),'population_total':float(pop[validpop].sum(dtype='float64')),'population_readback_exact':True,'source_comparison':{'both_valid_cells':int(both.sum()),'different_cells':int(different.sum()),'different_fraction':float(different.sum()/both.sum()),'population_on_different_classes':float(pop[different].sum(dtype='float64')),'support_masks_equal':bool(np.array_equal(vl,vg)),'point_case_percent_difference':float(100*(float(local.additional_cases)/float(bridge.additional_cases)-1))},'outputs':comparisons,'lookup_sha256':sha(lookup),'cloud_model_sha256':sha(a.gee_repo/'urban_mental_health/model.js'),'conditional_uncertainty':'Effect-size95%CI only','cost_status':'Exploratory2019USD societal-cost proxy; nonPPP; not treatment savings'}
+ report['artifact_sha256']={str(p.relative_to(d)):sha(p) for p in [inputs/'population_2019.tif',inputs/'population_gee.tif',inputs/'land_cover_2019.tif',inputs/'land_cover_gee.tif',d/'cloud_cases.tif',d/'cloud_config.json',d/'cloud_graph.json']}
+ report['land_cover_asset_ids']=ee.ImageCollection('projects/sat-io/open-datasets/GLC-FCS30D/annual').filterBounds(region).sort('system:index').aggregate_array('system:id').getInfo()
+ report['git_commit']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=a.repo,text=True).strip()
  result.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report),flush=True);return True
 
 def main():
@@ -119,7 +122,8 @@ def main():
    except Exception as e:
     (a.data_root/'pilots/expanded_2019_v1'/c['label']/'failure.json').write_text(json.dumps({'error':repr(e)},indent=2)+'\n');raise
   if not pending:break
-  print('Waiting for verified tiles/lookups:',pending,flush=True)
+  if pending!=locals().get('previous_pending'):print('Waiting for verified tiles/lookups:',pending,flush=True)
+  previous_pending=pending
   if not a.wait:break
   time.sleep(30)
 if __name__=='__main__':main()
