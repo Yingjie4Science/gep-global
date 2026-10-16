@@ -162,3 +162,22 @@ Reproduction commands are documented in `DATA_SOURCES_AND_PREPROCESSING.md`; lar
 - Costs are attributed to Christensen et al. (2020). A reproducible reverse-PPP / local-CPI / market-FX conversion now produces 2019 USD derivatives. US value: $10,999.21 per patient. Thirty other country conversions are provisional because revised WDI GDP PPP replaces the unrecovered original factor vintage.
 - Remaining cost tasks: recover original PPP factors for exact non-US conversion; reconcile Bulgaria currency units; disaggregate Europe or omit it; decide whether mood-disorder societal cost is an acceptable depression cost proxy. Do not treat these as direct treatment-cost rates.
 - User supplied an NDVI reference script and GEE GLC_FCS30D asset. Verify the shared script, derive a documented 2019 class lookup, and retain coverage/QA statistics. Screenshot NLCD class codes are examples only.
+
+
+## Separate US GEE app and USD reporting — 2026-10-17
+
+Published app: https://natcap-gep.projects.earthengine.app/view/us-urban-mental-health. Source lives in the invest-gee repository under urban_mental_health, with a saved EE script users/yingjieli/invest_gee:US_Urban_Mental_Health.
+
+- The interface includes city cases and 2019 USD valuation, conditional effect-only limits, landscape comparison, native-cell maps, national/state summaries, state charts and CSV download links. All 3,312 GUPPD urban areas excluding Hawaii are selectable; Alaska is included.
+- Valuation uses the reproducibly converted US rate of 10,999.206774445318 USD per patient, with no PPP adjustment in the reported currency. It remains an exploratory mood-disorder total societal-cost proxy. Source model_ready=false is preserved; this is not a validated depression-treatment saving.
+- Anonymous public startup, Fort Morgan case/USD results, metric switching and state table rendering were checked. Fort Morgan showed 63.1 case equivalents and $694,017, with conditional limits 19.3–112.9 and $212,089–$1,241,753.
+- National population summaries cover all urban units, totaling 194,367,282.99912596 people. Deterministic overlap allocation, geometric state intersections and residual accounting reconcile exactly in cell count (17,669,067), within floating-point tolerance for population.
+- All 332 health/valuation chunks were submitted. Verified completed batches appear in the public app, clearly marked partial. At the final public UI check, 250 of 3,312 city receipts were available; this checkpoint will become stale as processing continues.
+
+### Remaining release checks
+
+- Complete all city health batches and reconcile national = state contributions + boundary residual, including missing-data support. Resume the documented local publisher if the host stops.
+- Complete large-city and Alaska interactive checks, native-cell inspection and downloaded-file validation for the new interface. State summary chart rendering already includes Alaska completed contributions.
+- Resolve the community GLC versus local Zenodo release difference before claiming identical land-cover inputs.
+- Continue study-matched p0 synthesis and endpoint/cost applicability review. Conditional limits do not cover these assumptions.
+- Reconcile final model language and comments in the Google Doc after full output review.
