@@ -5,7 +5,7 @@
 The population file has arrived. Local Python and GEE Fort Morgan pilots are complete; all 877 modeled city cells pass the matched-input comparison. The real NDVI lookup and private pilot boundary asset are available. **Land-cover sources differ at native resolution**, so national expansion requires an explicit source choice. See [pilot evidence, reproduction and remaining work](evidence/fort_morgan_pilot.md). This supersedes earlier missing-population, unexecuted-lookup and runtime-blocked entries below. Public Bhutan app integration and scientific validation remain pending.
 
 
-Last updated: 2026-10-16. **Current scope: 49 states plus DC; Hawaii excluded by user. See the latest decisions section below for superseding status.** This record separates source files, project derivatives, unresolved owner inputs and model-ready validation. Large rasters and licensed source files are kept outside Git under `../data/urban_mental_health/`.
+Last updated: 2026-10-17. **Current scope: 49 states plus DC; Hawaii excluded by user. See the latest decisions section below for superseding status.** This record separates source files, project derivatives, unresolved owner inputs and model-ready validation. Large rasters and licensed source files are kept outside Git under `../data/urban_mental_health/`.
 
 For the authoritative current missing-input and validation checklist, see [test-run readiness](DECISIONS_AND_TODOS.md#current-us-test-run-readiness--16-october-2026). Download counts are snapshots, not completion claims.
 
@@ -20,9 +20,9 @@ For the authoritative current missing-input and validation checklist, see [test-
 
 | Input | Selected source | Current status | Model role |
 | --- | --- | --- | --- |
-| Land cover | GLC_FCS30D v2, Zenodo record 15063683 | US queue: 114 annual tiles, 12.93 GB compressed transfer; downloading; Hawaii gap found | Baseline land-cover classes; later mapped to NDVI |
+| Land cover | GLC_FCS30D v2, Zenodo record 15063683 | 114 annual tiles acquired for the active 49-state-plus-DC scope; all pass independent file and band-20 checks | Baseline land-cover classes; later mapped to NDVI |
 | Urban polygons | NASA SEDAC GUPPD v1, DOI 10.7927/brq1-xc29 | Local GeoPackage verified: 3,337 USA polygons; derivative and QC generated | Urban aggregation units and country/ISO labels |
-| Population | WorldPop 2019 | Complete raster still pending; interrupted transfers are labelled `.incomplete` | Population counts on the reference grid |
+| Population | WorldPop 2019 | US 2019 constrained R2025A v1 raster received and validated for the local pilots | Population counts on the reference grid |
 | Effect estimate | User-supplied workbook | Present and schema-validated | Depression OR 0.931, 95% CI 0.887-0.977 per 0.1 NDVI |
 | Country prevalence | IHME GBD 2023 estimates for 2019 | Present in `../depression_prevalence_review/` | Country baseline prevalence |
 | Treatment cost | User-supplied CSV | Present, but identifies 2018 USD PPP and total societal costs for mood disorders; fails required cost basis | Cost per case in 2019 USD, without PPP adjustment |
@@ -45,13 +45,13 @@ Its bounds are longitude -75 to approximately -70 and latitude approximately 35 
 
 ### Whole-US acquisition (2026-10-16)
 
-The user requires land cover for the whole US. Scope is all 50 states and DC, including Alaska, the Aleutian Islands on both sides of the antimeridian, and Hawaii including its northwestern islands. US territories are not included in this scope. **Coverage gap:** 25 of the 3,337 USA GUPPD polygons fall outside the available tile extents, all in Hawaii (including Honolulu, Hilo and Kailua-Kona). The official W155-W160 archive index contains Alaska tiles but no W155/W160 N20/N25 annual tiles. Thus this acquisition is not yet complete whole-US coverage. Obtain missing same-product Hawaii tiles from the provider, or review a separately labelled 2019 alternative with an explicit class/NDVI crosswalk; do not fill Hawaii with zero or silently omit it. The remaining 3,312 polygon geometries are covered by planned nominal extents, pending actual raster QC.
+The initial request covered all 50 states and DC. The user subsequently excluded Hawaii, so the active scope is 49 states plus DC, including Alaska and the Aleutian Islands on both sides of the antimeridian. US territories are excluded. The retained 3,312 GUPPD features fall within the planned nominal tile envelopes. The original 3,337-feature derivative and the 25 excluded Hawaii identifiers remain preserved.
 
 The download uses conservative geographic envelopes and consequently includes some neighboring-country and ocean pixels; it is not a national land mask.
 
-`scripts/fetch_glc_fcs30d_us.py DATA_ROOT` selects 114 available annual tiles from the official ZIP central directories (12.93 GB compressed transfer), retrieves only these members with resumable 1 MiB ranges (reduced from 8 MiB after slow-transfer timeouts), checks member size and CRC, and extracts band 20. Outputs are under `processed/lulc_2019_us/`; per-tile checksums and source/raster metadata are under `manifests/glc_us_tiles/`. `manifests/glc_us_download_plan.json` records the complete queue and envelopes. Re-running skips verified outputs and resumes partial compressed members. A failed tile is recorded and must be retried; queue completion alone does not establish full coverage.
+`scripts/fetch_glc_fcs30d_us.py DATA_ROOT` selects 114 available annual tiles from the official ZIP central directories (12.93 GB compressed transfer), retrieves only these members with resumable 1 MiB ranges (reduced from 8 MiB after slow-transfer timeouts), checks member size and CRC, and extracts band 20. Outputs are under `processed/lulc_2019_us/`; per-tile checksums and source/raster metadata are under `manifests/glc_us_tiles/`. `manifests/glc_us_download_plan.json` records the complete queue and envelopes. Re-running skips verified outputs and resumes partial compressed members. The completed queue passed an independent audit of all 114 raw/output hashes, raster metadata and deterministic source-band/output pixel windows.
 
-The extracted tiles retain source fill values 0/250 and native grids. Before modelling, mask both fill codes, build regional virtual mosaics (separate Alaska across the antimeridian to avoid an almost-global dense raster), and align classes to the population grid using nearest neighbor. Verify actual valid-data coverage against all retained US urban polygons; the planned nominal extents alone are insufficient. A single national dense GeoTIFF is not required to preserve complete US coverage.
+The extracted tiles retain source fill values 0/250 and native grids. Mask both fill codes, use regional virtual mosaics where helpful (separate Alaska across the antimeridian to avoid an almost-global dense raster), and align classes to the population grid using nearest neighbor. A single national dense GeoTIFF is not required. The completed actual-support audit found complete support in 3,290 of 3,312 retained GUPPD features. The other 22 contain 44 feature-row population cells mapping to fill code 0 and none to 250. Keep those cells missing until an explicit exclusion or sensitivity rule is approved; do not silently convert fill to built-up or zero NDVI. Detailed audit files are under `pilots/us_local_qc_2019_v1/`.
 
 ## 2. GUPPD urban polygons
 
@@ -143,9 +143,9 @@ The lookup therefore cannot currently be reproduced from public code. Do not inf
 
 ## Latest scope and cost conversion decisions (2026-10-16; supersedes earlier status)
 
-The user explicitly excluded Hawaii. The active US scope is now 49 states plus DC (Alaska included, territories excluded). `processed/guppd_us_excluding_hawaii.gpkg` retains 3,312 polygons; the 25 Hawaii identifiers and geographic selection envelope are recorded in `manifests/guppd_us_excluding_hawaii_qc.json`. The earlier 3,337-feature derivative remains preserved. The existing 114-tile acquisition queue includes neighboring-country tiles from conservative envelopes, but no Hawaii tile; downloaded valid-data coverage still needs checking. Hawaii is now an intentional scope exclusion, not a blocker.
+The user explicitly excluded Hawaii. The active US scope is now 49 states plus DC (Alaska included, territories excluded). `processed/guppd_us_excluding_hawaii.gpkg` retains 3,312 polygons; the 25 Hawaii identifiers and geographic selection envelope are recorded in `manifests/guppd_us_excluding_hawaii_qc.json`. The earlier 3,337-feature derivative remains preserved. The completed 114-tile acquisition includes neighboring-country tiles from conservative envelopes, but no Hawaii tile. Hawaii is an intentional scope exclusion, not a blocker.
 
-The user will download WorldPop and supply the complete file. The agent's active 100 m transfer was stopped; its `.incomplete` file must not be used.
+The user supplied the complete WorldPop US 2019 constrained R2025A v1 raster. It has been validated and used in the local pilot, expanded tests, and nationwide land-cover support audit. Any older `.incomplete` transfer remains unusable.
 
 ### Conversion of Christensen et al. costs to 2019 USD
 

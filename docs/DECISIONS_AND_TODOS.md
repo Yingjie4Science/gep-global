@@ -1,5 +1,15 @@
 # Urban mental health model: decisions and open work
 
+## Nationwide local land-cover completion — 17 October 2026
+
+- The active scope remains 49 states plus DC, including Alaska and excluding Hawaii and territories. The official local GLC_FCS30D queue completed after one bounded retry pass.
+- All 114 planned annual tiles pass independent raw/output SHA-256 checks, raster metadata checks, and deterministic comparisons of source band 20 with the extracted 2019 raster. Raw annual tiles occupy about 13 GB; the 114 extracted 2019 rasters occupy about 2.5 GB. A dense national mosaic is unnecessary.
+- Actual land-cover support was checked for all 3,312 retained GUPPD features on native WorldPop cell centres. Of these, 3,290 have complete support. The other 22 contain 44 feature-row population cells mapped to source fill code 0; none map to fill code 250. Their feature-row population sum is 459.093, which must not be treated as a national total because source polygons may overlap.
+- Lowest feature support is 99.7147% for Pataskala (22_16529); the largest affected feature total is 133.997 people for Philadelphia (30_12532). These are source fill/edge findings, not missing downloads. Treat the affected cells as missing exposure pending an explicit exclusion or sensitivity rule; do not assign built-up or zero NDVI silently.
+- Completion evidence is outside Git under `data/urban_mental_health/manifests/us_local_completion.json` and `data/urban_mental_health/pilots/us_local_qc_2019_v1/`. The four expanded source-comparison tests remain complete.
+
+Current local priorities are: select and document the source-fill treatment; derive or validate an NDVI lookup against the chosen production land-cover snapshot; reconcile the small Python/GEE boundary-cell membership differences; retain the p0, endpoint, cost-proxy and conditional-uncertainty limitations; then run the national model and review its outputs.
+
 ## Full US app scope — 16 October 2026
 
 All3,312 GUPPD US urban areas excluding Hawaii have been uploaded to the Earth Engine app asset. The all-city interface in `invest-gee/urban_mental_health/us_code_editor.js` supports selection and city-specific lookup/calculation on demand. The one-city pilot was a verification stage, not a scope restriction. All-city results have not been precomputed or nationally validated. Public app publication and rendered checks are pending because both browser-control connections timed out. See that repository's `US_APP_STATUS.md`; do not present the Bhutan app URL as a mental health app URL.
@@ -24,10 +34,10 @@ User requested a parallel cloud implementation within `Yingjie4Science/invest-ge
 - The reviewed lookup, GUPPD cloud asset, polygon edge/overlap reconciliation, real-data comparison, cost interpretation and publication checks still remain. This is a project model port; do not describe it as an officially released InVEST mental health model or a validated Bhutan estimate.
 - Local isolated pilot runtime imports and all 11 repository tests passed. GDAL/PROJ resource-directory warnings remain to resolve before local spatial execution. This supersedes the installation-only status below.
 
-## Latest retry status — 16 October 2026
+## Historical retry status — 16 October 2026
 
 - Source-script blocker resolved: user pasted the Landsat code. See `evidence/shared_ndvi_script_review.md`; adaptation now uses merged L7/L8 2019 annual medians with documented QA changes. No numeric lookup CSV has been exported.
-- Land cover: 8/114 tiles verified. Retrying the remaining queue with 1 MiB ranges is retaining new chunks; national coverage and regional mosaics remain pending.
+- Land cover checkpoint: 8/114 tiles were verified at this stage. The later 17 October completion record at the top of this file supersedes this checkpoint.
 - Runtime: stopped stalled Conda solve; isolated pilot venv setup is being verified. Do not infer runtime readiness from installed-package names alone.
 - Population: no completed raster found in the project WorldPop folder or matching US-2019 file in Downloads at this check; user download remains separate.
 - Remaining run gates: finish/validate lookup and rasters; verify runtime imports; check population-grid overlaps; approve and package the societal-cost proxy as an explicit scenario; perform a small-city run and inspect outputs.
@@ -50,9 +60,9 @@ Scope: **49 states plus DC, including Alaska; Hawaii and US territories excluded
 | Item | Verified state | Remaining action | Responsibility |
 | --- | --- | --- | --- |
 | 2019 population | User download underway | Check complete file, year/release, count units, nodata, CRS, extent, checksum and raster population sum | User supplies file; agent validates |
-| 2019 GLC_FCS30D | Latest retry checkpoint: 8 of 114 verified; prior 106 TLS failures are being retried with smaller chunks | Finish/resume acquisition, inspect all status files, assemble regional mosaics, mask fill codes 0/250, verify valid coverage and align classes to population by nearest neighbor | Agent |
+| 2019 GLC_FCS30D | All 114 planned tiles independently verified; actual support checked for all 3,312 retained features | Keep fill codes 0/250 missing, choose an explicit treatment for 44 source-fill cells, and align classes to population by nearest neighbor | Agent |
 | Land-cover-to-NDVI lookup | No derived lookup CSV yet | Shared script text reviewed and adaptation updated; execute 2019 L7/L8 lookup exports and validate class coverage before use | Agent; Earth Engine execution remains blocked by access/timeouts |
-| Urban polygons | 3,312 GUPPD polygons after Hawaii exclusion; valid geometries and unique source IDs; all within planned nominal tile extents | Check overlap between settlements, actual raster coverage and source-FID joins | Agent |
+| Urban polygons | 3,312 GUPPD polygons after Hawaii exclusion; valid geometries and unique source IDs; actual land-cover support audited | Resolve overlap accounting and the few differing Python/GEE boundary cells; preserve source-FID joins | Agent |
 | Effect estimates | Workbook supplied: depression OR 0.931, limits 0.887–0.977 per 0.1 NDVI | Validate workbook loading in the model environment and record its hash | Agent |
 | Country prevalence | Country GBD 2023 release / 2019 all-age depressive-disorder table already present | Confirm exact US country crosswalk and applied rate; no silent scalar fallback | Agent |
 | US cost | 2019 USD conversion saved: 10,999.206774445318 per patient | Retain mood-disorder societal-cost label; review its use as a depression proxy; build the model-readable cost workbook or add CSV support with explicit status checks | Agent; scientific interpretation remains open |
@@ -60,7 +70,7 @@ Scope: **49 states plus DC, including Alaska; Hawaii and US territories excluded
 | Local input configuration | Runner still expects historical filenames/layout and an XLSX cost input | Add explicit path configuration or a documented input staging layout; point to the Hawaii-excluded polygons and reviewed derivatives | Agent |
 | End-to-end verification | Pending | Fresh small-city run first; compare population/zonal sums, maps, country joins, case formulas and output bounds; then expand to the 49-state scope | Agent |
 
-The **NDVI lookup is the main uncreated scientific input besides population**. Land cover is partially downloaded. The other rows are integration, validation or interpretation work, not requests for additional user files.
+The **production land-cover-to-NDVI lookup remains the main unresolved scientific input**. Population and land-cover acquisition are complete. The other rows are integration, validation or interpretation work, not requests for additional user files.
 
 ### Lookup derivation to document before execution
 
@@ -145,8 +155,8 @@ Describe results as conditional model estimates of additional depression-related
 ## US input acquisition update — 2026-10-16
 
 - Scope: acquire 2019 LULC for all 50 states and DC, including Alaska and Hawaii; a single-city tile is insufficient. Territories are outside this stated scope.
-- Started an official GLC_FCS30D queue of 114 available annual tiles (12.93 GB compressed transfer), with resumable downloads, ZIP CRC verification, 2019 band extraction and checksums. Completion is pending.
-- Coverage gate: 3,312 of 3,337 US GUPPD polygons fall within planned tile extents. The 25 uncovered polygons are Hawaiian; the inspected W155-W160 official archive lacks the required Hawaii tiles. Resolve same-product availability or explicitly approve and document an alternative 2019 product and class/NDVI crosswalk. Whole-US coverage remains open.
+- Started an official GLC_FCS30D queue of 114 available annual tiles (12.93 GB compressed transfer), with resumable downloads, ZIP CRC verification, 2019 band extraction and checksums. This historical start record is superseded by the completed 17 October audit at the top of this file.
+- Coverage gate at this stage: 3,312 of 3,337 US GUPPD polygons fell within planned tile extents; the other 25 were Hawaiian. Hawaii was subsequently excluded by the user, and the retained 3,312-feature scope has now been audited against actual raster support.
 - GUPPD is supplied and the US derivative has 3,337 features, no invalid geometry and no duplicate SMOD_ID. Preserve all settlement levels pending overlap review; verify zonal-statistic FID joins before a model run.
 - Retrying the exact WorldPop page 75977 download: 2019, 100 m, constrained R2025A v1. This is an updated-input scenario relative to the original archived WorldPop mosaic. Partial downloads are not usable inputs.
 - Cost CSV is supplied but all 33 rows identify 2018 USD PPP, mood disorders, total societal cost per patient. It fails the agreed 2019 USD non-PPP treatment-cost basis. Recover original currency/year and conversion provenance and resolve cost-component/endpoint scope before monetary output.
@@ -189,12 +199,12 @@ Published app: https://natcap-gep.projects.earthengine.app/view/us-urban-mental-
 - All four matched-cell Python/GEE checks pass for point/lower/upper case bands, covering788,807population cells. Population raster values agree exactly and no city population lacks the tested land-cover/lookup support.
 - Fixed-lookup source sensitivity: different class fractions8.04%,16.60%,30.05%,12.86%; local case changes+0.24%,+1.42%,+3.89%,+0.66%, respectively. Do not claim source equivalence.
 - Regional membership differs by+1cell(Tucson),0(Portland),−1(Anchorage),+6(New York). Same-cell formula checks do not resolve geographic reduction parity. A planar New York geometry diagnostic alone did not remove the difference.
-- Official acquisition:17/114tiles independently pass hashes and band20sample checks at this checkpoint. The remaining queue is active with shared pacing, bounded transfer concurrency, per-tile locks and HTTP429cooldowns. Previous overlapping writers were stopped and an oversized partial preserved.
-- The local completion monitor runs a bounded retry, then independent acquisition and national urban-coverage audits. Status is data/urban_mental_health/manifests/us_local_completion.json; the host processes must remain running. No scheduler/service was installed.
+- Official acquisition: all 114 planned tiles independently pass raw/output hashes, raster metadata checks and deterministic band-20 sample comparisons. The bounded retry completed; no downloader or monitor remains active.
+- The national urban-coverage audit completed for all 3,312 retained features. A total of 3,290 have complete support; 22 contain 44 feature-row cells mapped to source fill code 0. This is a source support finding rather than an acquisition gap. Status is `data/urban_mental_health/manifests/us_local_completion.json`; detailed results are under `pilots/us_local_qc_2019_v1/`.
 
 ### Still required before production parity claims
 
-1. Finish114tile acquisition and complete actual valid-data coverage audit across3,312urban units.
+1. Choose and document an exclusion or sensitivity treatment for the 44 source-fill cells; do not silently assign an exposure value.
 2. Resolve the few differing boundary cells with a shared native-grid membership rule.
 3. Derive or validate the NDVI lookup against the chosen production land-cover snapshot. Completed source tests hold the community-derived lookup fixed to isolate classification differences.
 4. Retain p0/endpoint/cost limitations, conditional effect-only uncertainty, and final methods-document reconciliation.
