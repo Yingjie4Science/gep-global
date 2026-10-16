@@ -5,6 +5,16 @@ Updated 16 October 2026. The current readiness checklist below supersedes histor
 This record separates implemented behavior, accepted modelling decisions, evidence limitations, and work that still requires unpublished inputs. It should be read with the main [README](../README.md) and the [Liu NDVI evidence audit](evidence/liu_2023_ndvi_p0_review.md).
 
 
+## Parallel Earth Engine implementation — 16 October 2026
+
+User requested a parallel cloud implementation within `Yingjie4Science/invest-gee`, alongside the Bhutan app. The experimental module is in `urban_mental_health/` in that repository. The current local workflow remains the comparison reference.
+
+- Earth Engine SDK access through project `natcap-gep` now works; the earlier default-project/access blocker is resolved for this path.
+- Verified one US 2019 constrained R2025A v1 population image in `projects/sat-io/open-datasets/WORLDPOP/pop`, ID `USA_POP_2019_CN_100M_R2025A_V1`. Catalog image metadata matches the selected release labels; pixel identity with the user-downloaded raster is still unverified.
+- Cloud computation can read GLC and population without completing the full national local download. Preserve the source population grid/counts and export city summaries plus small diagnostic subsets.
+- The reviewed lookup, GUPPD cloud asset, polygon edge/overlap reconciliation, real-data comparison, cost interpretation and publication checks still remain. This is a project model port; do not describe it as an officially released InVEST mental health model or a validated Bhutan estimate.
+- Local isolated pilot runtime imports and all 11 repository tests passed. GDAL/PROJ resource-directory warnings remain to resolve before local spatial execution. This supersedes the installation-only status below.
+
 ## Latest retry status — 16 October 2026
 
 - Source-script blocker resolved: user pasted the Landsat code. See `evidence/shared_ndvi_script_review.md`; adaptation now uses merged L7/L8 2019 annual medians with documented QA changes. No numeric lookup CSV has been exported.
