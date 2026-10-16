@@ -2,13 +2,16 @@
 // Shared script derives annual medians; class lookup is a new extension.
 // Sources and decisions: docs/DATA_SOURCES_AND_PREPROCESSING.md.
 // Run in an Earth Engine-enabled Cloud Project. First export DE, review it,
-// then set STATES=ALL_STATES. No export has been executed by this repository.
+// then set STATES=ALL_STATES. A bounded Fort Morgan lookup was evaluated
+// through the exact serialized graph on 2026-10-16; state exports remain pending.
 var ALL_STATES = 'AL AK AZ AR CA CO CT DE DC FL GA ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(' ');
 var STATES = ['DE']; // Pilot only; Hawaii and territories intentionally excluded.
 var YEAR = 2019;
 var MIN_OBSERVATIONS = 3; // Proposed QC threshold; inspect coverage sensitivity.
 var SCALE = 30;
 var CRS = 'EPSG:6933'; // Equal-area analysis grid, explicit for all reductions.
+// EE currently rejects the short EPSG code; equivalent WKT1 verified server-side.
+var CRS_WKT = "PROJCS[\"WGS 84 / NSIDC EASE-Grid 2.0 Global\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Cylindrical_Equal_Area\"],PARAMETER[\"standard_parallel_1\",30],PARAMETER[\"central_meridian\",0],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"6933\"]]";
 var GLC = 'projects/sat-io/open-datasets/GLC-FCS30D/annual';
 var LABELS = {
   "10": "Rainfed cropland",
@@ -93,7 +96,7 @@ STATES.forEach(function(state) {
     .addBands(lc).updateMask(lc.mask());
   var sums = stack.reduceRegion({
     reducer: ee.Reducer.sum().repeat(6).group({groupField:6, groupName:'lc_code'}),
-    geometry: region, crs: CRS, scale: SCALE, maxPixels:1e13, tileScale:4
+    geometry: region, crs: CRS_WKT, scale: SCALE, maxPixels:1e13, tileScale:4
   });
   var groups = ee.List(sums.get('groups', ee.List([])));
   var byCode = ee.Dictionary.fromLists(groups.map(function(g) {
