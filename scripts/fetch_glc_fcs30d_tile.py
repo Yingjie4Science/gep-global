@@ -19,6 +19,9 @@ def request_bytes(url: str, start: int, end: int) -> bytes:
     with urllib.request.urlopen(request, timeout=300) as response:
         if response.status != 206:
             raise RuntimeError(f"Expected HTTP 206 for range {start}-{end}; got {response.status}")
+        expected_range = f"bytes {start}-{end}/"
+        if not response.headers.get("Content-Range", "").startswith(expected_range):
+            raise RuntimeError("Server returned an unexpected Content-Range")
         data = response.read()
     expected = end - start + 1
     if len(data) != expected:
