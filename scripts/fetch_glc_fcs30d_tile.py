@@ -8,6 +8,9 @@ import binascii
 import io
 from pathlib import Path
 import struct
+import subprocess
+import os
+import re
 import tempfile
 import urllib.request
 import zipfile
@@ -15,6 +18,24 @@ import zlib
 
 
 def request_bytes(url: str, start: int, end: int) -> bytes:
+    # Optional curl transport works around Python TLS failures without disabling
+    # certificate validation. Check the returned range before accepting bytes.
+    if os.environ.get('GEP_DOWNLOAD_TRANSPORT') == 'curl':
+        with tempfile.TemporaryDirectory() as folder:
+            headers = Path(folder) / 'headers'
+            body = Path(folder) / 'body'
+            subprocess.run(['curl', '--silent', '--show-error', '--fail', '--location',
+                            '--retry', '3', '--retry-all-errors', '--connect-timeout', '20',
+                            '--max-time', '180', '--range', f'{start}-{end}',
+                            '--dump-header', str(headers), '--output', str(body), url], check=True)
+            text = headers.read_text()
+            ranges = re.findall(r'(?im)^content-range:\s*bytes (\d+)-(\d+)/', text)
+            if not ranges or ranges[-1] != (str(start), str(end)):
+                raise RuntimeError('curl response did not match requested byte range')
+            data = body.read_bytes()
+            if len(data) != end-start+1:
+                raise RuntimeError('curl response length mismatch')
+            return data
     request = urllib.request.Request(url, headers={"Range": f"bytes={start}-{end}"})
     with urllib.request.urlopen(request, timeout=300) as response:
         if response.status != 206:
