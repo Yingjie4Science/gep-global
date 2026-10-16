@@ -34,7 +34,7 @@ def main():
  model.create_no_vegetation_ndvi_scenario(o/'ndvi_2019.tif',o/'ndvi_no_vegetation.tif')
  model.calculate_delta_raster(o/'ndvi_2019.tif',o/'ndvi_no_vegetation.tif',o/'delta_ndvi.tif',lambda a,b:a-b)
  e=model.load_depression_effect_sizes(args.effects);rate=resolve_country_rates(['United States'],args.prevalence,args.crosswalk)['United States'];p0=0.115
- summary={'city_id':str(cities.iloc[0]['id']),'city_name':str(cities.iloc[0]['CIESIN_NAME']),'population_total':float(pop[valid].sum(dtype='float64')),'population_modelled':float(pop[supported].sum(dtype='float64')),'observed_cases':float(pop[supported].sum(dtype='float64'))*rate,'prevalence':rate,'p0':p0,'lookup_scope':'5 km buffered Fort Morgan; technical pilot proxy, not national lookup','interval_scope':'conditional 95% effect-size limits only','scientific_status':'technical pilot; not causal or locally validated'}
+ summary={'city_id':str(cities.iloc[0]['id']),'city_name':str(cities.iloc[0]['CIESIN_NAME']),'population_total':float(pop[valid].sum(dtype='float64')),'population_modelled':float(pop[supported].sum(dtype='float64')),'observed_cases':float(pop[supported].sum(dtype='float64'))*rate,'prevalence':rate,'p0':p0,'lookup_scope':'Selected GUPPD urban area plus 5 km UTM buffer; city-specific technical pilot proxy','interval_scope':'conditional 95% effect-size limits only','scientific_status':'technical pilot; not causal or locally validated'}
  for name,odds in [('additional_cases',e['effect_size']),('additional_cases_lower',e['ci_upper']),('additional_cases_upper',e['ci_lower'])]:
   raster=o/(name+'_factor.tif');csv=o/(name+'_city.csv')
   model.calculate_preventable_cases(o/'delta_ndvi.tif',d/'population_2019.tif',args.effects,1,p0,raster,odds_ratio=odds,overwrite=True)
