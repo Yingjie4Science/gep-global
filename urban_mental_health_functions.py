@@ -9,6 +9,7 @@ import gc
 import pandas as pd
 import geopandas as gpd
 from osgeo import gdal
+from vector_attributes import attributes_by_fid
 import shapely
 from shapely.geometry import MultiPolygon
 import pygeoprocessing as pgp
@@ -429,16 +430,18 @@ def aggregate_preventable_cases_by_region(
 
     results = []
     
-    # Process results: pygeoprocessing returns a dict keyed by the vector's FID.
-    # Geopandas loads FIDs into the dataframe index sequentially (or 0-indexed).
-    urban_boundaries['fid'] = range(1, len(urban_boundaries) + 1)
-    
+    # Read IDs from the exact vector passed to zonal_statistics. FIDs may
+    # contain gaps or start at zero, and reprojection may assign new FIDs.
+    rows_by_fid = attributes_by_fid(processing_boundary_path)
+
     for fid, stats in tqdm(zs.items(), desc="Compiling zonal statistics"):
         if stats['count'] == 0 or stats['count'] is None:
             continue
 
         # Retrieve original row data based on FID.
-        row = urban_boundaries[urban_boundaries['fid'] == fid].iloc[0]
+        if fid not in rows_by_fid:
+            raise ValueError(f'Zonal statistics returned unknown feature ID {fid}')
+        row = rows_by_fid[fid]
 
         region_stats = {
             "region_id": row.get("id", fid),

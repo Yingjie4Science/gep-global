@@ -48,6 +48,9 @@ def parse_args():
                         help='Explicit scalar sensitivity rate; overrides the country table (e.g. historical 0.05)')
     parser.add_argument('--p0', type=float,
                         help='Least-green reference prevalence for OR-to-RR conversion; default 0.115')
+    for option in ['land-cover', 'population', 'ndvi-lookup', 'effects', 'urban-boundaries', 'costs']:
+        parser.add_argument('--' + option, type=Path,
+                            help='Explicit input file; overrides the historical base-directory layout')
     return parser.parse_args()
 
 
@@ -84,15 +87,20 @@ def main():
     p.aoi = 'global'
     # The 30 m land-cover raster is nearest-neighbor warped to the 100 m
     # population grid. NDVI is assigned by land-cover code, not read from Landsat.
-    p.base_year_lulc_path = p.get_path(os.path.join(
-        p.base_data_dir, '../../lulc/glc_fcs30d/lulc_glc_fcs30d_2019.tif'))
-    p.population_2019_path = p.get_path(os.path.join(
-        p.base_data_dir, 'worldpop/100m_2019_global-mosaic.tif'))
-    p.lulc_attribute_table_path = p.get_path(os.path.join(
-        p.base_data_dir, 'glc_fcs30d_attribute_table_processed.csv'))
-    p.effect_size_table_path = p.get_path(os.path.join(p.base_data_dir, 'effect_size.xlsx'))
-    p.urban_boundary_path = p.get_path(os.path.join(p.base_data_dir, 'urban_boundaries_2019.gpkg'))
-    p.health_cost_rate_path = p.get_path(os.path.join(p.base_data_dir, 'treatment_cost.xlsx'))
+    inputs = {
+        'land_cover': ('base_year_lulc_path', '../../lulc/glc_fcs30d/lulc_glc_fcs30d_2019.tif'),
+        'population': ('population_2019_path', 'worldpop/100m_2019_global-mosaic.tif'),
+        'ndvi_lookup': ('lulc_attribute_table_path', 'glc_fcs30d_attribute_table_processed.csv'),
+        'effects': ('effect_size_table_path', 'effect_size.xlsx'),
+        'urban_boundaries': ('urban_boundary_path', 'urban_boundaries_2019.gpkg'),
+        'costs': ('health_cost_rate_path', 'treatment_cost.xlsx'),
+    }
+    for argument, (attribute, legacy_relative_path) in inputs.items():
+        value = getattr(args, argument)
+        resolved = (value if value is not None else Path(p.base_data_dir) / legacy_relative_path).expanduser().resolve()
+        if not resolved.is_file():
+            raise FileNotFoundError(f'Missing --{argument.replace("_", "-")} input: {resolved}')
+        setattr(p, attribute, str(resolved))
 
     p.scalar_prevalence = baseline_prevalence
     p.country_prevalence_table_path = (str(args.country_prevalence_table.expanduser().resolve())
