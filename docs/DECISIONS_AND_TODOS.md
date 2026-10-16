@@ -181,3 +181,22 @@ Published app: https://natcap-gep.projects.earthengine.app/view/us-urban-mental-
 - Resolve the community GLC versus local Zenodo release difference before claiming identical land-cover inputs.
 - Continue study-matched p0 synthesis and endpoint/cost applicability review. Conditional limits do not cover these assumptions.
 - Reconcile final model language and comments in the Google Doc after full output review.
+
+
+## Expanded local tests and acquisition — 2026-10-17
+
+- Executed Tucson30_12305, Portland(Maine)30_12572, Anchorage feature23_87444, and New York30_12545. These are GUPPD source features, not municipality definitions.
+- All four matched-cell Python/GEE checks pass for point/lower/upper case bands, covering788,807population cells. Population raster values agree exactly and no city population lacks the tested land-cover/lookup support.
+- Fixed-lookup source sensitivity: different class fractions8.04%,16.60%,30.05%,12.86%; local case changes+0.24%,+1.42%,+3.89%,+0.66%, respectively. Do not claim source equivalence.
+- Regional membership differs by+1cell(Tucson),0(Portland),−1(Anchorage),+6(New York). Same-cell formula checks do not resolve geographic reduction parity. A planar New York geometry diagnostic alone did not remove the difference.
+- Official acquisition:17/114tiles independently pass hashes and band20sample checks at this checkpoint. The remaining queue is active with shared pacing, bounded transfer concurrency, per-tile locks and HTTP429cooldowns. Previous overlapping writers were stopped and an oversized partial preserved.
+- The local completion monitor runs a bounded retry, then independent acquisition and national urban-coverage audits. Status is data/urban_mental_health/manifests/us_local_completion.json; the host processes must remain running. No scheduler/service was installed.
+
+### Still required before production parity claims
+
+1. Finish114tile acquisition and complete actual valid-data coverage audit across3,312urban units.
+2. Resolve the few differing boundary cells with a shared native-grid membership rule.
+3. Derive or validate the NDVI lookup against the chosen production land-cover snapshot. Completed source tests hold the community-derived lookup fixed to isolate classification differences.
+4. Retain p0/endpoint/cost limitations, conditional effect-only uncertainty, and final methods-document reconciliation.
+
+Full results and provenance are in docs/evidence/expanded_city_tests.md, expanded_city_summary.csv and expanded_city_comparisons.json. Original pilot outputs are preserved.

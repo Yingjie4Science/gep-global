@@ -1,0 +1,326 @@
+{
+  "completed_date": "2026-10-17",
+  "scope": "Four bounded US GUPPD tests; same-cell implementation pass; regional membership findings; not empirical health validation",
+  "results": [
+    {
+      "city": {
+        "label": "tucson",
+        "city_id": "30_12305",
+        "city_name": "Tucson",
+        "bounds": [
+          -111.09237698899994,
+          32.10290269600006,
+          -110.75066542699994,
+          32.37872635200006
+        ],
+        "required_tiles": [
+          "GLC_FCS30D_20002022_W115N35_Annual_V1.1.tif"
+        ]
+      },
+      "scope": "Native population-grid complete city; identical-input implementation check, not epidemiological validation. GUPPD feature may be only part of named settlement.",
+      "population_cells": 54794,
+      "population_total": 658336.2048990339,
+      "population_readback_exact": true,
+      "source_comparison": {
+        "both_valid_cells": 54794,
+        "different_cells": 4407,
+        "different_fraction": 0.08042851407088367,
+        "population_on_different_classes": 19201.64131434056,
+        "support_masks_equal": true,
+        "point_case_percent_difference": 0.24033533925629236
+      },
+      "outputs": {
+        "additional_cases": {
+          "passed": true,
+          "cells": 54794,
+          "max_absolute_cell_difference": 3.6066410269430804e-07,
+          "local_zenodo_total": 3345.946626015051,
+          "matched_local_total": 3337.9244140504247,
+          "gee_cell_sum": 3337.9260011429133
+        },
+        "additional_cases_lower": {
+          "passed": true,
+          "cells": 54794,
+          "max_absolute_cell_difference": 2.603395906908279e-07,
+          "local_zenodo_total": 1043.9668692823502,
+          "matched_local_total": 1041.5938373886445,
+          "gee_cell_sum": 1041.594980821054
+        },
+        "additional_cases_upper": {
+          "passed": true,
+          "cells": 54794,
+          "max_absolute_cell_difference": 4.444320673702151e-07,
+          "local_zenodo_total": 5858.839630839893,
+          "matched_local_total": 5844.017152995256,
+          "gee_cell_sum": 5844.015013605528
+        }
+      },
+      "lookup_sha256": "7dd1b512f26e80e715379dcee637016b1423a3c1f8c891a54c0e6db41e34db1b",
+      "cloud_model_sha256": "f09bbd8423510aa3b38ad90028dddf4edfc3beccd41980ddf73f8b3b77b5e8af",
+      "conditional_uncertainty": "Effect-size95%CI only",
+      "cost_status": "Exploratory2019USD societal-cost proxy; nonPPP; not treatment savings",
+      "artifact_sha256": {
+        "inputs/population_2019.tif": "aa41065a01f13c2af4e43a715942ede9ce4caf7aebfed2a1c67e1a6094152347",
+        "inputs/population_gee.tif": "5da453b6a79adfd3a3ea2a9cac274d774e7d14e0a8fceab56b5aecf245794efe",
+        "inputs/land_cover_2019.tif": "e27c73d45102395f0b22685e3f3036c4404fedbd35234de036aaccde8efad3ac",
+        "inputs/land_cover_gee.tif": "dbff9b9b850d51b793ad88786a1eb807294b06cb943e7d9cdf750ddf9fbf2352",
+        "cloud_cases.tif": "a87414a3d908a32caf5510fa7e8bf4a86b7b3e4f9cd6233b88da6e26f82274ff",
+        "cloud_config.json": "5da56413bc03fdf44722e730f7e4ed3126627c10d79153a128276140c35aafea",
+        "cloud_graph.json": "c6c509c87d804a7855894dc21e12f666a6698b90a027708eac751811cafe6e8d",
+        "cloud_regional_summary.json": "221daefd61db78476b9f212a13624daa548a59975749ee3b7348e75439d4cb4e"
+      },
+      "land_cover_asset_ids": [
+        "projects/sat-io/open-datasets/GLC-FCS30D/annual/GLC_FCS30D_20002022_W115N35_Annual"
+      ],
+      "git_commit": "1e037f84f09766a8440e8a11ded737e7739d9dfa",
+      "regional_reconciliation": {
+        "gee_population_cells": 54795,
+        "local_population_cells": 54794,
+        "population_difference": 17.242108559818007,
+        "case_difference_from_matched_local": 0.08726844964394331,
+        "same_cell_count": false,
+        "interpretation": "Identical-cell formula checks pass; geographic membership is a separate check. Nonzero regional membership differences remain unresolved."
+      }
+    },
+    {
+      "city": {
+        "label": "portland_maine",
+        "city_id": "30_12572",
+        "city_name": "Portland",
+        "bounds": [
+          -70.38272062599998,
+          43.593765819000055,
+          -70.20941553799997,
+          43.70343417200007
+        ],
+        "required_tiles": [
+          "GLC_FCS30D_20002022_W75N45_Annual_V1.1.tif"
+        ]
+      },
+      "scope": "Native population-grid complete city; identical-input implementation check, not epidemiological validation. GUPPD feature may be only part of named settlement.",
+      "population_cells": 10664,
+      "population_total": 97633.56371488,
+      "population_readback_exact": true,
+      "source_comparison": {
+        "both_valid_cells": 10664,
+        "different_cells": 1770,
+        "different_fraction": 0.16597899474868716,
+        "population_on_different_classes": 7924.337198091569,
+        "support_masks_equal": true,
+        "point_case_percent_difference": 1.4247338303122747
+      },
+      "outputs": {
+        "additional_cases": {
+          "passed": true,
+          "cells": 10664,
+          "max_absolute_cell_difference": 1.438191348235307e-07,
+          "local_zenodo_total": 1461.1766734805014,
+          "matched_local_total": 1440.6512280575562,
+          "gee_cell_sum": 1440.6512823583482
+        },
+        "additional_cases_lower": {
+          "passed": true,
+          "cells": 10664,
+          "max_absolute_cell_difference": 9.895285810190835e-08,
+          "local_zenodo_total": 426.0357623055207,
+          "matched_local_total": 420.80958907235623,
+          "gee_cell_sum": 420.80965620757684
+        },
+        "additional_cases_upper": {
+          "passed": true,
+          "cells": 10664,
+          "max_absolute_cell_difference": 8.354712135449915e-07,
+          "local_zenodo_total": 2748.908609118747,
+          "matched_local_total": 2704.7773267866246,
+          "gee_cell_sum": 2704.7764074620864
+        }
+      },
+      "lookup_sha256": "4597fc9c58bfbc365b9e8b238be94f337410914b2d27ab5a85a2eab84ae15cda",
+      "cloud_model_sha256": "f09bbd8423510aa3b38ad90028dddf4edfc3beccd41980ddf73f8b3b77b5e8af",
+      "conditional_uncertainty": "Effect-size95%CI only",
+      "cost_status": "Exploratory2019USD societal-cost proxy; nonPPP; not treatment savings",
+      "artifact_sha256": {
+        "inputs/population_2019.tif": "9594d814799ce8ddf94e69f97a9dc3f7799b60b9b626000d9aa4207ac8b43230",
+        "inputs/population_gee.tif": "dac6379100c0f2f212388801ba3543d2c748674a89a0fe0aa1602ac81e11f233",
+        "inputs/land_cover_2019.tif": "4c7431a8bca738d623f7fb2bcf769b13709e129479e77d995272812543dbec4a",
+        "inputs/land_cover_gee.tif": "954b2353263c70a1f33437a737f119a8bba55c399a7450db44a5ba296d1af992",
+        "cloud_cases.tif": "de50ae04d9a1754698d3006f85a977d03f423683e6c87e6fe046f01ab7eb596b",
+        "cloud_config.json": "83e87a7f793f0e54a4a88bb78c8d3e7a28110e0d2d2cd145503e962e846bcc74",
+        "cloud_graph.json": "66bca6abb0680fa058efc9a2e61c20f5b5f5d7694f6896c60028081cb7b1f439",
+        "cloud_regional_summary.json": "377db35a187ef7a82ec3ff1b5fed6af430a6a2243314e001ed0e516d4d01f70b"
+      },
+      "land_cover_asset_ids": [
+        "projects/sat-io/open-datasets/GLC-FCS30D/annual/GLC_FCS30D_20002022_W75N45_Annual"
+      ],
+      "git_commit": "1e037f84f09766a8440e8a11ded737e7739d9dfa",
+      "regional_reconciliation": {
+        "gee_population_cells": 10664,
+        "local_population_cells": 10664,
+        "population_difference": 0.0,
+        "case_difference_from_matched_local": 5.430078476820199e-05,
+        "same_cell_count": true,
+        "interpretation": "Identical-cell formula checks pass; geographic membership is a separate check. Nonzero regional membership differences remain unresolved."
+      }
+    },
+    {
+      "city": {
+        "label": "anchorage",
+        "city_id": "23_87444",
+        "city_name": "Anchorage",
+        "bounds": [
+          -149.98738003999998,
+          61.118995760000075,
+          -149.81212700199998,
+          61.16140322500007
+        ],
+        "required_tiles": [
+          "GLC_FCS30D_20002022_W150N65_Annual_V1.1.tif"
+        ]
+      },
+      "scope": "Native population-grid complete city; identical-input implementation check, not epidemiological validation. GUPPD feature may be only part of named settlement.",
+      "population_cells": 3551,
+      "population_total": 28884.561005424708,
+      "population_readback_exact": true,
+      "source_comparison": {
+        "both_valid_cells": 3551,
+        "different_cells": 1067,
+        "different_fraction": 0.30047873838355393,
+        "population_on_different_classes": 8594.997752252966,
+        "support_masks_equal": true,
+        "point_case_percent_difference": 3.8949112358164673
+      },
+      "outputs": {
+        "additional_cases": {
+          "passed": true,
+          "cells": 3551,
+          "max_absolute_cell_difference": 1.4992426616844412e-07,
+          "local_zenodo_total": 468.431340836089,
+          "matched_local_total": 450.8703412555621,
+          "gee_cell_sum": 450.8704245053935
+        },
+        "additional_cases_lower": {
+          "passed": true,
+          "cells": 3551,
+          "max_absolute_cell_difference": 8.239391698083853e-08,
+          "local_zenodo_total": 134.9998372257059,
+          "matched_local_total": 130.59407887553593,
+          "gee_cell_sum": 130.59400773950625
+        },
+        "additional_cases_upper": {
+          "passed": true,
+          "cells": 3551,
+          "max_absolute_cell_difference": 4.2005815914514244e-07,
+          "local_zenodo_total": 892.9087572226578,
+          "matched_local_total": 854.6404789507612,
+          "gee_cell_sum": 854.6402567735904
+        }
+      },
+      "lookup_sha256": "c302566813a1f6a129db56cf154ee67486478ebab528b5cd95f3729a0acb9de7",
+      "cloud_model_sha256": "f09bbd8423510aa3b38ad90028dddf4edfc3beccd41980ddf73f8b3b77b5e8af",
+      "conditional_uncertainty": "Effect-size95%CI only",
+      "cost_status": "Exploratory2019USD societal-cost proxy; nonPPP; not treatment savings",
+      "artifact_sha256": {
+        "inputs/population_2019.tif": "194c286482eec98cfebe4b0c68c8ce2dc0968d3c51040ee9d4239b5784d58c0a",
+        "inputs/population_gee.tif": "b4c5f00ce6ee3a6a07f029e741265a4e31bb54853ebf0c6f9e9acaef19485368",
+        "inputs/land_cover_2019.tif": "033721baa8c26c195998f881edae57ee13eb22a88aa946d5b3ad7a3585acb3ab",
+        "inputs/land_cover_gee.tif": "1d88d8affd906534d57fd88d9d7290bc28a13f29c0e0e006864fdbf87ed48fbe",
+        "cloud_cases.tif": "242fe5c8ce53b8a266a8c7570eec00b4d1ecfbf0e524a60e02e9d86c97c41833",
+        "cloud_config.json": "ccf58f1f223b0f30514eb28b8102a1f2fefe36c517a7caf4530c7c5a0ac0822e",
+        "cloud_graph.json": "5f1410fdc026aafb67abc11201db8ad0f1af4cd62c2a1a0b541ce811ac4c72b2",
+        "cloud_regional_summary.json": "ec47f877a5d5478bbb92bb2d5962a7a6b483d1c50704da6fec9335e147514473"
+      },
+      "land_cover_asset_ids": [
+        "projects/sat-io/open-datasets/GLC-FCS30D/annual/GLC_FCS30D_20002022_W150N65_Annual"
+      ],
+      "git_commit": "1e037f84f09766a8440e8a11ded737e7739d9dfa",
+      "regional_reconciliation": {
+        "gee_population_cells": 3550,
+        "local_population_cells": 3551,
+        "population_difference": -2.449537992477417,
+        "case_difference_from_matched_local": -0.034347585191142116,
+        "same_cell_count": false,
+        "interpretation": "Identical-cell formula checks pass; geographic membership is a separate check. Nonzero regional membership differences remain unresolved."
+      }
+    },
+    {
+      "city": {
+        "label": "new_york",
+        "city_id": "30_12545",
+        "city_name": "New York",
+        "bounds": [
+          -74.68045441799995,
+          40.36359876600005,
+          -72.90239322299993,
+          41.17222816300006
+        ],
+        "required_tiles": [
+          "GLC_FCS30D_20002022_W75N45_Annual_V1.1.tif"
+        ]
+      },
+      "scope": "Native population-grid complete city; identical-input implementation check, not epidemiological validation. GUPPD feature may be only part of named settlement.",
+      "population_cells": 719798,
+      "population_total": 16871592.91044676,
+      "population_readback_exact": true,
+      "source_comparison": {
+        "both_valid_cells": 719798,
+        "different_cells": 92601,
+        "different_fraction": 0.1286485930775023,
+        "population_on_different_classes": 534695.6367507088,
+        "support_masks_equal": true,
+        "point_case_percent_difference": 0.6573011729957168
+      },
+      "outputs": {
+        "additional_cases": {
+          "passed": true,
+          "cells": 719798,
+          "max_absolute_cell_difference": 3.0522688305723022e-06,
+          "local_zenodo_total": 225676.37038640789,
+          "matched_local_total": 224202.68351775777,
+          "gee_cell_sum": 224202.6988637144
+        },
+        "additional_cases_lower": {
+          "passed": true,
+          "cells": 719798,
+          "max_absolute_cell_difference": 3.2734625432517817e-06,
+          "local_zenodo_total": 66509.72843544197,
+          "matched_local_total": 66131.1757708172,
+          "gee_cell_sum": 66131.11383599271
+        },
+        "additional_cases_upper": {
+          "passed": true,
+          "cells": 719798,
+          "max_absolute_cell_difference": 5.662660630179062e-06,
+          "local_zenodo_total": 419657.7056500594,
+          "matched_local_total": 416518.06668573734,
+          "gee_cell_sum": 416517.9921786841
+        }
+      },
+      "lookup_sha256": "5da9788a853b1ed2d6fccec4c7cf063330a95226a50195a1ac5144227e06a4f7",
+      "cloud_model_sha256": "f09bbd8423510aa3b38ad90028dddf4edfc3beccd41980ddf73f8b3b77b5e8af",
+      "conditional_uncertainty": "Effect-size95%CI only",
+      "cost_status": "Exploratory2019USD societal-cost proxy; nonPPP; not treatment savings",
+      "artifact_sha256": {
+        "inputs/population_2019.tif": "61bc1aef9b63d95dd7b0bc18442d757b12548cd3c2d67eb1660bacfd587dcc98",
+        "inputs/population_gee.tif": "e162db2ea5d3bf940e694456309dbd94cb09421676b5ea3589b5fe921dd5c289",
+        "inputs/land_cover_2019.tif": "8dcb8eb6a05310025e1b9d1689611f3ab83b56d3b45f7ad72f7e4f28e088f5dc",
+        "inputs/land_cover_gee.tif": "6e5ebd3178f0d27f5c153f66bc578c24dcd0f6a562b38374ed6d99804d3da59b",
+        "cloud_cases.tif": "908f3a98264b06afc51588f54542f7c596db48fad4e666a3c0457e1db73f1d87",
+        "cloud_config.json": "7d91338e630772c3b9c8574708379229d63256efa3d86c8eede09b20c4b5e16b",
+        "cloud_graph.json": "2f35e7cb826234c67abd8eb0add8e2fca20c825bd663f3714a4554d743e27a23",
+        "cloud_regional_summary.json": "41e315bfa127aba16cbfbba9caf52c1eea40c71ca0756e75784883905ed694b8"
+      },
+      "land_cover_asset_ids": [
+        "projects/sat-io/open-datasets/GLC-FCS30D/annual/GLC_FCS30D_20002022_W75N45_Annual"
+      ],
+      "git_commit": "1e037f84f09766a8440e8a11ded737e7739d9dfa",
+      "regional_reconciliation": {
+        "gee_population_cells": 719804,
+        "local_population_cells": 719798,
+        "population_difference": 46.42139966413379,
+        "case_difference_from_matched_local": 0.7555651655129623,
+        "same_cell_count": false,
+        "interpretation": "Identical-cell formula checks pass; geographic membership is a separate check. Nonzero regional membership differences remain unresolved."
+      }
+    }
+  ]
+}

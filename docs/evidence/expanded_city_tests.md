@@ -25,6 +25,40 @@ After acquisition, run `verify_land_cover_acquisition.py DATA_ROOT OUTPUT_JSON` 
 
 All expanded run files stay under `data/urban_mental_health/pilots/expanded_2019_v1`. The scientific constants remain prevalence 0.0424332878, p0=0.115, OR0.931 (0.887–0.977) per0.1NDVI, and the positive-NDVI-to-zero counterfactual. The USD calculation is an exploratory 2019 USD non-PPP mood-disorder societal-cost proxy. Confidence limits propagate the effect-size CI only.
 
-## Current checkpoint
+## Executed results — 17 October 2026
 
-The four city-specific lookup evaluations and native-grid cloud input readbacks completed. Official local tile acquisition and expanded matched-input outputs remain in progress; no completed national coverage or expanded numeric parity claim is made at this checkpoint.
+All three official tiles required by the four selected test features are verified. The four local runs, matched-cloud-source local runs, and exact-JS GEE raster evaluations completed. All three case bands pass cellwise tolerance in all four tests; WorldPop values match exactly. These checks cover **788,807 urban population cells** across the four tests. All modeled city populations have land-cover and lookup support.
+
+| Test feature | Population cells | Different land-cover cells | Local case equivalents | Local vs cloud-source case change |
+| --- | ---: | ---: | ---: | ---: |
+| tucson | 54,794 | 8.04% | 3,345.95 | +0.24% |
+| portland_maine | 10,664 | 16.60% | 1,461.18 | +1.42% |
+| anchorage | 3,551 | 30.05% | 468.43 | +3.89% |
+| new_york | 719,798 | 12.86% | 225,676.37 | +0.66% |
+
+“Local vs cloud-source” holds the city-specific lookup, population, formula and local cell mask constant and changes land-cover input only. Both products remain distinct snapshots. A small change in the case total does not imply the classifications are equivalent.
+
+### Regional membership finding
+
+The GEE unweighted polygon reductions and local centre masks agree exactly for Portland. They differ slightly for the other three geometries:
+
+| Test feature | Local cells | GEE regional cells | GEE minus local population | GEE regional cases minus matched local cases |
+| --- | ---: | ---: | ---: | ---: |
+| tucson | 54,794 | 54,795 | +17.242109 | +0.087268 |
+| portland_maine | 10,664 | 10,664 | +0.000000 | +0.000054 |
+| anchorage | 3,551 | 3,550 | -2.449538 | -0.034348 |
+| new_york | 719,798 | 719,804 | +46.421400 | +0.755565 |
+
+The population rasters agree exactly on the test grids; the differences arise in geographic membership/reduction, separately from the formula check. A New York diagnostic using explicitly planar EE geometry reduced the population discrepancy only from46.421400 to45.361691 people; therefore geodesic-versus-planar edges alone do not resolve it. Exact boundary-cell reconciliation remains open. Do not relabel the four matched-cell passes as exact regional or national parity.
+
+### Decisions and remaining actions
+
+- Keep official Zenodo land cover as the local source-sensitivity reference; label the existing cloud run with its community snapshot. Do not merge or substitute them silently. This is not approval of an unmatched land-cover/lookup pair for production.
+- These tests deliberately hold the lookup fixed to isolate class-map differences. The class means were derived with community land cover; a production local-Zenodo workflow must derive or validate a lookup against the selected Zenodo snapshot. A full source-specific lookup comparison is distinct from the completed fixed-lookup tests.
+- Retain source sensitivity alongside the case and USD results. The Anchorage feature showed the largest difference in these four tests; it is not a whole-Anchorage estimate.
+- Investigate the small set of differing boundary cells and pin one shared native-grid membership rule before claiming cross-platform regional/national equality. Preserve the original geometries and these diagnostic outputs.
+- Local estimates and conditional intervals are exported in `expanded_city_summary.csv`. The USD column remains the exploratory mood-disorder societal-cost proxy, not demonstrated treatment savings.
+- Nationwide acquisition is **still in progress** after provider rate limiting. At this execution checkpoint,17of114tiles were verified; the independent hash and band-20 audit passed for all17. The three priority tiles needed for these tests completed; the remaining nationwide downloads and full coverage audit are not complete.
+- `monitor_us_local_completion.py` watches the acquisition, performs one bounded retry pass if needed, and runs the independent file and national urban-coverage audits after all tiles verify. It writes `manifests/us_local_completion.json`; it requires the local process to remain running. The monitor installs no scheduler or service.
+
+During matched-source writes, GDAL emitted non-tiled block-size-option warnings. The output files were re-opened and all cellwise numeric checks passed; no result is inferred from a successful write alone. The existing outputs are retained with their recorded hashes.
