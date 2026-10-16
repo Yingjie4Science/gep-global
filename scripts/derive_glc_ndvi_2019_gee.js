@@ -1,4 +1,5 @@
-// Proposed replacement lookup; shared reference script NOT yet verified.
+// Adapted from user-pasted shared Landsat script, reviewed 2026-10-16.
+// Shared script derives annual medians; class lookup is a new extension.
 // Sources and decisions: docs/DATA_SOURCES_AND_PREPROCESSING.md.
 // Run in an Earth Engine-enabled Cloud Project. First export DE, review it,
 // then set STATES=ALL_STATES. No export has been executed by this repository.
@@ -51,13 +52,13 @@ var states = ee.FeatureCollection('TIGER/2018/States');
 var annual = ee.ImageCollection(GLC);
 print('GLC asset bands (verify b20 before export)', annual.first().bandNames());
 
-function ndvi(image) {
+function ndvi(image, redBand, nirBand) {
   // Collection 2 surface reflectance scaling; no legacy Collection 1 scale.
   var qa = image.select('QA_PIXEL');
   var clear = qa.bitwiseAnd(63).eq(0); // fill/cloud/cirrus/shadow/snow bits 0-5
   var unsaturated = image.select('QA_RADSAT').eq(0);
-  var red = image.select('SR_B4').multiply(0.0000275).add(-0.2);
-  var nir = image.select('SR_B5').multiply(0.0000275).add(-0.2);
+  var red = image.select(redBand).multiply(0.0000275).add(-0.2);
+  var nir = image.select(nirBand).multiply(0.0000275).add(-0.2);
   var denominator = nir.add(red);
   var valid = clear.and(unsaturated).and(red.gte(0)).and(nir.gte(0)).and(denominator.gt(0));
   // Explicit ratio preserves valid negative NDVI; water is not masked by QA bit 7.
@@ -69,8 +70,15 @@ STATES.forEach(function(state) {
   var region = states.filter(ee.Filter.eq('STUSPS', state)).geometry();
   var lc = annual.filterBounds(region).sort('system:index').select('b20').mosaic().rename('lc_code');
   lc = lc.updateMask(lc.neq(0).and(lc.neq(250)));
-  var observations = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
-    .filterBounds(region).filterDate('2019-01-01', '2020-01-01').map(ndvi);
+  // Match the supplied script's merged-sensor annual median. Landsat 5
+  // contributes no observations in 2019. L7 SLC-off gaps remain masked.
+  var l7 = ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
+    .filterBounds(region).filterDate('2019-01-01', '2020-01-01')
+    .map(function(image) { return ndvi(image, 'SR_B3', 'SR_B4'); });
+  var l8 = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
+    .filterBounds(region).filterDate('2019-01-01', '2020-01-01')
+    .map(function(image) { return ndvi(image, 'SR_B4', 'SR_B5'); });
+  var observations = l7.merge(l8);
   var n = observations.count().rename('n_obs');
   var composite = observations.median().updateMask(n.gte(MIN_OBSERVATIONS));
   var valid = composite.mask().unmask(0);
@@ -103,10 +111,10 @@ STATES.forEach(function(state) {
       ndvi_area_sum:sum, ndvi2_area_sum:square, valid_area_m2:available,
       class_area_m2:total, valid_cell_count:v.get(4), nobs_area_sum:v.get(5),
       valid_area_fraction:ee.Algorithms.If(total.gt(0),available.divide(total.max(1)),null),
-      year:YEAR, temporal_statistic:'annual median of valid 2019 Landsat 8 NDVI',
+      year:YEAR, temporal_statistic:'annual median of valid 2019 Landsat 7 and 8 NDVI',
       spatial_statistic:'area-weighted mean of annual pixel medians',
       minimum_observations:MIN_OBSERVATIONS, analysis_crs:CRS, analysis_scale_m:SCALE,
-      glc_asset:GLC, glc_band:'b20', landsat_asset:'LANDSAT/LC08/C02/T1_L2',
+      glc_asset:GLC, glc_band:'b20', landsat_asset:'LANDSAT/LE07/C02/T1_L2;LANDSAT/LC08/C02/T1_L2',
       status:ee.Algorithms.If(available.gt(0),'candidate_requires_review','no_valid_observations')
     });
   }));
