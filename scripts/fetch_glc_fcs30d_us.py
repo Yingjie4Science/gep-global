@@ -4,7 +4,7 @@ Conservative envelopes intentionally include neighboring countries/ocean. These
 are acquisition extents, not a national mask. Territories are outside this scope.
 Uses official ZIP member CRCs; keeps resumable compressed parts and status JSON.
 """
-import argparse, binascii, concurrent.futures, json, re, struct, tempfile, time
+import argparse, binascii, concurrent.futures, json, re, struct, tempfile, time, os, fcntl
 import urllib.request, zipfile, zlib, hashlib
 from pathlib import Path
 from fetch_glc_fcs30d_tile import request_bytes, extract_2019
@@ -32,7 +32,7 @@ def sha(p):
     with p.open('rb') as f:
         for b in iter(lambda:f.read(8*1024*1024),b''): h.update(b)
     return h.hexdigest()
-def download(row,root):
+def _download(row,root):
     name=Path(row['member']).name
     raw=root/'raw/glc_fcs30d'/name
     out=root/'processed/lulc_2019_us'/name.replace('20002022','2019')
@@ -48,22 +48,30 @@ def download(row,root):
             start=row['offset']+30+fields[-2]+fields[-1]
             offset=part.stat().st_size if part.exists() else 0
             if offset>row['compressed_size']: raise ValueError('Oversized partial file')
-            with part.open('ab') as f:
+            chunk=int(os.environ.get('GEP_DOWNLOAD_CHUNK_BYTES',1024*1024))
+            parallel=int(os.environ.get('GEP_DOWNLOAD_RANGES',4))
+            def fetch_interval(bounds):
+                lo,hi=bounds
+                for attempt in range(5):
+                    try:return request_bytes(row['url'],start+lo,start+hi-1)
+                    except Exception:
+                        if attempt==4:raise
+                        time.sleep(2**attempt)
+            with part.open('ab') as f, concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as ranges:
                 while offset<row['compressed_size']:
-                    end=min(offset+1024*1024,row['compressed_size'])
-                    for attempt in range(5):
-                        try: data=request_bytes(row['url'],start+offset,start+end-1); break
-                        except Exception:
-                            if attempt==4: raise
-                            time.sleep(2**attempt)
-                    f.write(data); f.flush(); offset=end
+                    intervals=[(lo,min(lo+chunk,row['compressed_size'])) for lo in range(offset,min(offset+chunk*parallel,row['compressed_size']),chunk)]
+                    # map yields in byte order; only validated contiguous ranges are appended.
+                    for data in ranges.map(fetch_interval,intervals):
+                        f.write(data);f.flush();offset+=len(data)
             temporary=raw.with_suffix('.tif.incomplete'); crc=0; size=0
             dec=zlib.decompressobj(-15)
             with part.open('rb') as f, temporary.open('wb') as dst:
                 for b in iter(lambda:f.read(1024*1024),b''):
                     b=dec.decompress(b) if row['method']==8 else b
                     dst.write(b); crc=binascii.crc32(b,crc); size+=len(b)
-            if size!=row['size'] or crc & 0xffffffff != row['crc']: raise ValueError('ZIP CRC/size mismatch')
+            if size!=row['size'] or crc & 0xffffffff != row['crc']:
+                part.rename(part.with_name(part.name+'.crc_failed_'+str(time.time_ns())))
+                raise ValueError('ZIP CRC/size mismatch; partial preserved separately for audit, next attempt restarts')
             temporary.replace(raw); part.unlink()
         crc=0
         with raw.open('rb') as f:
@@ -78,8 +86,16 @@ def download(row,root):
     except Exception as e:
         status.write_text(json.dumps(dict(**row,status='failed',error=str(e)),indent=2)); return name+' FAILED '+str(e)
 
+def download(row,root):
+    # A process lock prevents multiple resumed queues corrupting one partial member.
+    lock=root/'manifests/glc_us_tiles'/(Path(row['member']).name+'.lock')
+    lock.parent.mkdir(parents=True,exist_ok=True)
+    with lock.open('a') as handle:
+        fcntl.flock(handle,fcntl.LOCK_EX)
+        return _download(row,root)
+
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('data_root',type=Path); ap.add_argument('--workers',type=int,default=3); ap.add_argument('--plan-only',action='store_true'); args=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('data_root',type=Path); ap.add_argument('--workers',type=int,default=3); ap.add_argument('--plan-only',action='store_true'); ap.add_argument('--priority-tiles',nargs='*',default=[]); args=ap.parse_args()
     plan=args.data_root/'manifests/glc_us_download_plan.json'; plan.parent.mkdir(parents=True,exist_ok=True)
     if plan.exists(): rows=json.loads(plan.read_text())['tiles']
     else:
@@ -91,7 +107,11 @@ def main():
         plan.write_text(json.dumps(dict(scope='50 states and DC; conservative bounding envelopes; territories excluded',envelopes=ENVELOPES,source='https://zenodo.org/records/15063683',compressed_bytes=sum(r['compressed_size'] for r in rows),tiles=rows),indent=2))
     print(f'Tiles: {len(rows)}; compressed transfer: {sum(r["compressed_size"] for r in rows)/1e9:.2f} GB',flush=True)
     if args.plan_only: return
+    rows.sort(key=lambda r: Path(r['member']).name not in args.priority_tiles)
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
-        for result in pool.map(lambda r:download(r,args.data_root),rows): print(result,flush=True)
-    print('Finished queue. Inspect individual status files for failures before use.',flush=True)
+        jobs=[pool.submit(download,r,args.data_root) for r in rows]
+        for job in concurrent.futures.as_completed(jobs): print(job.result(),flush=True)
+    failed=[r for r in rows if json.loads((args.data_root/'manifests/glc_us_tiles'/(Path(r['member']).name+'.json')).read_text()).get('status')!='verified']
+    print(f'Finished queue: {len(rows)-len(failed)}/{len(rows)} verified; {len(failed)} failed.',flush=True)
+    if failed:raise SystemExit(2)
 if __name__=='__main__': main()

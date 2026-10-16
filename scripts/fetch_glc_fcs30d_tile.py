@@ -15,7 +15,23 @@ import tempfile
 import urllib.request
 import zipfile
 import zlib
+import threading
+import time
 
+
+# Shared across the tile worker threads: cap open transfers and request starts.
+_TRANSFER_SLOTS = threading.BoundedSemaphore(4)
+_REQUEST_LOCK = threading.Lock()
+_NEXT_REQUEST = 0.0
+
+def _pace_request(cooldown=0):
+    global _NEXT_REQUEST
+    with _REQUEST_LOCK:
+        now=time.monotonic()
+        _NEXT_REQUEST=max(_NEXT_REQUEST,now+cooldown)
+        wait=max(0,_NEXT_REQUEST-now)
+        _NEXT_REQUEST+=float(os.environ.get('GEP_DOWNLOAD_MIN_INTERVAL','1.0'))
+    if wait:time.sleep(wait)
 
 def request_bytes(url: str, start: int, end: int) -> bytes:
     # Optional curl transport works around Python TLS failures without disabling
@@ -24,10 +40,25 @@ def request_bytes(url: str, start: int, end: int) -> bytes:
         with tempfile.TemporaryDirectory() as folder:
             headers = Path(folder) / 'headers'
             body = Path(folder) / 'body'
-            subprocess.run(['curl', '--silent', '--show-error', '--fail', '--location',
-                            '--retry', '3', '--retry-all-errors', '--connect-timeout', '20',
-                            '--max-time', '180', '--range', f'{start}-{end}',
-                            '--dump-header', str(headers), '--output', str(body), url], check=True)
+            with _TRANSFER_SLOTS:
+                for attempt in range(3):
+                    _pace_request()
+                    result=subprocess.run(['curl','--silent','--show-error','--fail','--location',
+                        '--connect-timeout','20','--max-time','120','--range',f'{start}-{end}',
+                        '--dump-header',str(headers),'--output',str(body),url],capture_output=True,text=True)
+                    header_text=headers.read_text() if headers.exists() else ''
+                    statuses=re.findall(r'(?im)^HTTP/\S+\s+(\d+)',header_text)
+                    status=int(statuses[-1]) if statuses else 0
+                    if status==429:
+                        retry=re.findall(r'(?im)^retry-after:\s*(\d+)',header_text)
+                        cooldown=max(int(retry[-1]) if retry else 0,60*(2**attempt))
+                        print(f'Provider rate limit: shared cooldown {cooldown}s',flush=True)
+                        _pace_request(cooldown)
+                        continue
+                    if result.returncode:
+                        raise RuntimeError(f'curl range transfer failed: {result.stderr.strip()}')
+                    break
+                else:raise RuntimeError('Provider rate limit persisted after shared cooldowns; resume later')
             text = headers.read_text()
             ranges = re.findall(r'(?im)^content-range:\s*bytes (\d+)-(\d+)/', text)
             if not ranges or ranges[-1] != (str(start), str(end)):
