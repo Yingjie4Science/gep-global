@@ -5,6 +5,17 @@ Updated 16 October 2026. The current readiness checklist below supersedes histor
 This record separates implemented behavior, accepted modelling decisions, evidence limitations, and work that still requires unpublished inputs. It should be read with the main [README](../README.md) and the [Liu NDVI evidence audit](evidence/liu_2023_ndvi_p0_review.md).
 
 
+## Implementation progress — 16 October 2026
+
+- Added explicit input flags to the runner: `--land-cover`, `--population`, `--ndvi-lookup`, `--effects`, `--urban-boundaries`, `--costs`. Explicit files are checked before execution; source files need not be renamed to historical global-input filenames.
+- Fixed the sequential-feature-ID assumption: zonal statistics now join attributes using actual OGR FIDs from the precise vector used in aggregation. A regression test covers IDs 0, 7 and 42. All 11 repository unit tests pass in the existing geospatial environment; this is not an end-to-end raster run.
+- Added `config/us_country_crosswalk.csv`: GUPPD `United States` maps explicitly to GBD location 102 (`United States of America`). Verified applied prevalence is 0.0424332878 for 2019.
+- Added `scripts/check_us_boundaries.py`; the 3,312-feature subset has three positive-area overlap pairs of approximately 702.13, 422.35 and 473.28 m². Saved audit: `manifests/guppd_us_overlap_qc.json`. No geometry is altered. Pixel-level population duplication remains to be checked once population arrives.
+- Acquisition update: 8 tiles were verified, then 106 transfers failed with TLS connection errors. Added an optional certificate-validated curl transport and restarted the resumable queue with two workers. Verified files are preserved. Read per-tile statuses for fresh progress; old failure statuses persist until the corresponding retry finishes.
+- Started a separate Conda environment from `environment.yml` under the project's `.envs/urban-mental-health`; package solving/install and full import verification remain pending. Existing environments are not changed.
+- Added `scripts/derive_glc_ndvi_2019_gee.js` as a **proposed replacement**, not a verified adaptation of the inaccessible shared script. It selects GLC band b20, uses QA-screened and scaled Landsat 8 Collection 2 observations from 2019, retains valid negative NDVI, computes annual pixel medians and area-weighted class summaries, and exports raw sums/coverage statistics. JavaScript syntax check passed; no Earth Engine execution or CSV export has occurred.
+- The GEE script defaults to a Delaware export for inspection. After a successful pilot and source-method review, `STATES = ALL_STATES` creates per-state export definitions for 49 states plus DC. Pool raw NDVI-area sums divided by valid area, not unweighted state means. Require coverage/observation review before promoting any result to the model lookup. Full study uncertainty is not inferred from class SD.
+
 ## Current US test-run readiness — 16 October 2026
 
 Scope: **49 states plus DC, including Alaska; Hawaii and US territories excluded**. No complete model run or validated monetary result has been produced. Population is being downloaded by the user; no further agent download is needed.

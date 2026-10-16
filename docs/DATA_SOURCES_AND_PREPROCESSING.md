@@ -161,3 +161,20 @@ All derivatives retain `model_ready = False`: the supplied values describe **moo
 ### NDVI lookup work in progress
 
 The user supplied a shared Landsat script and the community asset catalog. The catalog identifies `projects/sat-io/open-datasets/GLC-FCS30D/annual`; annual band 20 corresponds to 2019. The screenshot is an NLCD-format example; its codes and values must not be copied as GLC_FCS30D values. The linked script contents have not yet been retrieved reliably from the browser, so its temporal and QA choices remain unverified. A new lookup will be labelled as a replacement derivation, with its 2019 compositing basis and class coverage recorded.
+
+
+## Executable preparation and model wiring
+
+From the repository directory (replace `DATA_ROOT` with the local data directory):
+
+```sh
+GEP_DOWNLOAD_TRANSPORT=curl python scripts/fetch_glc_fcs30d_us.py DATA_ROOT --workers 2
+python scripts/check_us_boundaries.py DATA_ROOT
+python scripts/convert_costs_2019_usd.py DATA_ROOT
+```
+
+`derive_glc_ndvi_2019_gee.js` is a self-contained Earth Engine Code Editor candidate. It defines a Delaware pilot export first. It must be executed in a registered Earth Engine project and reviewed before extending to all configured states. Shared-script equivalence and community-asset versus Zenodo-v2 equivalence remain unverified. Candidate output contains raw weighted sums, class areas, valid cell counts, NDVI spread and temporal/asset identifiers for reproducible aggregation. The 2019 annual median and minimum-three-observation rule are declared proposal choices, not recovered original-author settings.
+
+The model runner now accepts explicit file paths. A future validated run should include all six input flags plus `--country-prevalence-table` and `--country-crosswalk config/us_country_crosswalk.csv`, and use a new `--project-dir`. Do not run a national dense raster across Alaska's antimeridian extent without first reviewing memory/storage requirements and regional processing. The `--costs` input still requires the reviewed XLSX schema; the conversion audit CSV is not silently substituted.
+
+Verification completed in this implementation stage: 11 unit tests; JavaScript syntax; Python compilation; explicit US prevalence join; geometry-intersection audit. Remaining verification: isolated-environment completion, real raster run, pixel-level overlap checks, lookup export/coverage, cost-proxy interpretation and output maps/tables.
