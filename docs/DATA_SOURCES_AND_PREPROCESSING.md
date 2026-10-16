@@ -1,6 +1,6 @@
 # Urban mental health input data: sources and preprocessing
 
-Last updated: 2026-10-16. This record separates source files, project derivatives, unresolved owner inputs and model-ready validation. Large rasters and licensed source files are kept outside Git under `../data/urban_mental_health/`.
+Last updated: 2026-10-16. **Current scope: 49 states plus DC; Hawaii excluded by user. See the latest decisions section below for superseding status.** This record separates source files, project derivatives, unresolved owner inputs and model-ready validation. Large rasters and licensed source files are kept outside Git under `../data/urban_mental_health/`.
 
 ## Directory convention
 
@@ -132,3 +132,30 @@ The lookup therefore cannot currently be reproduced from public code. Do not inf
 - Population sums, urban feature counts and zonal totals are compared with source summaries.
 - The model is first run on a fresh small output directory; intermediate rasters are visually inspected.
 - Reported uncertainty remains conditional unless prevalence, exposure, population and cost uncertainty are also propagated.
+
+
+## Latest scope and cost conversion decisions (2026-10-16; supersedes earlier status)
+
+The user explicitly excluded Hawaii. The active US scope is now 49 states plus DC (Alaska included, territories excluded). `processed/guppd_us_excluding_hawaii.gpkg` retains 3,312 polygons; the 25 Hawaii identifiers and geographic selection envelope are recorded in `manifests/guppd_us_excluding_hawaii_qc.json`. The earlier 3,337-feature derivative remains preserved. The existing 114-tile acquisition queue includes neighboring-country tiles from conservative envelopes, but no Hawaii tile; downloaded valid-data coverage still needs checking. Hawaii is now an intentional scope exclusion, not a blocker.
+
+The user will download WorldPop and supply the complete file. The agent's active 100 m transfer was stopped; its `.incomplete` file must not be used.
+
+### Conversion of Christensen et al. costs to 2019 USD
+
+Source paper: Christensen et al. (2020), doi:10.1017/S204579602000075X, Methods / Data extraction. The paper inflated costs within each country to 2018 and converted with 2018 PPP factors, primarily OECD (accessed February 2020), with World Bank/Quandl fallbacks. Online Resource 2 was downloaded for the audit; an original factor ledger was not recovered from it.
+
+The reproducible conversion is:
+
+`2019 USD = supplied 2018 international dollars × PPP2018 (LCU/international dollar) × CPI2019/CPI2018 ÷ annual-average FX2019 (LCU/USD)`.
+
+PPP is used only to reverse the source normalization. Final values use market exchange rates. The country CPI update occurs before the 2019 exchange-rate conversion. Current World Bank WDI series `PA.NUS.PPP`, `FP.CPI.TOTL`, and `PA.NUS.FCRF` (snapshot last updated 2026-10-08) are saved under `raw/cost_conversion/`; response hashes and URLs are recorded in `manifests/cost_conversion_2019_usd.json`. Run `python scripts/convert_costs_2019_usd.py DATA_ROOT` to reproduce the two derivative CSVs.
+
+- `processed/data_cost_mental_health_2019_usd_conversion_audit.csv`: all 33 original rows and source columns, added factors, converted values, and status flags. 31 rows have a numeric conversion. For 30 non-US countries this is a **provisional reconstruction using revised WDI GDP PPP**, not a verified reversal of the paper's exact OECD vintage.
+- `processed/data_cost_mental_health_US_2019_USD.csv`: US reference-currency conversion, from 10,803.426 to **10,999.206774445318 USD per patient in 2019 prices**. US PPP and FX factors are both 1; WDI CPI rises from 115.15730322479 to 117.244195476228.
+- Bulgaria is held because current PPP and historical FX values need currency-unit reconciliation. Europe is held because the aggregate cannot be reversed with a single country factor. No missing value is imputed as zero.
+
+All derivatives retain `model_ready = False`: the supplied values describe **mood-disorder total societal cost per patient**, which has not yet been accepted as a proxy for depression-specific cost. Currency conversion does not change the endpoint or cost components. The original CSV is unchanged, and no model workbook or run has been silently replaced. For exact non-US reversal, obtain the original 2018 PPP factors or the pre-PPP local-currency costs, then regenerate with a matched currency basis. The numerical round-trip check verifies arithmetic, not source validity.
+
+### NDVI lookup work in progress
+
+The user supplied a shared Landsat script and the community asset catalog. The catalog identifies `projects/sat-io/open-datasets/GLC-FCS30D/annual`; annual band 20 corresponds to 2019. The screenshot is an NLCD-format example; its codes and values must not be copied as GLC_FCS30D values. The linked script contents have not yet been retrieved reliably from the browser, so its temporal and QA choices remain unverified. A new lookup will be labelled as a replacement derivation, with its 2019 compositing basis and class coverage recorded.

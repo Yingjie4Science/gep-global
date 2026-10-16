@@ -71,3 +71,12 @@ Describe results as conditional model estimates of additional depression-related
 - Still needed from the original owner: land-cover/NDVI table and its derivation, original population mosaic details, and cost conversion ledger. Raster alignment, valid-data coverage, settlement overlap, test run and final output review remain open.
 
 Reproduction commands are documented in `DATA_SOURCES_AND_PREPROCESSING.md`; large data and local acquisition status remain outside Git.
+
+
+## Latest user decisions and conversion results — 2026-10-16
+
+- Exclude Hawaii; active scope is 49 states plus DC, with Alaska included. Prepare the 3,312-polygon derivative and retain the complete source copy.
+- WorldPop download is assigned to the user. Agent transfer stopped; validate the completed user-supplied raster when available.
+- Costs are attributed to Christensen et al. (2020). A reproducible reverse-PPP / local-CPI / market-FX conversion now produces 2019 USD derivatives. US value: $10,999.21 per patient. Thirty other country conversions are provisional because revised WDI GDP PPP replaces the unrecovered original factor vintage.
+- Remaining cost tasks: recover original PPP factors for exact non-US conversion; reconcile Bulgaria currency units; disaggregate Europe or omit it; decide whether mood-disorder societal cost is an acceptable depression cost proxy. Do not treat these as direct treatment-cost rates.
+- User supplied an NDVI reference script and GEE GLC_FCS30D asset. Verify the shared script, derive a documented 2019 class lookup, and retain coverage/QA statistics. Screenshot NLCD class codes are examples only.
