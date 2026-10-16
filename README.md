@@ -21,6 +21,10 @@ The separate default `p0 = 0.115` is the health-record diagnosis proportion for 
 
 The full Liu NDVI study extraction found nine named studies and 13 forest estimates, mixed depression outcomes, repeated cohorts, very high heterogeneity, and no fully matched low-exposure probability for an individual forest effect. The project therefore retains `p0 = 0.115` as a labelled legacy scenario, `0.096` as a separate Hystad self-report scenario, and `0.03–0.20` as structural sensitivity analysis. See the [decision and to-do record](docs/DECISIONS_AND_TODOS.md), [evidence audit](docs/evidence/liu_2023_ndvi_p0_review.md), and [row-level extraction](docs/evidence/liu_2023_ndvi_study_extraction.csv).
 
+## Input data record
+
+Source selection, current US pilot availability, preprocessing steps, and the exact files/methods still needed from the original owner are recorded in [`docs/DATA_SOURCES_AND_PREPROCESSING.md`](docs/DATA_SOURCES_AND_PREPROCESSING.md). Large source rasters and collaborator workbooks remain outside Git under `../data/urban_mental_health/`.
+
 ## Reproduce a run
 
 Create the environment from `environment.yml` and provide the six external spatial, effect and cost inputs at the paths below, relative to `--base-data-dir`:
