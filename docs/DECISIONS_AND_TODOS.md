@@ -1,5 +1,9 @@
 # Urban mental health model: decisions and open work
 
+## Full US app scope — 16 October 2026
+
+All3,312 GUPPD US urban areas excluding Hawaii have been uploaded to the Earth Engine app asset. The all-city interface in `invest-gee/urban_mental_health/us_code_editor.js` supports selection and city-specific lookup/calculation on demand. The one-city pilot was a verification stage, not a scope restriction. All-city results have not been precomputed or nationally validated. Public app publication and rendered checks are pending because both browser-control connections timed out. See that repository's `US_APP_STATUS.md`; do not present the Bhutan app URL as a mental health app URL.
+
 ## Executed pilot — 16 October 2026
 
 The population file has arrived. Local Python and GEE Fort Morgan pilots are complete; all 877 modeled city cells pass the matched-input comparison. The real NDVI lookup and private pilot boundary asset are available. **Land-cover sources differ at native resolution**, so national expansion requires an explicit source choice. See [pilot evidence, reproduction and remaining work](evidence/fort_morgan_pilot.md). This supersedes earlier missing-population, unexecuted-lookup and runtime-blocked entries below. Public Bhutan app integration and scientific validation remain pending.
