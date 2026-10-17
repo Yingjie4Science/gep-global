@@ -1,6 +1,7 @@
 """Render the concise US direct-NDVI production report from verified summaries."""
 import argparse,csv,json
 from pathlib import Path
+
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('direct_summary',type=Path);p.add_argument('state_summary',type=Path)
 p.add_argument('output',type=Path);p.add_argument('--technical-summary',type=Path)
@@ -12,20 +13,27 @@ states=[r for r in states if int(r['state_code'])!=0]
 states.sort(key=lambda r:float(r['additional_cases'] or 0),reverse=True)
 technical=json.loads(a.technical_summary.read_text()) if a.technical_summary else None
 coverage=100*float(n['population_modelled'])/float(n['population_total'])
-missing=100-float(coverage)
-def num(x,d=0):return f"{float(x):,.{d}f}"
-def money(x):return '$'+num(x/1e9,2)+' billion'
-comparison=''
-spatial_check=''
+missing=100-coverage
+
+def compact(x):
+    x=float(x);absolute=abs(x)
+    if absolute>=1e9:return f"{x/1e9:,.2f} billion"
+    if absolute>=1e6:return f"{x/1e6:,.2f} million"
+    if absolute>=1e3:return f"{x/1e3:,.2f} thousand"
+    return f"{x:,.2f}".rstrip('0').rstrip('.')
+def money(x):return '$'+compact(x)
+def million(x):return f"{float(x)/1e6:,.2f} million"
+
+comparison='';spatial_check=''
 if technical:
     old=technical['totals']['additional_cases'];diff=100*(n['additional_cases']/old-1)
     old_pop=technical['totals']['population_total'];pop_delta=n['population_total']-old_pop
     pop_pct=100*pop_delta/old_pop
-    comparison=(f"The earlier five-region pooled land-cover lookup produced {num(old)} case equivalents. "
-      f"The direct-NDVI result is {diff:+.1f}% different. This is a method sensitivity comparison, "
+    comparison=(f"The earlier five-region pooled land-cover lookup produced {compact(old)} case equivalents. "
+      f"The direct-NDVI result is {diff:+.2f}% different. This is a method sensitivity comparison, "
       "not an uncertainty interval; the pooled lookup was rejected for production because it transferred poorly among test cities.\n")
-    spatial_check=(f"The Earth Engine reporting geometry contains {num(n['population_total'],3)} people, "
-      f"{num(pop_delta,3)} ({pop_pct:.5f}%) more than the independent local native-cell-centre audit. ")
+    spatial_check=(f"The Earth Engine reporting geometry contains {compact(n['population_total'])} people, "
+      f"{compact(pop_delta)} ({pop_pct:.3f}%) more than the independent local native-cell-centre audit. ")
 if a.local_feature_results:
     local={r['region_id']:float(r['population_total'] or 0) for r in csv.DictReader(a.local_feature_results.open())}
     cloud_path=a.state_summary.with_name('city_summary.csv')
@@ -34,34 +42,69 @@ if a.local_feature_results:
     spatial_check+=(f"The difference is distributed across {changed:,} feature totals and reflects the known "
       "cross-engine boundary-cell membership sensitivity. The reported production values retain the reviewed "
       "Earth Engine reporting units and are not rescaled to the local population total.")
-top='\n'.join(f"| {r['state_abbr']} | {num(r['population_modelled'])} | {num(r['additional_cases'])} | {money(float(r['value_2019_usd']))} |" for r in states[:10])
+top='\n'.join(f"| {r['state_abbr']} | {compact(r['population_modelled'])} | {compact(r['additional_cases'])} | {money(r['value_2019_usd'])} |" for r in states[:10])
+
 text=f"""# 2019 US urban mental health direct-NDVI production run
 
 Completed {direct['created_utc'][:10]}. Status: **nationwide calculation complete; internal checks passed**. A small cross-engine boundary-cell difference is reported below.
 
-## Result at a glance
+## Key results
 
-| Quantity | Result |
+> **Removing all positive NDVI in the model increases depressive-disorder burden by an estimated {million(n['additional_cases'])} case equivalents, with conditional 95% effect-size limits of {million(n['additional_cases_lower'])}–{million(n['additional_cases_upper'])}. The associated societal-value proxy is {money(n['value_2019_usd'])} in 2019 USD, without PPP.**
+
+| Quantity | Reported result |
 | --- | ---: |
 | GUPPD urban features | {direct['completed_city_receipts']:,} |
-| Population in scope | {num(n['population_total'],3)} |
-| Population with valid NDVI | {num(n['population_modelled'],3)} ({coverage:.5f}%) |
-| Population without valid NDVI | {num(n['population_missing_ndvi'],3)} ({missing:.5f}%) |
-| Baseline depressive-disorder case equivalents on modelled population | {num(n['observed_cases'],1)} |
-| Additional case equivalents under the zero-positive-NDVI counterfactual | **{num(n['additional_cases'],1)}** |
-| Conditional 95% effect-size limits | {num(n['additional_cases_lower'],1)} to {num(n['additional_cases_upper'],1)} |
-| 2019 USD societal-value proxy | **{money(n['value_2019_usd'])}** |
-| Conditional value limits | {money(n['value_2019_usd_lower'])} to {money(n['value_2019_usd_upper'])} |
+| Population in scope | {compact(n['population_total'])} |
+| Population with valid NDVI | {compact(n['population_modelled'])} ({coverage:.3f}%) |
+| Population without valid NDVI | {compact(n['population_missing_ndvi'])} ({missing:.3f}%) |
+| Baseline depressive-disorder case equivalents on modelled population | {compact(n['observed_cases'])} |
+| **Additional case equivalents** | **{million(n['additional_cases'])}** |
+| Conditional 95% effect-size limits | **{million(n['additional_cases_lower'])}–{million(n['additional_cases_upper'])}** |
+| **2019 USD societal-value proxy** | **{money(n['value_2019_usd'])}** |
+| Conditional value limits | **{money(n['value_2019_usd_lower'])}–{money(n['value_2019_usd_upper'])}** |
 
-The case result estimates the modelled increase in depressive-disorder case equivalents if every positive 2019 NDVI value in the scoped urban population cells were set to zero. It is a counterfactual model output, not an observed case count or a forecast. The monetary result multiplies this case contrast by a transported mood-disorder societal-cost proxy.
+These are counterfactual model outputs rather than observed cases, forecasts, treatment expenditures or cash savings.
 
-## Scope and method
+## Workflow at a glance
 
-- Geography: 3,312 GUPPD urban polygons in 49 states plus DC. Alaska is included; Hawaii and territories are excluded. Overlapping source polygons are assigned to the lexically first `SMOD_ID`; state pieces plus the boundary residual form disjoint reporting units.
-- Population: WorldPop 2019 constrained R2025A v1 on its native 3-arc-second grid. Reductions are unweighted and use the reviewed city/state reporting geometries.
-- Exposure: annual median of valid Landsat 7 and 8 Collection 2 Level 2 NDVI during 2019. QA bits 0–5, saturation, reflectance and denominator checks are applied; at least three observations are required. The nearest 30 m NDVI value is sampled at each WorldPop cell centre, matching the four-city diagnostic.
-- Health calculation: US all-age depressive-disorders prevalence 0.0424332878; `p0=0.115`; OR 0.931 with 95% CI 0.887–0.977 per +0.1 NDVI. `p0` converts the OR to an RR. Positive NDVI is reduced to zero in the counterfactual; nonpositive NDVI has zero exposure difference.
-- Valuation: 10,999.206774445318 per case equivalent, reported in 2019 USD without PPP. This is a mood-disorder total societal-cost proxy derived from Christensen et al. (2020) and US CPI conversion, not demonstrated treatment spending or cash savings.
+```mermaid
+flowchart LR
+    A["GUPPD urban boundaries<br/>disjoint city and state units"] --> D
+    B["WorldPop 2019<br/>native population grid"] --> D
+    C["Landsat 7 and 8, 2019<br/>QA and annual median NDVI"] --> D["Sample NDVI at<br/>WorldPop cell centres"]
+    D --> E["Counterfactual:<br/>positive NDVI becomes zero"]
+    E --> F["Convert OR to RR with p0<br/>calculate case contrast"]
+    F --> G["Aggregate by city, state,<br/>residual and nation"]
+    G --> H["Apply 2019 USD<br/>non-PPP cost proxy"]
+```
+
+1. Retain 3,312 GUPPD urban polygons in 49 states plus DC; include Alaska and exclude Hawaii and territories. Remove polygon overlap once and split cross-state features into disjoint reporting units.
+2. Build the 2019 annual median from valid Landsat 7/8 Collection 2 Level 2 NDVI observations. Require at least three valid observations and sample the nearest 30 m value at each native WorldPop cell centre.
+3. Set positive NDVI to zero for the counterfactual. Nonpositive NDVI has no exposure difference.
+4. Convert the published OR to an RR using `RR = OR / (1 − p0 + p0 × OR)`. Calculate `prevalence-derived 2019 case equivalents × [RR^(−10 × positive NDVI) − 1]` and aggregate without rounding intermediate values.
+5. Multiply case equivalents by the US cost proxy and report the result in 2019 USD without PPP.
+
+Inputs used here are US 2019 all-age depressive-disorders prevalence **4.24%**, `p0 = 11.5%`, and OR **0.931** (95% CI **0.887–0.977**) per +0.1 NDVI. The exact unrounded inputs remain in the machine-readable outputs.
+
+## Difference from Varun Sethi's original implementation
+
+The comparison below refers to the original Observarun [`run_urban_mental_health.py`](https://github.com/Observarun/urban-mental-health-gep/blob/f1822e2/run_urban_mental_health.py) and [`urban_mental_health_functions.py`](https://github.com/Observarun/urban-mental-health-gep/blob/f1822e2/urban_mental_health_functions.py) at commit [`f1822e2`](https://github.com/Observarun/urban-mental-health-gep/tree/f1822e2). It compares implementation and estimand; the original repository does not contain a completed national output to reproduce numerically.
+
+| Component | Original Observarun implementation | Current production run |
+| --- | --- | --- |
+| Execution and scope | Local Python/Hazelbean global-raster pipeline with user-supplied inputs and fixed machine paths. | Versioned Earth Engine run for the reviewed US subset; 133 resumable batches with explicit task receipts. |
+| Nature exposure | Warp GLC_FCS30D land cover to WorldPop with nearest-neighbour resampling, then assign one NDVI value to each land-cover class from a lookup table. | Use the 2019 Landsat annual-median NDVI pixels directly; no land-cover class-to-NDVI lookup enters the production exposure. |
+| Counterfactual | Set every positive lookup-derived NDVI value to zero. | Same conceptual counterfactual, applied to direct Landsat NDVI sampled on the population grid. |
+| Health contrast | `prevalence × population × [1 − RR^(10 × ΔNDVI)]`, labelled preventable cases. This applies the risk-reduction fraction to prevalence-derived baseline cases. | `2019 reference case equivalents × [RR^(−10 × ΔNDVI) − 1]`, reported as additional case equivalents if current nature were removed. This explicitly uses the prevalence-derived 2019 state as the reference. |
+| Prevalence | Fixed `0.05` for every country. | Country-specific 2019 GBD prevalence; **4.24%** for this US run, aligned with the all-age WorldPop denominator. |
+| `p0` and OR-to-RR | Fixed `p0 = 0.115`; convert the depression OR to an RR. | Retains the conversion but labels `p0 = 0.115` as a transported assumption and records sensitivity work. |
+| Uncertainty | Uses only the point effect estimate. | Reports conditional 95% limits from the effect estimate; other uncertainty remains outside the interval. |
+| Spatial aggregation | Zonal statistics over the original urban polygons; region totals are rounded before country aggregation. Polygon overlap is not explicitly allocated once. | Uses disjoint city/state units, retains fractional cases through aggregation, reports missing NDVI support, and reconciles state/DC plus residual totals. |
+| Valuation | Multiplies country cases by the supplied `cost_per_case`; the code does not enforce currency year or PPP status. | Uses an explicitly labelled US proxy of about **$11,000 per case equivalent**, reported in **2019 USD without PPP**. |
+| Reproducibility | Skips existing intermediates but does not create a run manifest or input/output hashes. | Pins code and graph hashes, preserves task IDs, validates unique receipts, publishes row-level summaries and supplies SHA-256 checksums. |
+
+Both implementations retain the same central idea: compare current urban nature with a zero-positive-NDVI counterfactual, convert an odds ratio using `p0`, calculate a population-weighted depression contrast, and aggregate it geographically. The production result should therefore be described as an extension and clarification of the original model, rather than a literal rerun of Varun's code.
 
 ## Largest state contributions
 
@@ -69,28 +112,27 @@ The case result estimates the modelled increase in depressive-disorder case equi
 | --- | ---: | ---: | ---: |
 {top}
 
-These rows reflect only the GUPPD urban areas intersecting each state. State values may be compared within this run, but should not be read as whole-state burden estimates.
+These rows cover only the GUPPD urban areas intersecting each state and are not whole-state burden estimates.
 
 ## Method sensitivity
 
 {comparison}
-The four-city gate reproduced the earlier direct-grid estimates closely: exactly for Portland, and within 0.0027% for Anchorage, 0.0021% for Tucson and 0.0003% for New York. The small differences match previously identified boundary-cell membership differences.
+The four-city gate reproduced the earlier direct-grid estimates exactly for Portland and within **0.01%** for Anchorage, Tucson and New York. The remaining differences match previously identified boundary-cell membership differences.
 
 ## Verification and reproducibility
 
 - All {direct['completed_batches']} Earth Engine table batches completed.
 - Exactly {direct['completed_city_receipts']:,} unique expected city receipts were recovered; no city was duplicated or omitted.
-- The 50 state/DC summaries plus the boundary residual ({num(residual['population_total'],1)} people; {num(residual['additional_cases'],1)} case equivalents) reconcile to the national totals.
-- Population total equals modelled plus missing-NDVI population within numerical tolerance.
-- Case and value limits are ordered correctly, and value arithmetic reproduces cases multiplied by the cost proxy.
+- The 50 state/DC summaries plus the boundary residual ({compact(residual['population_total'])} people; {compact(residual['additional_cases'])} case equivalents) reconcile to the national totals.
+- Population support, interval order, observed-case arithmetic and valuation arithmetic passed at national, state and city levels.
 - Model source commit: `{direct['source_git_commit']}`; model graph SHA-256: `{direct['code_sha256']}`.
-- Machine-readable outputs: [national summary](data/us_direct_ndvi_2019_v1/national_summary.json), [state summary](data/us_direct_ndvi_2019_v1/state_summary.csv), [city summary](data/us_direct_ndvi_2019_v1/city_summary.csv), [city-state rows](data/us_direct_ndvi_2019_v1/city_state_rows.csv), and the [task manifest](data/us_direct_ndvi_2019_v1/direct_ndvi_batch_manifest.json).
+- Machine-readable outputs: [national summary](data/us_direct_ndvi_2019_v1/national_summary.json), [state summary](data/us_direct_ndvi_2019_v1/state_summary.csv), [city summary](data/us_direct_ndvi_2019_v1/city_summary.csv), [city-state rows](data/us_direct_ndvi_2019_v1/city_state_rows.csv), [task manifest](data/us_direct_ndvi_2019_v1/direct_ndvi_batch_manifest.json), and [checksums](data/us_direct_ndvi_2019_v1/checksums.sha256).
 
 {spatial_check}
 
 ## Interpretation limits
 
-The 95% limits propagate only the published effect-size interval. They hold `p0`, prevalence, population, NDVI, geographic membership and cost fixed. The exposure-response estimate and `p0` are transported assumptions; the all-age GBD prevalence is aligned with the all-age WorldPop denominator but is not an adult current-MDD endpoint. GUPPD features are physical urban extents rather than municipal boundaries. The cost factor is broader than depression treatment cost, so the dollar figure is best reported as an exploratory societal-value proxy. A future Monte Carlo analysis should jointly vary the effect, `p0`, prevalence, exposure and cost inputs.
+The 95% limits propagate only the published effect-size interval. They hold `p0`, prevalence, population, NDVI, geographic membership and cost fixed. The exposure-response estimate and `p0` are transported assumptions; the all-age GBD prevalence matches the all-age population denominator but is not an adult current-MDD endpoint. GUPPD features represent physical urban extents rather than municipal boundaries. The cost factor is broader than depression treatment cost, so the dollar result is an exploratory societal-value proxy. A later Monte Carlo analysis should jointly vary the effect, `p0`, prevalence, exposure and cost inputs.
 """
 a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(text)
 print(a.output)
