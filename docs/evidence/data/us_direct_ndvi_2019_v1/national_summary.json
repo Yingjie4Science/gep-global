@@ -1,0 +1,33 @@
+{
+  "created_utc": "2026-10-17T01:18:01.786140+00:00",
+  "source_manifest": "urban_mental_health/local-runs/direct_ndvi_2019_v1/direct_ndvi_batch_manifest.json",
+  "source_git_commit": "66e9c165700eba391fdfef8857856840a803bb8e",
+  "code_sha256": "1df0d08b896c29c0a1bbef8d3c71656f6322acdf40ce27de449405cf0223ac98",
+  "expected_city_count": 3312,
+  "completed_city_receipts": 3312,
+  "completed_batches": 133,
+  "expected_batches": 133,
+  "status": "complete_verified",
+  "scope": "US GUPPD urban areas excluding Hawaii and territories; Alaska and DC included",
+  "method": "direct 2019 L7/L8 annual-median NDVI at native WorldPop cell centres;min3observations",
+  "national": {
+    "population_total": 194373474.37048596,
+    "population_modelled": 194370858.9966663,
+    "population_missing_ndvi": 2615.3738196048744,
+    "population_valid_cells": 17670415.0,
+    "modelled_cells": 17669010.0,
+    "observed_cases": 8247794.599738774,
+    "additional_cases": 2453460.51533886,
+    "additional_cases_lower": 714768.9621873645,
+    "additional_cases_upper": 4626257.930702393,
+    "value_2019_usd": 26986119521.149292,
+    "value_2019_usd_lower": 7861891611.054504,
+    "value_2019_usd_upper": 50885167571.713165
+  },
+  "checks": [
+    "unique expected city receipts",
+    "population support reconciliation",
+    "effect interval order",
+    "value arithmetic"
+  ]
+}

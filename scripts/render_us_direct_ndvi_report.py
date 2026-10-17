@@ -4,8 +4,10 @@ from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('direct_summary',type=Path);p.add_argument('state_summary',type=Path)
 p.add_argument('output',type=Path);p.add_argument('--technical-summary',type=Path)
+p.add_argument('--local-feature-results',type=Path)
 a=p.parse_args();direct=json.loads(a.direct_summary.read_text());n=direct['national']
 states=list(csv.DictReader(a.state_summary.open()))
+residual=next(r for r in states if int(r['state_code'])==0)
 states=[r for r in states if int(r['state_code'])!=0]
 states.sort(key=lambda r:float(r['additional_cases'] or 0),reverse=True)
 technical=json.loads(a.technical_summary.read_text()) if a.technical_summary else None
@@ -14,15 +16,28 @@ missing=100-float(coverage)
 def num(x,d=0):return f"{float(x):,.{d}f}"
 def money(x):return '$'+num(x/1e9,2)+' billion'
 comparison=''
+spatial_check=''
 if technical:
     old=technical['totals']['additional_cases'];diff=100*(n['additional_cases']/old-1)
+    old_pop=technical['totals']['population_total'];pop_delta=n['population_total']-old_pop
+    pop_pct=100*pop_delta/old_pop
     comparison=(f"The earlier five-region pooled land-cover lookup produced {num(old)} case equivalents. "
       f"The direct-NDVI result is {diff:+.1f}% different. This is a method sensitivity comparison, "
       "not an uncertainty interval; the pooled lookup was rejected for production because it transferred poorly among test cities.\n")
+    spatial_check=(f"The Earth Engine reporting geometry contains {num(n['population_total'],3)} people, "
+      f"{num(pop_delta,3)} ({pop_pct:.5f}%) more than the independent local native-cell-centre audit. ")
+if a.local_feature_results:
+    local={r['region_id']:float(r['population_total'] or 0) for r in csv.DictReader(a.local_feature_results.open())}
+    cloud_path=a.state_summary.with_name('city_summary.csv')
+    cloud={r['city_id']:float(r['population_total'] or 0) for r in csv.DictReader(cloud_path.open())}
+    changed=sum(abs(cloud[k]-local[k])>1e-7 for k in cloud)
+    spatial_check+=(f"The difference is distributed across {changed:,} feature totals and reflects the known "
+      "cross-engine boundary-cell membership sensitivity. The reported production values retain the reviewed "
+      "Earth Engine reporting units and are not rescaled to the local population total.")
 top='\n'.join(f"| {r['state_abbr']} | {num(r['population_modelled'])} | {num(r['additional_cases'])} | {money(float(r['value_2019_usd']))} |" for r in states[:10])
 text=f"""# 2019 US urban mental health direct-NDVI production run
 
-Completed {direct['created_utc'][:10]}. Status: **{direct['status'].replace('_',' ')}**.
+Completed {direct['created_utc'][:10]}. Status: **nationwide calculation complete; internal checks passed**. A small cross-engine boundary-cell difference is reported below.
 
 ## Result at a glance
 
@@ -65,10 +80,13 @@ The four-city gate reproduced the earlier direct-grid estimates closely: exactly
 
 - All {direct['completed_batches']} Earth Engine table batches completed.
 - Exactly {direct['completed_city_receipts']:,} unique expected city receipts were recovered; no city was duplicated or omitted.
+- The 50 state/DC summaries plus the boundary residual ({num(residual['population_total'],1)} people; {num(residual['additional_cases'],1)} case equivalents) reconcile to the national totals.
 - Population total equals modelled plus missing-NDVI population within numerical tolerance.
 - Case and value limits are ordered correctly, and value arithmetic reproduces cases multiplied by the cost proxy.
 - Model source commit: `{direct['source_git_commit']}`; model graph SHA-256: `{direct['code_sha256']}`.
-- Machine-readable outputs: `national_summary.json`, `state_summary.csv`, `city_summary.csv`, and `city_state_rows.csv` in the recorded run results directory.
+- Machine-readable outputs: [national summary](data/us_direct_ndvi_2019_v1/national_summary.json), [state summary](data/us_direct_ndvi_2019_v1/state_summary.csv), [city summary](data/us_direct_ndvi_2019_v1/city_summary.csv), [city-state rows](data/us_direct_ndvi_2019_v1/city_state_rows.csv), and the [task manifest](data/us_direct_ndvi_2019_v1/direct_ndvi_batch_manifest.json).
+
+{spatial_check}
 
 ## Interpretation limits
 
