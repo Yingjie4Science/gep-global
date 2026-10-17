@@ -1,0 +1,400 @@
+{
+  "created_utc": "2026-10-17T04:30:18.877210+00:00",
+  "source_git_commit": "53839e78f5a16f4f7fef5d2291366f67e4185e2d",
+  "code_sha256": "400c7f095ab852d4f36a1dbbb59f51f73d2823408ed0945030fba501daf9404d",
+  "states": [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "DC",
+    "FL",
+    "GA",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+    "RESIDUAL"
+  ],
+  "asset_folder": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1",
+  "jobs": [
+    {
+      "chunk": 0,
+      "states": [
+        "AL",
+        "AK",
+        "AZ",
+        "AR",
+        "CA"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_000",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "156813bde2e9bb6c0a4f9f0f53f66834e37dbd144b6091ad87efcfb0d5286ee0",
+      "task_id": "BA4K5A67PAEAGPV6OFWOCKKJ",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_000",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211425811,
+        "update_timestamp_ms": 1792211904286,
+        "start_timestamp_ms": 1792211427767,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_000"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 61985.03125,
+        "id": "BA4K5A67PAEAGPV6OFWOCKKJ",
+        "name": "projects/natcap-gep/operations/BA4K5A67PAEAGPV6OFWOCKKJ"
+      }
+    },
+    {
+      "chunk": 1,
+      "states": [
+        "CO",
+        "CT",
+        "DE",
+        "DC",
+        "FL"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_001",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "a24175f2149ddb2eb8b1f4d54aa96e5612d5ae7a0ebe2473ef43a57a5c47ac7d",
+      "task_id": "Y27TAAQRAFFK5ESIRZDMAZ3G",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_001",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211425833,
+        "update_timestamp_ms": 1792212283366,
+        "start_timestamp_ms": 1792211427752,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_001"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 38180.6328125,
+        "id": "Y27TAAQRAFFK5ESIRZDMAZ3G",
+        "name": "projects/natcap-gep/operations/Y27TAAQRAFFK5ESIRZDMAZ3G"
+      }
+    },
+    {
+      "chunk": 2,
+      "states": [
+        "GA",
+        "ID",
+        "IL",
+        "IN",
+        "IA"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_002",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "bc6e1065ef57c3de1ce33cfb0cd0e3365eb0189e489f427880ed1de7bee3cd03",
+      "task_id": "3O23E44GZPPIWK6WWGJ6A3RB",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_002",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211423215,
+        "update_timestamp_ms": 1792211613385,
+        "start_timestamp_ms": 1792211424761,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_002"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 32190.244140625,
+        "id": "3O23E44GZPPIWK6WWGJ6A3RB",
+        "name": "projects/natcap-gep/operations/3O23E44GZPPIWK6WWGJ6A3RB"
+      }
+    },
+    {
+      "chunk": 3,
+      "states": [
+        "KS",
+        "KY",
+        "LA",
+        "ME",
+        "MD"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_003",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "3956e04455d1388d15438120bd066fe13216bd691c2fd5e15e9b0ffea75fadf5",
+      "task_id": "RQXMIJV2H5E7VYOEQY4DR5DJ",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_003",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211427203,
+        "update_timestamp_ms": 1792211802137,
+        "start_timestamp_ms": 1792211616352,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_003"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 20186.87890625,
+        "id": "RQXMIJV2H5E7VYOEQY4DR5DJ",
+        "name": "projects/natcap-gep/operations/RQXMIJV2H5E7VYOEQY4DR5DJ"
+      }
+    },
+    {
+      "chunk": 4,
+      "states": [
+        "MA",
+        "MI",
+        "MN",
+        "MS",
+        "MO"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_004",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "100485231308a7a656636b24a0e6512b8f8015e00cbc26c345ac62bf3f680362",
+      "task_id": "NTORVETBDYKSLZJRDD5EFGVE",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_004",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211429646,
+        "update_timestamp_ms": 1792212001525,
+        "start_timestamp_ms": 1792211807858,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_004"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 31258.046875,
+        "id": "NTORVETBDYKSLZJRDD5EFGVE",
+        "name": "projects/natcap-gep/operations/NTORVETBDYKSLZJRDD5EFGVE"
+      }
+    },
+    {
+      "chunk": 5,
+      "states": [
+        "MT",
+        "NE",
+        "NV",
+        "NH",
+        "NJ"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_005",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "48683014fe94d72c05544e332288db670fbea66bf112aa9fe8a7b8f8d78e3711",
+      "task_id": "2RQYU56ZW4JRWG2G75WM66FA",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_005",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211428728,
+        "update_timestamp_ms": 1792211899001,
+        "start_timestamp_ms": 1792211801172,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_005"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 16715.080078125,
+        "id": "2RQYU56ZW4JRWG2G75WM66FA",
+        "name": "projects/natcap-gep/operations/2RQYU56ZW4JRWG2G75WM66FA"
+      }
+    },
+    {
+      "chunk": 6,
+      "states": [
+        "NM",
+        "NY",
+        "NC",
+        "ND",
+        "OH"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_006",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "d4ecd33a0133ce7db7d01e3db747b9d0b9b331c83209a48550211afe66bd5d77",
+      "task_id": "2LFIAWYME2HILYP5WMUBMAWV",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_006",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211431365,
+        "update_timestamp_ms": 1792212155286,
+        "start_timestamp_ms": 1792211906083,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_006"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 36577.89453125,
+        "id": "2LFIAWYME2HILYP5WMUBMAWV",
+        "name": "projects/natcap-gep/operations/2LFIAWYME2HILYP5WMUBMAWV"
+      }
+    },
+    {
+      "chunk": 7,
+      "states": [
+        "OK",
+        "OR",
+        "PA",
+        "RI",
+        "SC"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_007",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "4c16b8c933d34d3f487ec246873b34c8e02b5f68bbad0873db4791b662286a0e",
+      "task_id": "HAFHIKVPBBMSMMXIIBBVZJEZ",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_007",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211431168,
+        "update_timestamp_ms": 1792212107968,
+        "start_timestamp_ms": 1792211903050,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_007"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 27325.283203125,
+        "id": "HAFHIKVPBBMSMMXIIBBVZJEZ",
+        "name": "projects/natcap-gep/operations/HAFHIKVPBBMSMMXIIBBVZJEZ"
+      }
+    },
+    {
+      "chunk": 8,
+      "states": [
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "VT"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_008",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "631230afccc4e0605b76f9826fc2defc5530c12cf424e26ce7e5fa4c15d1966c",
+      "task_id": "CLXY2F2KIV66OGFTRQJQMJGV",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_008",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211434721,
+        "update_timestamp_ms": 1792212437630,
+        "start_timestamp_ms": 1792212003291,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_008"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 43187.890625,
+        "id": "CLXY2F2KIV66OGFTRQJQMJGV",
+        "name": "projects/natcap-gep/operations/CLXY2F2KIV66OGFTRQJQMJGV"
+      }
+    },
+    {
+      "chunk": 9,
+      "states": [
+        "VA",
+        "WA",
+        "WV",
+        "WI",
+        "WY"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_009",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "183ac3c305f3860894d2a5c99da353c69c987e8597ed8d4c2665c152bb138a4f",
+      "task_id": "ACDZA36ZPFVFAJVZYCVUQBEV",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_009",
+        "priority": 100,
+        "creation_timestamp_ms": 1792211434815,
+        "update_timestamp_ms": 1792212362477,
+        "start_timestamp_ms": 1792212109810,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_009"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 21623.205078125,
+        "id": "ACDZA36ZPFVFAJVZYCVUQBEV",
+        "name": "projects/natcap-gep/operations/ACDZA36ZPFVFAJVZYCVUQBEV"
+      }
+    },
+    {
+      "chunk": 10,
+      "states": [
+        "RESIDUAL"
+      ],
+      "asset_id": "projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_010",
+      "state": "COMPLETED",
+      "attempts": 1,
+      "graph_sha256": "83c32bd9ab6fd2ea8bdc1899a8dbf33aa1c8cdcf013a3a561e3bf286eacf968f",
+      "task_id": "CS6SKFXWS7FNVHDUIHEURDSQ",
+      "task_status": {
+        "state": "COMPLETED",
+        "description": "umh_us_lookup_2019_010",
+        "priority": 100,
+        "creation_timestamp_ms": 1792216553700,
+        "update_timestamp_ms": 1792217086794,
+        "start_timestamp_ms": 1792216559144,
+        "task_type": "EXPORT_FEATURES",
+        "destination_uris": [
+          "https://code.earthengine.google.com/?asset=projects/natcap-gep/assets/umh_us_lc_ndvi_lookup_2019_v1/state_chunk_010"
+        ],
+        "attempt": 1,
+        "batch_eecu_usage_seconds": 5053.17431640625,
+        "id": "CS6SKFXWS7FNVHDUIHEURDSQ",
+        "name": "projects/natcap-gep/operations/CS6SKFXWS7FNVHDUIHEURDSQ"
+      }
+    }
+  ],
+  "last_checked_utc": "2026-10-17T06:05:55.016771+00:00",
+  "plan_revision": "Added boundary-residual reporting units to calibration scope"
+}

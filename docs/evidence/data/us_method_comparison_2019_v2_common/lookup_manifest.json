@@ -1,0 +1,24 @@
+{
+  "created_utc": "2026-10-17T06:05:55.016771+00:00",
+  "status": "complete_verified",
+  "source_manifest": "urban_mental_health/local-runs/national_lookup_2019_v1/national_lookup_manifest.json",
+  "source_git_commit": "53839e78f5a16f4f7fef5d2291366f67e4185e2d",
+  "execution_graph_code_sha256": "400c7f095ab852d4f36a1dbbb59f51f73d2823408ed0945030fba501daf9404d",
+  "source_file_sha256": {
+    "city_lookup.js": "e633e2179906d3bbd0dd8111813ac2a324bfffd7b49c8380325959b98eb01878",
+    "national_lookup_batch.js": "82ab62c5d89da5db9ea2b9825dac242cbe0529dea3d88d242fab0401e07cb015",
+    "serialize_national_lookup_batch.cjs": "8322fe8195af97c10bad2395f0a10330f802390ea3e27feeeb4f197bbdd93d92",
+    "run_national_lookup_batch.py": "e633d5c959f99b583535290f087a5f22f989dce04a1fd227427df87075b65c11",
+    "collect_national_lookup.py": "60b146e91eae38c5526e4ddb92dcad6a42cccdfbcd5d588b0c3b96211bc29812"
+  },
+  "ee_algorithms_sha256": "23ecc42456d81ccfe3f61c9a6a05bca01f1088cf7cb5d7abb0186c422005aa2f",
+  "state_or_residual_group_count": 51,
+  "class_count": 35,
+  "supported_class_count": 28,
+  "exact_state_class_inventory_verified": true,
+  "pooling_rule": "sum state and residual raw area terms then divide; never average group means equally",
+  "run_use": "lc_ndvi is the fixed attribute-table value used in the national method comparison; only has_valid_ndvi=1 rows are remapped",
+  "exclusion_policy": "exclude=0 for every class; coverage is separate; source fill and classes without a valid lookup remain missing",
+  "attribute_table_sha256": "4d2f654319a1a937efcb23eb9846c0d997b60485e8f8af053ff665c4d2b45702",
+  "state_raw_sha256": "2ec8be8b7b025eb27fb4f2899336e756c21d17c0bf44cd8582d858dccd3aea2e"
+}

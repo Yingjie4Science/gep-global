@@ -1,0 +1,93 @@
+{
+  "created_utc": "2026-10-17T07:23:55.354191+00:00",
+  "status": "complete_verified",
+  "expected_city_count": 3312,
+  "expected_city_state_rows": 3530,
+  "completed_city_receipts": 3312,
+  "completed_city_state_rows": 3530,
+  "completed_batches": 133,
+  "source_git_commit": "51ff71a8b119ecdfdc821e90fb751919e9093f55",
+  "code_sha256": "030c27134f23fd72276a75eb3ad61057d11ec99b54e7a91e3b2f53928ba59697",
+  "ee_algorithms_sha256": "c2271a9fc1b2a99c5a1ad88b6f38fec4d66207e9494eca6612244ba1330db4a3",
+  "lookup_csv_sha256": "4d2f654319a1a937efcb23eb9846c0d997b60485e8f8af053ff665c4d2b45702",
+  "lookup_json_sha256": "6be5b4ec49dd7eefc904134af0ccbeceaa92d6276743a3fddf23f870db515f8e",
+  "scope": "US GUPPD urban areas excluding Hawaii and territories; Alaska and DC included",
+  "comparison_design": "2 exposure methods x 2 prevalence values x 2 literal case formulas; point OR; common valid support",
+  "national": {
+    "population_total": 194373474.37048596,
+    "population_valid_cells": 17670415.0,
+    "direct_population_modelled": 194370858.9966663,
+    "direct_population_missing_ndvi": 2615.3738196048744,
+    "class_population_modelled": 194371665.20522264,
+    "class_population_missing_land_cover": 1809.1652633169256,
+    "class_population_missing_lookup": 0.0,
+    "common_population_modelled": 194369049.83140308,
+    "common_population_missing": 4424.5390829217995,
+    "direct_only_population": 1809.1652633169256,
+    "class_only_population": 2615.3738196048744,
+    "direct_reference_gbd_own_cases": 2453460.5153388605,
+    "class_reference_gbd_own_cases": 2425109.1008188473,
+    "direct_reference_gbd_cases": 2453426.273838942,
+    "direct_literal_original_gbd_cases": 1808274.8805696226,
+    "direct_reference_5pct_cases": 2890921.7280106,
+    "direct_literal_original_5pct_cases": 2130726.8118046043,
+    "class_reference_gbd_cases": 2425076.834998098,
+    "class_literal_original_gbd_cases": 1851420.1220152492,
+    "class_reference_5pct_cases": 2857517.0116774472,
+    "class_literal_original_5pct_cases": 2181565.721163903,
+    "direct_reference_gbd_value": 26985742891.811428,
+    "direct_literal_original_gbd_value": 19889589316.420677,
+    "direct_reference_5pct_value": 31797845855.12531,
+    "direct_literal_original_5pct_value": 23436304782.893436,
+    "class_reference_gbd_value": 26673921552.061535,
+    "class_literal_original_gbd_value": 20364152748.414505,
+    "class_reference_5pct_value": 31430420472.935326,
+    "class_literal_original_5pct_value": 23995492459.123707
+  },
+  "comparisons": {
+    "fixed_to_gbd_prevalence_ratio_expected": 1.1783201960607919,
+    "class_vs_direct_percent_gbd_reference_common_support": -1.1555040044665676,
+    "literal_original_vs_reference_percent_direct_5pct_common_support": -26.295935612519227,
+    "literal_original_vs_reference_percent_class_5pct_common_support": -23.655197423190177,
+    "population_excluded_from_common_support": 4424.5390829217995,
+    "city_exposure_comparison": {
+      "eligibility": "direct current-reference GBD case equivalents >= 100 on common support",
+      "city_count": 2468,
+      "median_class_vs_direct_percent": -14.085740423651277,
+      "p05_class_vs_direct_percent_inclusive": -29.5216954313674,
+      "p95_class_vs_direct_percent_inclusive": 28.086933902343873,
+      "count_absolute_difference_gt_10_percent": 1866,
+      "fraction_absolute_difference_gt_10_percent": 0.7560777957860616
+    }
+  },
+  "direct_production_validation": {
+    "source": "urban_mental_health/local-runs/direct_ndvi_2019_v1/results/national_summary.json",
+    "expected_previous_direct_cases": 2453460.51533886,
+    "observed_own_support_direct_cases": 2453460.5153388605,
+    "absolute_difference": 4.656612873077393e-10
+  },
+  "formula_interpretation": {
+    "literal_comparison": "Both literal implementations multiply the same prevalence-derived current baseline, so their totals differ.",
+    "reference_state_identity": "If C_current=C_no_nature*RR^(10*delta), then C_current*(RR^(-10*delta)-1)=C_no_nature*(1-RR^(10*delta)).",
+    "original_code_note": "The original code multiplies prevalence*population directly by 1-RR^(10*delta) and does not establish a counterfactual baseline case count."
+  },
+  "uncertainty_scope": "Point-estimate method sensitivity; production 95% effect-size-only limits are reported separately and this spread is not a confidence interval.",
+  "checks": [
+    "exact expected city receipts",
+    "exact unique city-state pairs",
+    "receipt row counts",
+    "row metadata and finite numeric fields",
+    "row/city/state/national support reconciliation",
+    "state plus boundary residual equals national",
+    "prevalence scaling",
+    "value arithmetic",
+    "direct production total reproduction when supplied"
+  ],
+  "execution_source_git_commit": "51ff71a8b119ecdfdc821e90fb751919e9093f55",
+  "execution_code_sha256": "030c27134f23fd72276a75eb3ad61057d11ec99b54e7a91e3b2f53928ba59697",
+  "postprocessing_source_git_commit": "b13b052c251868ab0557bb798f87b8a4b08c9d75",
+  "postprocessing_file_sha256": {
+    "collect_method_comparison.py": "3b7675fa0378d9abd70bb01af5769dbbda601571ba22a4ce784c7f86177e51f1"
+  },
+  "postprocessing_scope": "Scenario CSV field renamed to case_equivalents and city-scale exposure statistics derived from validated city rows; Earth Engine outputs and national numeric totals unchanged."
+}

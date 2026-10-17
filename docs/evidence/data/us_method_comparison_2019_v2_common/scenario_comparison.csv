@@ -1,0 +1,9 @@
+exposure,prevalence,health_contrast,support,case_equivalents,value_2019_usd_proxy
+direct,GBD 2019 4.2433%,current-reference additional cases,common valid cells,2453426.273838942,26985742891.811428
+direct,GBD 2019 4.2433%,literal original formula,common valid cells,1808274.8805696226,19889589316.420677
+direct,fixed 5%,current-reference additional cases,common valid cells,2890921.7280106,31797845855.12531
+direct,fixed 5%,literal original formula,common valid cells,2130726.8118046043,23436304782.893436
+class lookup,GBD 2019 4.2433%,current-reference additional cases,common valid cells,2425076.834998098,26673921552.061535
+class lookup,GBD 2019 4.2433%,literal original formula,common valid cells,1851420.1220152492,20364152748.414505
+class lookup,fixed 5%,current-reference additional cases,common valid cells,2857517.0116774472,31430420472.935326
+class lookup,fixed 5%,literal original formula,common valid cells,2181565.721163903,23995492459.123707
