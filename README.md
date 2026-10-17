@@ -1,12 +1,14 @@
 # Global GEP Urban Mental Health Service
 
-**Nationwide local technical run completed (17 October 2026):** all 114 planned official GLC_FCS30D annual tiles passed independent acquisition checks, actual support was checked for all 3,312 retained GUPPD features, and a windowed national integration run completed. Its pooled five-region lookup is not production-ready: city sensitivity ranges from −14.7% to +136.2%, and a direct-NDVI comparison shows substantial class-aggregation sensitivity in New York. Treat the national cases and USD proxy as technical outputs only. See the [national technical-run evidence](docs/evidence/us_national_technical_run.md), [expanded source tests](docs/evidence/expanded_city_tests.md), and [original Fort Morgan pilot](docs/evidence/fort_morgan_pilot.md).
+**Direct-NDVI nationwide production calculation completed (17 October 2026):** all 133 Earth Engine batches completed with exactly 3,312 expected GUPPD receipts. The result is 2,453,460.5 additional depressive-disorder case equivalents (conditional effect limits 714,769.0–4,626,257.9) and a $26.99 billion 2019 USD non-PPP societal-value proxy. Read these as conditional model outputs under the zero-positive-NDVI counterfactual. See the [concise production report](docs/evidence/us_direct_ndvi_production_run.md) and [machine-readable summaries](docs/evidence/data/us_direct_ndvi_2019_v1/).
+
+The earlier nationwide land-cover lookup run remains a technical comparator. All 114 official GLC_FCS30D tiles passed acquisition checks, but its pooled five-region lookup transferred poorly among test cities. See the [national technical-run evidence](docs/evidence/us_national_technical_run.md), [expanded source tests](docs/evidence/expanded_city_tests.md), and [original Fort Morgan pilot](docs/evidence/fort_morgan_pilot.md).
 
 This repository estimates additional depression-related cases under a built-up-like, zero-positive-NDVI counterfactual relative to estimated observed 2019 cases. It uses 2019 country-specific, all-age GBD depressive-disorders prevalence with 2019 all-age WorldPop. The resulting cases and costs are conditional model estimates, not observed avoided diagnoses or validated societal savings.
 
 ## Status and evidence boundary
 
-The country-prevalence workflow and observed-case formula are implemented, with conditional 95% effect-size bounds and a run manifest. The public repository does not include the rasters, lookup table, effect-size workbook, urban polygons, cost workbook, or completed outputs. The numerical results, spatial joins, cost basis and full geospatial run are therefore unvalidated. The default `p0 = 0.115` remains a transported assumption.
+The direct-NDVI production summaries, task manifest and checksums are now included. Internal receipt, aggregation, interval and valuation checks pass. Earth Engine's reporting geometries include 6,191.371 more people (0.00319%) than the independent local native-cell-centre audit; this known cross-engine boundary sensitivity is retained rather than silently rescaled. The source rasters and collaborator workbooks remain outside Git. The default `p0 = 0.115`, exposure-response effect, prevalence and cost proxy remain transported inputs, and the reported confidence limits cover only the effect estimate.
 
 ## Workflow
 
