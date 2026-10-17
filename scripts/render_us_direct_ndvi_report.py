@@ -6,12 +6,18 @@ p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('direct_summary',type=Path);p.add_argument('state_summary',type=Path)
 p.add_argument('output',type=Path);p.add_argument('--technical-summary',type=Path)
 p.add_argument('--local-feature-results',type=Path)
+p.add_argument('--comparison-summary',type=Path);p.add_argument('--comparison-scenarios',type=Path)
+p.add_argument('--lookup-table',type=Path);p.add_argument('--lookup-manifest',type=Path)
 a=p.parse_args();direct=json.loads(a.direct_summary.read_text());n=direct['national']
 states=list(csv.DictReader(a.state_summary.open()))
 residual=next(r for r in states if int(r['state_code'])==0)
 states=[r for r in states if int(r['state_code'])!=0]
 states.sort(key=lambda r:float(r['additional_cases'] or 0),reverse=True)
 technical=json.loads(a.technical_summary.read_text()) if a.technical_summary else None
+method=json.loads(a.comparison_summary.read_text()) if a.comparison_summary else None
+method_scenarios=list(csv.DictReader(a.comparison_scenarios.open())) if a.comparison_scenarios else []
+lookup_manifest=json.loads(a.lookup_manifest.read_text()) if a.lookup_manifest else None
+lookup_rows=list(csv.DictReader(a.lookup_table.open())) if a.lookup_table else []
 coverage=100*float(n['population_modelled'])/float(n['population_total'])
 missing=100-coverage
 
@@ -24,7 +30,7 @@ def compact(x):
 def money(x):return '$'+compact(x)
 def million(x):return f"{float(x)/1e6:,.2f} million"
 
-comparison='';spatial_check=''
+comparison='';spatial_check='';method_detail=''
 if technical:
     old=technical['totals']['additional_cases'];diff=100*(n['additional_cases']/old-1)
     old_pop=technical['totals']['population_total'];pop_delta=n['population_total']-old_pop
@@ -42,6 +48,50 @@ if a.local_feature_results:
     spatial_check+=(f"The difference is distributed across {changed:,} feature totals and reflects the known "
       "cross-engine boundary-cell membership sensitivity. The reported production values retain the reviewed "
       "Earth Engine reporting units and are not rescaled to the local population total.")
+if method:
+    mn=method['national'];mc=method['comparisons']
+    method_rows='\n'.join(
+      f"| {r['exposure']} | {r['prevalence']} | {r['health_contrast']} | {compact(r['additional_case_equivalents'])} | {money(r['value_2019_usd_proxy'])} |"
+      for r in method_scenarios)
+    production_common=next(r for r in method_scenarios if r['exposure']=='direct' and r['prevalence'].startswith('GBD') and r['health_contrast'].startswith('current-reference'))
+    original_style=next(r for r in method_scenarios if r['exposure']=='class lookup' and r['prevalence']=='fixed 5%' and r['health_contrast']=='literal original formula')
+    supported=lookup_manifest['supported_class_count'] if lookup_manifest else sum(int(r['has_valid_ndvi']) for r in lookup_rows)
+    class_count=lookup_manifest['class_count'] if lookup_manifest else len(lookup_rows)
+    method_detail=f"""
+## Controlled comparison of the modelling choices
+
+This comparison changes one factor at a time on the same disjoint reporting units and the same **common valid population support**: (1) direct 2019 Landsat NDVI versus a fixed land-cover/NDVI lookup, (2) US GBD prevalence versus the original fixed 5%, and (3) the current-reference equation versus the literal equation in the original code. All eight rows use OR **0.931** and the same 2019 USD non-PPP proxy. These are point-estimate method sensitivities, not confidence intervals.
+
+```mermaid
+flowchart LR
+    A["2019 Landsat NDVI"] --> C["Common valid WorldPop cells"]
+    B["2019 GLC_FCS30D<br/>+ US urban class lookup"] --> C
+    C --> D["Zero positive NDVI<br/>counterfactual"]
+    E["GBD 4.24% or fixed 5%"] --> F["Current-reference or<br/>literal original equation"]
+    D --> F
+    F --> G["City, state and US totals<br/>+ 2019 USD value"]
+```
+
+| Exposure | Prevalence | Health contrast | Case equivalents | 2019 USD proxy |
+| --- | --- | --- | ---: | ---: |
+{method_rows}
+
+The production configuration on common support gives **{compact(production_common['additional_case_equivalents'])}** case equivalents. The configuration closest to the original code choices—fixed class lookup, 5% prevalence, and the literal original equation—gives **{compact(original_style['additional_case_equivalents'])}** and **{money(original_style['value_2019_usd_proxy'])}**. The direct production total at its own full support remains **{compact(n['additional_cases'])}**; its exact reproduction in this comparison is recorded in the validation JSON.
+
+### What the health equations change
+
+Let `r = RR^(10 × positive NDVI)`, so `r < 1` for positive NDVI. The original code literally computes `B × (1 − r)`. The current production method computes `B × (1/r − 1)`, where `B` is the prevalence-derived 2019 reference burden. With the **same numeric `B`**, the two calculations are close but are not identical; the literal original result is {abs(mc['literal_original_vs_reference_percent_direct_5pct_common_support']):.2f}% lower for direct NDVI and {abs(mc['literal_original_vs_reference_percent_class_5pct_common_support']):.2f}% lower for the class lookup.
+
+The equations become exactly equivalent only when their burden reference states are also converted: if `B_current = r × B_no-nature`, then `B_current × (1/r − 1) = B_no-nature × (1 − r)`. The original code multiplies `prevalence × population` directly by `(1 − r)` and does not construct `B_no-nature`. The difference is therefore a reference-state clarification rather than a different exposure-response effect.
+
+### Land-cover/NDVI attribute table
+
+The comparison uses a newly derived **InVEST-style US urban 2019 attribute table**, not Varun's missing original numeric table. It pools raw area-weighted NDVI sums over the 49 states, DC, and boundary residual, using annual-median valid Landsat 7/8 observations within disjoint GUPPD urban units. It maps {supported} of {class_count} GLC classes; unsupported classes remain missing. Class and direct exposure totals are compared only where both are valid, excluding {compact(mn['common_population_missing'])} people from the factorial comparison.
+
+The table preserves negative means for water and tidal flats, which yield zero positive-NDVI contrast. Rare classes should not be treated as transferable calibrations: deciduous shrubland is represented by about 0.02 km² and sparse herbaceous cover by about 1.21 km². The impervious-class mean is empirical NDVI within that broad class, not a semantic score for imperviousness. Because the lookup is calibrated and tested on the same national urban domain, this is an in-sample representation and smoothing comparison rather than independent validation or evidence of global transferability.
+
+Files: [attribute table](data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv), [lookup manifest](data/us_method_comparison_2019_v2_common/lookup_manifest.json), [eight scenarios](data/us_method_comparison_2019_v2_common/scenario_comparison.csv), [national validation](data/us_method_comparison_2019_v2_common/national_comparison.json), [state summary](data/us_method_comparison_2019_v2_common/state_summary.csv), and [city summary](data/us_method_comparison_2019_v2_common/city_summary.csv).
+"""
 top='\n'.join(f"| {r['state_abbr']} | {compact(r['population_modelled'])} | {compact(r['additional_cases'])} | {money(r['value_2019_usd'])} |" for r in states[:10])
 
 text=f"""# 2019 US urban mental health direct-NDVI production run
@@ -105,6 +155,8 @@ The comparison below refers to the original Observarun [`run_urban_mental_health
 | Reproducibility | Skips existing intermediates but does not create a run manifest or input/output hashes. | Pins code and graph hashes, preserves task IDs, validates unique receipts, publishes row-level summaries and supplies SHA-256 checksums. |
 
 Both implementations retain the same central idea: compare current urban nature with a zero-positive-NDVI counterfactual, convert an odds ratio using `p0`, calculate a population-weighted depression contrast, and aggregate it geographically. The production result should therefore be described as an extension and clarification of the original model, rather than a literal rerun of Varun's code.
+
+{method_detail}
 
 ## Largest state contributions
 
