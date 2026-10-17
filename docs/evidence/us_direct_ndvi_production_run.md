@@ -50,7 +50,7 @@ The comparison below refers to the original Observarun [`run_urban_mental_health
 | Execution and scope | Local Python/Hazelbean global-raster pipeline with user-supplied inputs and fixed machine paths. | Versioned Earth Engine run for the reviewed US subset; 133 resumable batches with explicit task receipts. |
 | Nature exposure | Warp GLC_FCS30D land cover to WorldPop with nearest-neighbour resampling, then assign one NDVI value to each land-cover class from a lookup table. | Use the 2019 Landsat annual-median NDVI pixels directly; no land-cover class-to-NDVI lookup enters the production exposure. |
 | Counterfactual | Set every positive lookup-derived NDVI value to zero. | Same conceptual counterfactual, applied to direct Landsat NDVI sampled on the population grid. |
-| Health contrast | `prevalence × population × [1 − RR^(10 × ΔNDVI)]`, labelled preventable cases. This applies the risk-reduction fraction to prevalence-derived baseline cases. | `2019 reference case equivalents × [RR^(−10 × ΔNDVI) − 1]`, reported as additional case equivalents if current nature were removed. This explicitly uses the prevalence-derived 2019 state as the reference. |
+| Health contrast | Literally calculates `prevalence × population × [1 − RR^(10 × ΔNDVI)]`, labelled preventable cases. The code does not convert the prevalence-derived baseline to the no-nature reference state required for exact equivalence with the current equation. | Calculates `2019 reference case equivalents × [RR^(−10 × ΔNDVI) − 1]`, reported as additional case equivalents if current nature were removed. The prevalence-derived 2019 state is explicit. |
 | Prevalence | Fixed `0.05` for every country. | Country-specific 2019 GBD prevalence; **4.24%** for this US run, aligned with the all-age WorldPop denominator. |
 | `p0` and OR-to-RR | Fixed `p0 = 0.115`; convert the depression OR to an RR. | Retains the conversion but labels `p0 = 0.115` as a transported assumption and records sensitivity work. |
 | Uncertainty | Uses only the point effect estimate. | Reports conditional 95% limits from the effect estimate; other uncertainty remains outside the interval. |
@@ -59,6 +59,52 @@ The comparison below refers to the original Observarun [`run_urban_mental_health
 | Reproducibility | Skips existing intermediates but does not create a run manifest or input/output hashes. | Pins code and graph hashes, preserves task IDs, validates unique receipts, publishes row-level summaries and supplies SHA-256 checksums. |
 
 Both implementations retain the same central idea: compare current urban nature with a zero-positive-NDVI counterfactual, convert an odds ratio using `p0`, calculate a population-weighted depression contrast, and aggregate it geographically. The production result should therefore be described as an extension and clarification of the original model, rather than a literal rerun of Varun's code.
+
+
+## Controlled comparison of the modelling choices
+
+This comparison changes one factor at a time on the same disjoint reporting units and the same **common valid population support**: (1) direct 2019 Landsat NDVI versus a fixed land-cover/NDVI lookup, (2) US GBD prevalence versus the original fixed 5%, and (3) the current-reference equation versus the literal equation in the original code. All eight rows use OR **0.931** and the same 2019 USD non-PPP proxy. These are point-estimate method sensitivities, not confidence intervals.
+
+```mermaid
+flowchart LR
+    A["2019 Landsat NDVI"] --> C["Common valid WorldPop cells"]
+    B["2019 GLC_FCS30D<br/>+ US urban class lookup"] --> C
+    C --> D["Zero positive NDVI<br/>counterfactual"]
+    E["GBD 4.24% or fixed 5%"] --> F["Current-reference or<br/>literal original equation"]
+    D --> F
+    F --> G["City, state and US totals<br/>+ 2019 USD value"]
+```
+
+| Exposure | Prevalence | Health contrast | Case equivalents | 2019 USD proxy |
+| --- | --- | --- | ---: | ---: |
+| direct | GBD 2019 4.2433% | current-reference additional cases | 2.45 million | $26.99 billion |
+| direct | GBD 2019 4.2433% | literal original formula | 1.81 million | $19.89 billion |
+| direct | fixed 5% | current-reference additional cases | 2.89 million | $31.80 billion |
+| direct | fixed 5% | literal original formula | 2.13 million | $23.44 billion |
+| class lookup | GBD 2019 4.2433% | current-reference additional cases | 2.43 million | $26.67 billion |
+| class lookup | GBD 2019 4.2433% | literal original formula | 1.85 million | $20.36 billion |
+| class lookup | fixed 5% | current-reference additional cases | 2.86 million | $31.43 billion |
+| class lookup | fixed 5% | literal original formula | 2.18 million | $24.00 billion |
+
+The production configuration on common support gives **2.45 million** case equivalents. The configuration closest to the original code choices—fixed class lookup, 5% prevalence, and the literal original equation—gives **2.18 million** and **$24.00 billion**. The direct production total at its own full support remains **2.45 million**; its exact reproduction in this comparison is recorded in the validation JSON.
+
+The main comparisons are: the class lookup is **1.16% lower** than direct NDVI under the production prevalence and equation; fixed 5% prevalence makes every matched result **17.83% higher** than the 4.24% GBD input because cases scale linearly with prevalence; and the literal original equation is **26.30% lower** for direct NDVI and **23.66% lower** for the class lookup when both equations receive the same prevalence-derived burden.
+
+National agreement does not imply city-level agreement. Among **2,468** cities with at least 100 direct current-reference case equivalents, the median class-versus-direct difference is **-14.09%**, the inclusive 5th–95th percentile range is **-29.52% to +28.09%**, and **75.61%** differ by more than 10% in absolute terms. This spatial variation supports retaining direct NDVI for the production run.
+
+### What the health equations change
+
+Let `r = RR^(10 × positive NDVI)`, so `r < 1` for positive NDVI. The original code literally computes `B × (1 − r)`. The current production method computes `B × (1/r − 1)`, where `B` is the prevalence-derived 2019 reference burden. With the **same numeric `B`**, the two formulas share the same exposure-response relation but are not numerically interchangeable; the literal original result is 26.30% lower for direct NDVI and 23.66% lower for the class lookup.
+
+The equations become exactly equivalent only when their burden reference states are also converted: if `B_current = r × B_no-nature`, then `B_current × (1/r − 1) = B_no-nature × (1 − r)`. The original code multiplies `prevalence × population` directly by `(1 − r)` and does not construct `B_no-nature`. The difference is therefore a reference-state clarification rather than a different exposure-response effect.
+
+### Land-cover/NDVI attribute table
+
+The comparison uses a newly derived **InVEST-style US urban 2019 attribute table**, not Varun's missing original numeric table. It pools raw area-weighted NDVI sums over the 49 states, DC, and boundary residual, using annual-median valid Landsat 7/8 observations within disjoint GUPPD urban units. It maps 28 of 35 GLC classes. The seven unsupported classes were absent from population-supporting land-cover cells in this run, so population missing specifically because of lookup coverage is 0. Class and direct exposure totals are compared only where both are valid, excluding 4.42 thousand people from the factorial comparison because direct NDVI or land cover was missing.
+
+The table preserves negative means for water and tidal flats, which yield zero positive-NDVI contrast. Rare classes should not be treated as transferable calibrations: deciduous shrubland is represented by about 0.02 km² and sparse herbaceous cover by about 1.21 km². The impervious-class mean is empirical NDVI within that broad class, not a semantic score for imperviousness. Because the health transformation is nonlinear, applying it to a class-mean NDVI is not mathematically equivalent to averaging pixel-level risk transformations. Because the lookup is calibrated and tested on the same national urban domain, this is an in-sample representation and smoothing comparison rather than independent validation or evidence of global transferability.
+
+Files: [attribute table](data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv), [lookup manifest](data/us_method_comparison_2019_v2_common/lookup_manifest.json), [eight scenarios](data/us_method_comparison_2019_v2_common/scenario_comparison.csv), [national validation](data/us_method_comparison_2019_v2_common/national_comparison.json), [state summary](data/us_method_comparison_2019_v2_common/state_summary.csv), and [city summary](data/us_method_comparison_2019_v2_common/city_summary.csv).
 
 ## Largest state contributions
 

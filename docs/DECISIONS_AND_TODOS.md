@@ -1,5 +1,28 @@
 # Urban mental health model: decisions and open work
 
+## Controlled original-method comparison completed — 17 October 2026
+
+This entry supersedes the earlier status notes that describe the national lookup, direct-NDVI production run, or comparison as pending. Historical checkpoints remain below for provenance.
+
+- **Production decision:** retain direct 2019 Landsat NDVI as the primary US exposure. It preserves pixel-level exposure variation and avoids applying a nonlinear health transformation to a class mean.
+- **Original-style sensitivity:** derive and publish a 2019 US urban GLC_FCS30D-to-NDVI attribute table, then run it beside direct NDVI. This is a newly calibrated InVEST-style table because Varun's original numeric lookup is absent from the source repository. It is not an exact reconstruction of his table.
+- **Factorial comparison:** run both exposure methods with both prevalence choices (GBD 2019 all-age US rate 4.2433% and fixed 5%) and both health equations (current-reference and the literal original formula) on the same common valid WorldPop support. All eight scenarios use OR 0.931, `p0 = 0.115`, and the same 2019 USD non-PPP societal-cost proxy.
+- **Result:** under the production prevalence/equation, the class lookup yields 2.43 million case equivalents, 1.16% below direct NDVI. Changing only prevalence from 4.2433% to 5% raises every matched result by 17.83%. With fixed 5% and class lookup, the literal original formula yields 2.18 million case equivalents and a $24.00 billion proxy.
+- **Health-equation decision:** the equations are equivalent only after converting the burden reference state. With the same prevalence-derived numeric burden, Varun's literal `B × (1 − r)` and the current `B × (1/r − 1)` differ; the literal result is 23.66% lower for the class lookup and 26.30% lower for direct NDVI. Retain the current-reference equation for production and report the literal equation as a sensitivity.
+- **Support and checks:** all 3,312 city receipts and 3,530 city-state rows passed exact-ID, metadata, finite-value, support-reconciliation, state-plus-residual, prevalence-scaling and valuation checks. The direct own-support result reproduces the prior production total to floating-point tolerance. Common support contains 194.37 million people and excludes 4.42 thousand with missing direct NDVI or land cover.
+- **Attribute table:** 28 of 35 GLC classes have valid US urban 2019 NDVI estimates. The seven unsupported classes were absent from population-supporting cells, so lookup coverage itself excludes zero population in this run. Coverage status is separate from the `exclude` field; no scientific class exclusion was imposed. Preserve negative water and tidal-flat means, which produce zero positive-NDVI contrast.
+- **Interpretation:** this is an in-sample representation and smoothing comparison because the lookup was calibrated and evaluated on the same national urban domain. National agreement conceals material city variation: among 2,468 cities with at least 100 direct current-reference case equivalents, the median class-versus-direct difference is −14.09%, the inclusive 5th–95th percentile range is −29.52% to +28.09%, and 75.61% differ by more than 10% in absolute terms. This does not validate transfer to other countries or establish which exposure representation is epidemiologically superior. Effect-size 95% limits remain available for the production run; differences among methods are sensitivity results, not confidence intervals.
+
+Evidence is in [the concise production and method-comparison report](evidence/us_direct_ndvi_production_run.md) and [the packaged comparison outputs](evidence/data/us_method_comparison_2019_v2_common/).
+
+### Remaining research and reporting work
+
+1. Validate the class lookup on held-out regions or a later year before any claim of predictive validity or reuse outside US urban areas.
+2. Replace or bound the transported `p0 = 0.115` assumption with endpoint-matched low-exposure risks when compatible study data become available.
+3. Implement joint uncertainty across effect size, `p0`, prevalence, exposure and cost if a full uncertainty interval is required.
+4. Revisit the adult-current-MDD pathway only with an age-aligned population denominator and endpoint-matched effect estimate.
+5. Complete the final Google Doc reconciliation. The model run is no longer waiting for data access.
+
 ## Nationwide local land-cover completion — 17 October 2026
 
 - The active scope remains 49 states plus DC, including Alaska and excluding Hawaii and territories. The official local GLC_FCS30D queue completed after one bounded retry pass.
@@ -8,7 +31,7 @@
 - Lowest feature support is 99.7147% for Pataskala (22_16529); the largest affected feature total is 133.997 people for Philadelphia (30_12532). These are source fill/edge findings, not missing downloads. Treat the affected cells as missing exposure pending an explicit exclusion or sensitivity rule; do not assign built-up or zero NDVI silently.
 - Completion evidence is outside Git under `data/urban_mental_health/manifests/us_local_completion.json` and `data/urban_mental_health/pilots/us_local_qc_2019_v1/`. The four expanded source-comparison tests remain complete.
 
-Current local priorities are: choose the production exposure strategy (direct NDVI or validated regional lookups); reconcile the small Python/GEE boundary-cell membership differences with a shared native-grid mask; retain the p0, endpoint, cost-proxy and conditional-uncertainty limitations; then rerun and review production outputs.
+Historical priority at this checkpoint was to choose the production exposure strategy. The completed comparison above resolves that choice in favor of direct NDVI for the US production result; the boundary-cell sensitivity and p0, endpoint, cost-proxy and uncertainty limitations remain.
 
 ## Nationwide windowed technical run — 17 October 2026
 

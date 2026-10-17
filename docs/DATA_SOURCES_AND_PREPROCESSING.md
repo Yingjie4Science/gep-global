@@ -1,5 +1,31 @@
 # Urban mental health input data: sources and preprocessing
 
+## Completed national comparison inputs — 17 October 2026
+
+This section supersedes older checkpoints below that describe the national lookup or comparison as pending. Those checkpoints remain as a dated audit trail.
+
+### 2019 US urban land-cover/NDVI attribute table
+
+The comparison uses `glc_fcs30d_attribute_table_us_2019.csv`, a newly derived InVEST-style table for the active US scope: 49 states plus DC, Alaska included, Hawaii and territories excluded. It is a replacement derivation because the original Observarun repository references but does not publish Varun's numeric table.
+
+1. Select band 20 (2019) from `projects/sat-io/open-datasets/GLC-FCS30D/annual`. Treat fill codes 0 and 250 as missing; preserve all declared class codes.
+2. Build 2019 annual-median NDVI from USGS Landsat 7 and 8 Collection 2 Level 2 surface reflectance after scaling and QA masks for fill, dilated cloud, cirrus where applicable, cloud, shadow, snow and radiometric saturation. Require at least three valid observations.
+3. Use the disjoint GUPPD city-state reporting units plus the boundary residual. For every state/DC/residual × class combination, export raw class area, valid-NDVI area, NDVI-area sum, NDVI-square-area sum and cell counts. Empty combinations are retained as zero rows.
+4. Pool raw sums nationally. Calculate `lc_ndvi = sum(NDVI × valid area) / sum(valid area)` and retain signed values. Do not average state means. Record the area-weighted standard deviation and valid-area fraction.
+5. Separate data coverage from modelling exclusion. `has_valid_ndvi` and `coverage_status` describe evidence; `exclude` remains zero for every class because the original code path did not impose a reviewed scientific class exclusion.
+6. Use only classes with `has_valid_ndvi = 1` in the comparison. Twenty-eight of 35 classes are supported. The seven unsupported classes occur on no population-supporting land-cover cells in the completed run, so `population_missing_lookup = 0`.
+
+The table, raw state-class sums, asset snapshots, manifests and SHA-256 ledger are in [`docs/evidence/data/us_method_comparison_2019_v2_common/`](evidence/data/us_method_comparison_2019_v2_common/). The Earth Engine execution source is versioned in `Yingjie4Science/invest-gee/urban_mental_health/` at commits `53839e7` through `51ff71a`; neutral output-schema and city-summary postprocessing is pinned separately at `b13b052`.
+
+### Common-support 2×2×2 comparison
+
+The comparison samples direct Landsat NDVI and lookup-assigned NDVI on the same native WorldPop 2019 cell centres and keeps only cells where both methods are valid. It then evaluates two prevalence inputs and two health equations without rounding intermediate values. The common population is 194,369,049.83; 4,424.54 people are outside common support because direct NDVI or land cover is missing. All scenario totals use OR 0.931, `p0 = 0.115`, and the $10,999.206774 per-case-equivalent 2019 USD non-PPP proxy.
+
+Validation requires exactly 3,312 unique city receipts and 3,530 city-state rows, exact expected IDs, finite nonnegative population/case/value fields, row-to-city-to-state-to-national support reconciliation, state/DC plus residual reconciliation, exact prevalence scaling, exact valuation arithmetic and reproduction of the earlier direct-NDVI own-support total. Interrupted submissions are preserved in the manifest; an existing asset is accepted only after its table type, expected receipt, and expected row count are verified.
+
+The class lookup is calibrated and evaluated on the same national urban domain. Treat the resulting difference from direct NDVI as an in-sample method sensitivity. It is not held-out validation and the lookup must not be assumed transferable globally.
+
+
 ## Executed pilot — 16 October 2026
 
 The population file has arrived. Local Python and GEE Fort Morgan pilots are complete; all 877 modeled city cells pass the matched-input comparison. The real NDVI lookup and private pilot boundary asset are available. **Land-cover sources differ at native resolution**, so national expansion requires an explicit source choice. See [pilot evidence, reproduction and remaining work](evidence/fort_morgan_pilot.md). This supersedes earlier missing-population, unexecuted-lookup and runtime-blocked entries below. Public Bhutan app integration and scientific validation remain pending.
@@ -7,7 +33,7 @@ The population file has arrived. Local Python and GEE Fort Morgan pilots are com
 
 Last updated: 2026-10-17. **Current scope: 49 states plus DC; Hawaii excluded by user. See the latest decisions section below for superseding status.** This record separates source files, project derivatives, unresolved owner inputs and model-ready validation. Large rasters and licensed source files are kept outside Git under `../data/urban_mental_health/`.
 
-For the authoritative current missing-input and validation checklist, see [test-run readiness](DECISIONS_AND_TODOS.md#current-us-test-run-readiness--16-october-2026). Download counts are snapshots, not completion claims.
+For the authoritative current decisions and remaining research tasks, see [the completed controlled comparison](DECISIONS_AND_TODOS.md#controlled-original-method-comparison-completed--17-october-2026). Later dated sections retain historical checkpoints.
 
 ## Directory convention
 
@@ -25,8 +51,8 @@ For the authoritative current missing-input and validation checklist, see [test-
 | Population | WorldPop 2019 | US 2019 constrained R2025A v1 raster received and validated for the local pilots | Population counts on the reference grid |
 | Effect estimate | User-supplied workbook | Present and schema-validated | Depression OR 0.931, 95% CI 0.887-0.977 per 0.1 NDVI |
 | Country prevalence | IHME GBD 2023 estimates for 2019 | Present in `../depression_prevalence_review/` | Country baseline prevalence |
-| Treatment cost | User-supplied CSV | Present, but identifies 2018 USD PPP and total societal costs for mood disorders; fails required cost basis | Cost per case in 2019 USD, without PPP adjustment |
-| Land-cover/NDVI lookup | Original project input | Missing; derivation is not in Git history | Maps `lc_code` to `lc_ndvi` |
+| Cost proxy | Christensen et al. source table plus preserved conversion inputs | US rate converted to 2019 USD without PPP; broader mood-disorder societal-cost scope remains an interpretation limitation | Exploratory value per case equivalent |
+| Land-cover/NDVI lookup | Newly derived US urban 2019 table | Complete for the controlled comparison: 28/35 classes supported; seven absent classes affect no population-supporting cells | Original-style exposure sensitivity, not production exposure |
 
 ## 1. GLC_FCS30D land cover
 
@@ -163,9 +189,9 @@ PPP is used only to reverse the source normalization. Final values use market ex
 
 All derivatives retain `model_ready = False`: the supplied values describe **mood-disorder total societal cost per patient**, which has not yet been accepted as a proxy for depression-specific cost. Currency conversion does not change the endpoint or cost components. The original CSV is unchanged, and no model workbook or run has been silently replaced. For exact non-US reversal, obtain the original 2018 PPP factors or the pre-PPP local-currency costs, then regenerate with a matched currency basis. The numerical round-trip check verifies arithmetic, not source validity.
 
-### NDVI lookup work in progress
+### NDVI lookup derivation record
 
-The user supplied a shared Landsat script and the community asset catalog. The catalog identifies `projects/sat-io/open-datasets/GLC-FCS30D/annual`; annual band 20 corresponds to 2019. The screenshot is an NLCD-format example; its codes and values must not be copied as GLC_FCS30D values. The linked script contents have not yet been retrieved reliably from the browser, so its temporal and QA choices remain unverified. A new lookup will be labelled as a replacement derivation, with its 2019 compositing basis and class coverage recorded.
+The user supplied the shared Landsat script text and the community asset catalog. The catalog identifies `projects/sat-io/open-datasets/GLC-FCS30D/annual`; annual band 20 corresponds to 2019. The screenshot was an NLCD-format example, so its codes and values were not copied. The completed replacement derivation preserves the shared script's annual median of merged Landsat observations, narrows the period to 2019, adds the declared QA and minimum-observation rules, and aggregates signed NDVI by actual GLC_FCS30D class. Its class coverage and raw pooling terms are published with the comparison.
 
 
 ## Executable preparation and model wiring
@@ -178,7 +204,7 @@ python scripts/check_us_boundaries.py DATA_ROOT
 python scripts/convert_costs_2019_usd.py DATA_ROOT
 ```
 
-`derive_glc_ndvi_2019_gee.js` is a self-contained Earth Engine Code Editor candidate. It defines a Delaware pilot export first. It must be executed in a registered Earth Engine project and reviewed before extending to all configured states. Shared-script equivalence and community-asset versus Zenodo-v2 equivalence remain unverified. Candidate output contains raw weighted sums, class areas, valid cell counts, NDVI spread and temporal/asset identifiers for reproducible aggregation. The 2019 annual median and minimum-three-observation rule are declared proposal choices, not recovered original-author settings.
+The earlier `derive_glc_ndvi_2019_gee.js` candidate remains a historical local prototype. The completed national cloud workflow is versioned in `Yingjie4Science/invest-gee` as `national_lookup_batch.js`, `serialize_national_lookup_batch.cjs`, `run_national_lookup_batch.py`, and `collect_national_lookup.py`. It exported 51 state/DC/residual groups, verified the exact 51 × 35 inventory, pooled raw weighted sums, and produced the published attribute table. The 2019 annual median and minimum-three-observation rule are documented replacement choices rather than recovered original-author settings. Community-asset versus local Zenodo-v2 file identity remains unverified.
 
 The model runner now accepts explicit file paths. A future validated run should include all six input flags plus `--country-prevalence-table` and `--country-crosswalk config/us_country_crosswalk.csv`, and use a new `--project-dir`. Do not run a national dense raster across Alaska's antimeridian extent without first reviewing memory/storage requirements and regional processing. The `--costs` input still requires the reviewed XLSX schema; the conversion audit CSV is not silently substituted.
 
