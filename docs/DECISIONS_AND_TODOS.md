@@ -1,11 +1,33 @@
 # Urban mental health model: decisions and open work
 
+## SNAPP valuation and area reconciliation — 25 October 2026
+
+- The [US cost comparison](evidence/varun_us_cost_comparison.md) retains Varun's $5,834.61, the project's $10,999.21, and SNAPP/Greenberg's $16,854 per-case 2019 USD rates as **separately labelled cost sensitivities** on the same four saved case runs. Case counts were not rerun. The SNAPP source rate applies to adults with current MDD, whereas these runs model all-age depressive disorders; do not select it as the primary rate without outcome alignment.
+- SNAPP's own existing-greenness total is 12.73 million modeled cases and $270.98 billion in **2024 USD** at $21,280 per case. Its study domain is 1,167 whole metropolitan counties, with a dissolved footprint of **2,526,402.14 km²**. The matched GUPPD local and Varun urban polygon footprints are **129,240.83** and **129,239.81 km²**, respectively. These county and urban areas are different kinds of boundaries. The [area audit](evidence/data/varun_2026_10/us_urban_area_audit.json) records geometry hashes and locked county IDs.
+- A fairer cross-project explanation still requires a matched run holding geography, population, prevalence endpoint, NDVI composite, buffer radius, `p0` and case formula fixed, then changing one input at a time. Price-year conversion alone cannot reconcile case counts. The $270,903 million SNAPP figure cited separately has not been matched to a source version; the current national summary reports $270,977 million.
+
+## Varun input review — 21 October 2026
+
+The supplied GUPPD layer, WorldPop mosaic and 2019 land-cover raster are now
+audited for the US. All owner US polygon geometries match GUPPD; three current-only
+IDs have zero modeled population. The mosaic matches all active urban population
+cells, while land-cover classes differ for 11.35% of population on cells valid
+in both sources. Four crossed full runs give 1.67–2.46 million case equivalents
+under fixed GBD prevalence and the current-reference equation. On Varun’s raster,
+his lookup gives 1.67 million versus 2.46 million with the US-derived lookup
+(32.01% lower). Changing raster at fixed lookup changes national cases by less
+than 1%. These are technical sensitivities; the direct-NDVI production estimate
+remains primary. Lookup derivation, global raster recipe and the cost workbook’s
+non-PPP basis remain owner requests. See the [data guide](DATA_SOURCES_AND_PREPROCESSING.md#7-remaining-requests-owners-and-decisions)
+and [crossed-run results](evidence/data/varun_2026_10/source_lookup_factorial_summary.json); historical notes
+below retain their original dates and status.
+
 ## Controlled original-method comparison completed — 17 October 2026
 
-This entry supersedes the earlier status notes that describe the national lookup, direct-NDVI production run, or comparison as pending. Historical checkpoints remain below for provenance.
+This entry supersedes earlier pending-status notes. The [current data guide](DATA_SOURCES_AND_PREPROCESSING.md) records the 21 October collaborator-file review and is authoritative for those inputs. Historical checkpoints remain below for provenance.
 
 - **Production decision:** retain direct 2019 Landsat NDVI as the primary US exposure. It preserves pixel-level exposure variation and avoids applying a nonlinear health transformation to a class mean.
-- **Original-style sensitivity:** derive and publish a 2019 US urban GLC_FCS30D-to-NDVI attribute table, then run it beside direct NDVI. This is a newly calibrated InVEST-style table because Varun's original numeric lookup is absent from the source repository. It is not an exact reconstruction of his table.
+- **Original-style sensitivity:** derive and publish a 2019 US urban GLC_FCS30D-to-NDVI attribute table, then run it beside direct NDVI. This is a newly calibrated InVEST-style table because Varun's numeric lookup was absent from the source repository and was not available when the comparison ran. Varun later supplied and confirmed the 35-class table used in his run; it was not used in the published comparison and still needs generation provenance; paired and crossed-run sensitivities are now complete.
 - **Factorial comparison:** run both exposure methods with both prevalence choices (GBD 2019 all-age US rate 4.2433% and fixed 5%) and both health equations (current-reference and the literal original formula) on the same common valid WorldPop support. All eight scenarios use OR 0.931, `p0 = 0.115`, and the same 2019 USD non-PPP societal-cost proxy.
 - **Result:** under the production prevalence/equation, the class lookup yields 2.43 million case equivalents, 1.16% below direct NDVI. Changing only prevalence from 4.2433% to 5% raises every matched result by 17.83%. With fixed 5% and class lookup, the literal original formula yields 2.18 million case equivalents and a $24.00 billion proxy.
 - **Health-equation decision:** the equations are equivalent only after converting the burden reference state. With the same prevalence-derived numeric burden, Varun's literal `B × (1 − r)` and the current `B × (1/r − 1)` differ; the literal result is 23.66% lower for the class lookup and 26.30% lower for direct NDVI. Retain the current-reference equation for production and report the literal equation as a sensitivity.

@@ -1,0 +1,92 @@
+# Varun input review: US technical evidence
+
+These are input audits and four full local technical sensitivities, not a
+reproduction of Varun’s global output. The first pair changes only the NDVI
+lookup on the current 3,312-feature US selection, Zenodo 2019 tiles and current
+WorldPop raster. The second pair crosses the same two lookups with Varun’s
+2019 land-cover raster, WorldPop mosaic and 3,309-feature non-Hawaii owner
+selection. All full runs hold the 2019 GBD US rate, OR, `p0`, current-reference
+equation and exploratory US societal-cost proxy fixed. Varun’s cost workbook is
+not used. The three current-only polygons have zero modeled population.
+
+- `urban_boundaries_audit.json`: GUPPD IDs, levels and US geometry comparison.
+- `population_mosaic_us_urban_cell_audit.json`: all active urban population
+  cell-centre values and nodata statuses compared between the two rasters.
+- `summary.json` and `city_comparison.csv`: paired full local-tile model runs.
+- `land_cover_us_urban_cell_audit.json`: nearest-neighbor class comparison on
+  WorldPop urban cell centres.
+- `source_lookup_factorial_summary.json`: four crossed full runs, checked
+  city-to-national totals, source contrasts, and analytic health sensitivities.
+- `us_lookup_value_sensitivity.json`: independently reconstructs the earlier
+  class-population calculation and varies lookup, prevalence and health equation.
+
+The full run files and hashes are preserved outside Git at
+`../data/urban_mental_health/pilots/varun_lookup_matched_2019_v1/`.
+From the repository root, with the project's geospatial Python environment:
+
+```sh
+DATA=../data/urban_mental_health
+OUT=$DATA/pilots/varun_lookup_matched_2019_v1
+export PROJ_DATA="$(python -c 'import sys; print(sys.prefix + "/share/proj")')"
+python scripts/audit_varun_inputs.py "$DATA" . docs/evidence/data/varun_2026_10
+python scripts/check_varun_population_mosaic.py "$DATA" docs/evidence/data/varun_2026_10/population_mosaic_us_urban_cell_audit.json
+python scripts/summarize_varun_lookup_runs.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" docs/evidence/data/varun_2026_10
+python scripts/check_varun_landcover.py "$DATA" docs/evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json
+python scripts/summarize_varun_factorial.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" \
+  "$OUT/varun_landcover_us_derived_lookup" "$OUT/varun_landcover_varun_lookup" \
+  docs/evidence/data/varun_2026_10/source_lookup_factorial_summary.json
+```
+
+For a fresh paired run, choose a new `OUT` directory and run:
+
+```sh
+OUT=$DATA/pilots/varun_lookup_matched_2019_v2
+python scripts/run_us_national_technical.py "$DATA" "$OUT/us_derived_lookup" \
+  --lookup docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv \
+  --effects "$DATA/processed/effect_size.xlsx" \
+  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --crosswalk config/us_country_crosswalk.csv \
+  --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv"
+python scripts/run_us_national_technical.py "$DATA" "$OUT/varun_lookup" \
+  --lookup "$DATA/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv" \
+  --effects "$DATA/processed/effect_size.xlsx" \
+  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --crosswalk config/us_country_crosswalk.csv \
+  --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv"
+```
+
+Review both saved `run_record.json` files and compare the new city and national
+outputs before replacing these evidence files.
+
+For the owner-raster pair, the saved derivative boundary subset is
+`$DATA/processed/varun_us_excluding_hawaii.gpkg`; its selection and checksum are
+in `$DATA/manifests/varun_us_boundary_subset_2026-10-21.json`. Rebuild that
+subset with `scripts/prepare_varun_us_boundaries.py` using a *new* output path.
+Then run the national technical script twice:
+
+```sh
+python scripts/run_us_national_technical.py "$DATA" "$OUT/varun_landcover_us_derived_lookup" \
+  --lookup docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv \
+  --effects "$DATA/processed/effect_size.xlsx" \
+  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --crosswalk config/us_country_crosswalk.csv \
+  --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv" \
+  --population-raster "$DATA/raw/collaborator/varun_2026-10/worldpop/100m_2019_global-mosaic.tif" \
+  --urban-boundaries "$DATA/processed/varun_us_excluding_hawaii.gpkg" \
+  --land-cover-mosaic "$DATA/raw/collaborator/varun_2026-10/lulc_glc_fcs30d_2019.tif"
+python scripts/run_us_national_technical.py "$DATA" "$OUT/varun_landcover_varun_lookup" \
+  --lookup "$DATA/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv" \
+  --effects "$DATA/processed/effect_size.xlsx" \
+  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --crosswalk config/us_country_crosswalk.csv \
+  --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv" \
+  --population-raster "$DATA/raw/collaborator/varun_2026-10/worldpop/100m_2019_global-mosaic.tif" \
+  --urban-boundaries "$DATA/processed/varun_us_excluding_hawaii.gpkg" \
+  --land-cover-mosaic "$DATA/raw/collaborator/varun_2026-10/lulc_glc_fcs30d_2019.tif"
+```
+
+Save each in a fresh directory.
+The fixed-5%/literal-original 1.54-million result in the summary is computed
+from the saved owner-raster class-population table. It is not a separate full
+raster run. Conditional OR limits do not include land-cover, lookup, prevalence,
+`p0`, or cost uncertainty.

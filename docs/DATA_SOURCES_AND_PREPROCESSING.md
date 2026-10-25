@@ -1,220 +1,431 @@
-# Urban mental health input data: sources and preprocessing
+# Urban mental health data sources and preprocessing
 
-## Completed national comparison inputs — 17 October 2026
+Last updated: 21 October 2026. The active US scope is 49 states plus DC,
+including Alaska and excluding Hawaii and US territories.
 
-This section supersedes older checkpoints below that describe the national lookup or comparison as pending. Those checkpoints remain as a dated audit trail.
+## Data folder structure
 
-### 2019 US urban land-cover/NDVI attribute table
+The Git repository and data folder are siblings under `gep-global/`. The active
+US data are in `../data/urban_mental_health/` relative to this repository:
 
-The comparison uses `glc_fcs30d_attribute_table_us_2019.csv`, a newly derived InVEST-style table for the active US scope: 49 states plus DC, Alaska included, Hawaii and territories excluded. It is a replacement derivation because the original Observarun repository references but does not publish Varun's numeric table.
+```text
+data/urban_mental_health/
+├── raw/                 original downloads and collaborator-supplied files
+│   ├── glc_fcs30d/      114 annual land-cover source tiles
+│   ├── worldpop/        complete 2019 US population raster
+│   ├── guppd/           original urban-boundary package
+│   ├── cost_conversion/ saved exchange-rate and price-index inputs
+│   └── collaborator/varun_2026-10/  unchanged land cover, lookup, population, boundaries and costs
+├── processed/           prepared inputs and historical source files
+│   └── lulc_2019_us/    114 one-band 2019 land-cover tiles
+├── manifests/           source, checksum, processing and validation records
+└── pilots/              local tests and diagnostic outputs
+```
 
-1. Select band 20 (2019) from `projects/sat-io/open-datasets/GLC-FCS30D/annual`. Treat fill codes 0 and 250 as missing; preserve all declared class codes.
-2. Build 2019 annual-median NDVI from USGS Landsat 7 and 8 Collection 2 Level 2 surface reflectance after scaling and QA masks for fill, dilated cloud, cirrus where applicable, cloud, shadow, snow and radiometric saturation. Require at least three valid observations.
-3. Use the disjoint GUPPD city-state reporting units plus the boundary residual. For every state/DC/residual × class combination, export raw class area, valid-NDVI area, NDVI-area sum, NDVI-square-area sum and cell counts. Empty combinations are retained as zero rows.
-4. Pool raw sums nationally. Calculate `lc_ndvi = sum(NDVI × valid area) / sum(valid area)` and retain signed values. Do not average state means. Record the area-weighted standard deviation and valid-area fraction.
-5. Separate data coverage from modelling exclusion. `has_valid_ndvi` and `coverage_status` describe evidence; `exclude` remains zero for every class because the original code path did not impose a reviewed scientific class exclusion.
-6. Use only classes with `has_valid_ndvi = 1` in the comparison. Twenty-eight of 35 classes are supported. The seven unsupported classes occur on no population-supporting land-cover cells in the completed run, so `population_missing_lookup = 0`.
+The 2019 GBD prevalence table is in the sibling
+`../depression_prevalence_review/` folder. Small published results are tracked
+inside this repository at `docs/evidence/data/`. The folder name describes a
+file's history, not its scientific role or approval status. For example,
+`processed/data_cost_mental_health.csv` retains a historical path but is an
+unchanged, 2018 PPP-labelled source table; it is not a validated model cost.
 
-The table, raw state-class sums, asset snapshots, manifests and SHA-256 ledger are in [`docs/evidence/data/us_method_comparison_2019_v2_common/`](evidence/data/us_method_comparison_2019_v2_common/). The Earth Engine execution source is versioned in `Yingjie4Science/invest-gee/urban_mental_health/` at commits `53839e7` through `51ff71a`; neutral output-schema and city-summary postprocessing is pinned separately at `b13b052`.
+Keep originals unchanged, record transformations in `manifests/`, and give
+each run a fresh output directory. The current file and checksum register is
+`manifests/current_data_inventory_2026-10-21.json`; it supersedes the 16 October
+pilot inventory. The 21 October partial-download cleanup is recorded in
+`manifests/data_cleanup_2026-10-21.json`.
 
-### Common-support 2×2×2 comparison
+## Current input inventory
 
-The comparison samples direct Landsat NDVI and lookup-assigned NDVI on the same native WorldPop 2019 cell centres and keeps only cells where both methods are valid. It then evaluates two prevalence inputs and two health equations without rounding intermediate values. The common population is 194,369,049.83; 4,424.54 people are outside common support because direct NDVI or land cover is missing. All scenario totals use OR 0.931, `p0 = 0.115`, and the $10,999.206774 per-case-equivalent 2019 USD non-PPP proxy.
+This register traces each input from source to selected derivative. Paths under
+`raw/`, `processed/`, `manifests/` and `pilots/` are relative to the data folder
+above; `docs/` paths are relative to this repository. The sections that follow
+give the source links, processing choices, checks and unresolved provenance.
 
-Validation requires exactly 3,312 unique city receipts and 3,530 city-state rows, exact expected IDs, finite nonnegative population/case/value fields, row-to-city-to-state-to-national support reconciliation, state/DC plus residual reconciliation, exact prevalence scaling, exact valuation arithmetic and reproduction of the earlier direct-NDVI own-support total. Interrupted submissions are preserved in the manifest; an existing asset is accepted only after its table type, expected receipt, and expected row count are verified.
-
-The class lookup is calibrated and evaluated on the same national urban domain. Treat the resulting difference from direct NDVI as an in-sample method sensitivity. It is not held-out validation and the lookup must not be assumed transferable globally.
-
-
-## Executed pilot — 16 October 2026
-
-The population file has arrived. Local Python and GEE Fort Morgan pilots are complete; all 877 modeled city cells pass the matched-input comparison. The real NDVI lookup and private pilot boundary asset are available. **Land-cover sources differ at native resolution**, so national expansion requires an explicit source choice. See [pilot evidence, reproduction and remaining work](evidence/fort_morgan_pilot.md). This supersedes earlier missing-population, unexecuted-lookup and runtime-blocked entries below. Public Bhutan app integration and scientific validation remain pending.
-
-
-Last updated: 2026-10-17. **Current scope: 49 states plus DC; Hawaii excluded by user. See the latest decisions section below for superseding status.** This record separates source files, project derivatives, unresolved owner inputs and model-ready validation. Large rasters and licensed source files are kept outside Git under `../data/urban_mental_health/`.
-
-For the authoritative current decisions and remaining research tasks, see [the completed controlled comparison](DECISIONS_AND_TODOS.md#controlled-original-method-comparison-completed--17-october-2026). Later dated sections retain historical checkpoints.
-
-## Directory convention
-
-- `raw/`: unchanged downloads or unchanged copies supplied by collaborators.
-- `processed/`: derived files used by a model run.
-- `manifests/`: URLs, retrieval dates, sizes, hashes, transformations and validation results.
-- Do not treat a file ending in `.incomplete` as data.
-
-## Current US input inventory
-
-| Input | Selected source | Current status | Model role |
+| Category | Source location | Selected derivative or parameter | Provenance record |
 | --- | --- | --- | --- |
-| Land cover | GLC_FCS30D v2, Zenodo record 15063683 | 114 annual tiles acquired for the active 49-state-plus-DC scope; all pass independent file and band-20 checks | Baseline land-cover classes; later mapped to NDVI |
-| Urban polygons | NASA SEDAC GUPPD v1, DOI 10.7927/brq1-xc29 | Local GeoPackage verified: 3,337 USA polygons; derivative and QC generated | Urban aggregation units and country/ISO labels |
-| Population | WorldPop 2019 | US 2019 constrained R2025A v1 raster received and validated for the local pilots | Population counts on the reference grid |
-| Effect estimate | User-supplied workbook | Present and schema-validated | Depression OR 0.931, 95% CI 0.887-0.977 per 0.1 NDVI |
-| Country prevalence | IHME GBD 2023 estimates for 2019 | Present in `../depression_prevalence_review/` | Country baseline prevalence |
-| Cost proxy | Christensen et al. source table plus preserved conversion inputs | US rate converted to 2019 USD without PPP; broader mood-disorder societal-cost scope remains an interpretation limitation | Exploratory value per case equivalent |
-| Land-cover/NDVI lookup | Newly derived US urban 2019 table | Complete for the controlled comparison: 28/35 classes supported; seven absent classes affect no population-supporting cells | Original-style exposure sensitivity, not production exposure |
+| **Land cover** | `raw/glc_fcs30d/` ([Zenodo](https://zenodo.org/records/15063683)); Varun’s supplied 2019 global mosaic under `raw/collaborator/varun_2026-10/` | `processed/lulc_2019_us/` (band 20 of 114 annual tiles); owner mosaic retained unchanged | `manifests/glc_us_tiles/`; [source comparison](evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json); [processing details](#1-land-cover) |
+| **NDVI exposure** | Landsat 7/8 in Earth Engine; Varun's confirmed run lookup in `raw/collaborator/varun_2026-10/` | Direct 2019 NDVI in Earth Engine; derived lookup in `docs/evidence/data/us_method_comparison_2019_v2_common/` | Published batch evidence and collaborator-file checksums; [method details](#2-ndvi-exposure-inputs) |
+| **Population** | Current US [WorldPop](https://hub.worldpop.org/geodata/summary?id=75977) raster; Varun's supplied mosaic under `raw/collaborator/varun_2026-10/worldpop/` | US raster used directly; mosaic retained for reproduction tests | `raw/worldpop/README.md` and current inventory manifest; [grid and comparison](#3-population) |
+| **Urban boundaries** | [GUPPD](https://doi.org/10.7927/brq1-xc29) source in `raw/guppd/`; Varun's prepared GeoPackage in `raw/collaborator/varun_2026-10/` | `processed/guppd_us_excluding_hawaii.gpkg` | Owner-layer comparison in [review evidence](evidence/data/varun_2026_10/urban_boundaries_audit.json); [selection details](#4-urban-polygons) |
+| **Health parameters** | `processed/effect_size.xlsx`; GBD export in `../depression_prevalence_review/` | Liu et al. OR, 2019 all-age country prevalence, and separately declared `p0` | GBD import manifest and model run manifest; [definitions](#5-health-inputs) |
+| **Valuation** | `processed/data_cost_mental_health.csv`; Varun's workbook in `raw/collaborator/varun_2026-10/` | `processed/data_cost_mental_health_US_2019_USD.csv` with conversion audit | `manifests/cost_conversion_2019_usd.json`; [cost basis and limits](#6-costs-and-valuation) |
 
-## 1. GLC_FCS30D land cover
+Varun's land-cover and population mosaics, prepared urban layer, and confirmed
+run lookup are now present. The US audits below separate measured input differences
+from lookup-generation and cost-provenance questions. Source files remain unchanged.
 
-**Source.** Liu, Zhang and Li, *GLC_FCS30D: the first global 30-m land-cover dynamic monitoring product with fine classification system from 1985 to 2022*, v2, Zenodo record 15063683, DOI `10.5281/zenodo.15063683`. The product has 35 fine land-cover categories. Its reported overall accuracy is 80.88% for 10 broad classes and 73.24% for the 17-class LCCS level-1 system. The guide asks scientific users to contact the authors before use and consider acknowledgement or authorship guidance.
+## 1. Land cover
 
-**US pilot retrieval.** Rather than downloading the entire 135.8 GB archive collection, `scripts/fetch_glc_fcs30d_tile.py` uses HTTP byte ranges to retrieve one member from the official Zenodo ZIP and verifies its ZIP CRC. The selected source member is:
+**Source.** Liu, Zhang and Li, *GLC_FCS30D: the first global 30-m
+land-cover dynamic monitoring product with fine classification system from 1985
+to 2022*, v2, DOI `10.5281/zenodo.15063683`. The community Earth Engine copy is
+documented in the [GLC_FCS catalog](https://gee-community-catalog.org/projects/glc_fcs/).
+Identity between every community asset pixel and the locally downloaded Zenodo
+v2 tiles has not been established, so the source used by each workflow is stated.
 
-`GLC_FCS30D_19852022maps_W75-W80/GLC_FCS30D_20002022_W75N40_Annual_V1.1.tif`
+**Acquisition.** `scripts/fetch_glc_fcs30d_us.py DATA_ROOT --workers 2`
+selected 114 available annual tiles for conservative envelopes around the active
+US scope. It downloaded only the required ZIP members, checked member size and
+CRC, and recorded per-tile hashes and raster metadata under
+`manifests/glc_us_tiles/`. `manifests/glc_us_download_plan.json` records the
+queue. All 114 source tiles and outputs passed the independent acquisition audit.
 
-Its bounds are longitude -75 to approximately -70 and latitude approximately 35 to 40 degrees, so it does not cover Washington, DC, Philadelphia or New York City. Earlier notes incorrectly identified its coverage; those statements are superseded. The source tile has 23 annual bands ordered 2000, 2001, ..., 2022. Band 20 is therefore 2019.
+**2019 extraction.** The source annual tiles contain bands for 2000–2022. Band
+20 is 2019. It was copied to `processed/lulc_2019_us/` without reprojection or
+resampling. Class rasters remain uint8 in their native EPSG:4326 grids. Use
+nearest-neighbor resampling when aligning classes to WorldPop. Do not use
+bilinear or cubic interpolation.
 
-**Preprocessing.** The script copies band 20 to a one-band, tiled, deflate-compressed GeoTIFF without reprojection or resampling. The output retains EPSG:4326, the source transform, uint8 class codes and source-year tags. In a model run, this categorical raster must subsequently be warped to the population grid with nearest-neighbor resampling. Bilinear or cubic resampling must not be used for class codes.
+### Varun's supplied 2019 global land-cover raster
 
-**Observed 2019 values in the pilot tile.** `0, 10, 11, 20, 51, 52, 61, 62, 71, 72, 81, 82, 91, 120, 121, 130, 140, 150, 153, 181, 182, 183, 186, 187, 190, 200, 210`. Code 0 is a fill value in the product guide and should become nodata, not an NDVI value.
+`raw/collaborator/varun_2026-10/lulc_glc_fcs30d_2019.tif` is the raster named by
+Varun's script and now supplied by him. It is a 25,709,308,922-byte, one-band
+uint8 GeoTIFF in EPSG:4326, with a 1/3600-degree grid, nodata 255 and SHA-256
+`05c1aeb0a827ea0de956c88c0314bfcbaa80896cf617f65d2e9e68be674dcdf2`.
+The source's GLC release and 2019 extraction/compositing recipe are not embedded
+in the file. It remains unchanged in `raw/`.
 
+Our [cell-level audit](evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json)
+resampled both sources by nearest neighbor to the same 2019 WorldPop cell centres
+inside all 3,312 current non-Hawaii US polygons. Both had a valid class on
+17,669,023 cell memberships, representing 194.37 million people. Classes differ
+on 3,134,545 memberships, representing **22.06 million people (11.35% of
+both-valid population)**. Forty-four cells representing 459 people are fill in
+the local tiles but valid in Varun's raster; none have the reverse pattern.
+This identifies a material classification or preprocessing difference, without
+establishing which map is more accurate. `scripts/check_varun_landcover.py`
+recreates the audit. The [four-scenario comparison](evidence/data/varun_2026_10/source_lookup_factorial_summary.json)
+isolates its modeled effect from the lookup-value effect.
 
-### Whole-US acquisition (2026-10-16)
+**Nodata.** Codes 0 and 250 are fill. Keep them missing; do not convert them to
+built-up land or zero NDVI. The completed support audit found 44 population-cell
+rows in 22 of the 3,312 retained GUPPD features mapped to code 0 and none to 250.
+See `pilots/us_local_qc_2019_v1/`.
 
-The initial request covered all 50 states and DC. The user subsequently excluded Hawaii, so the active scope is 49 states plus DC, including Alaska and the Aleutian Islands on both sides of the antimeridian. US territories are excluded. The retained 3,312 GUPPD features fall within the planned nominal tile envelopes. The original 3,337-feature derivative and the 25 excluded Hawaii identifiers remain preserved.
+## 2. NDVI exposure inputs
 
-The download uses conservative geographic envelopes and consequently includes some neighboring-country and ocean pixels; it is not a national land mask.
+### Direct 2019 Landsat NDVI: production workflow
 
-`scripts/fetch_glc_fcs30d_us.py DATA_ROOT` selects 114 available annual tiles from the official ZIP central directories (12.93 GB compressed transfer), retrieves only these members with resumable 1 MiB ranges (reduced from 8 MiB after slow-transfer timeouts), checks member size and CRC, and extracts band 20. Outputs are under `processed/lulc_2019_us/`; per-tile checksums and source/raster metadata are under `manifests/glc_us_tiles/`. `manifests/glc_us_download_plan.json` records the complete queue and envelopes. Re-running skips verified outputs and resumes partial compressed members. The completed queue passed an independent audit of all 114 raw/output hashes, raster metadata and deterministic source-band/output pixel windows.
+The US production run uses annual-median 2019 NDVI from Earth Engine
+[Landsat 7](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LE07_C02_T1_L2)
+and [Landsat 8](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC08_C02_T1_L2)
+Collection 2 Level 2, sampled at native WorldPop cell centres. Surface-reflectance scaling is
+applied before NDVI. Fill, dilated cloud, cloud, shadow, snow, applicable cirrus,
+and radiometric saturation are masked, and at least three valid observations are
+required. Positive NDVI is set to zero only in the counterfactual; signed observed
+NDVI remains unchanged. The Earth Engine execution source is in
+`Yingjie4Science/invest-gee/urban_mental_health/`. The run evidence is in
+`docs/evidence/data/us_direct_ndvi_2019_v1/`.
 
-The extracted tiles retain source fill values 0/250 and native grids. Mask both fill codes, use regional virtual mosaics where helpful (separate Alaska across the antimeridian to avoid an almost-global dense raster), and align classes to the population grid using nearest neighbor. A single national dense GeoTIFF is not required. The completed actual-support audit found complete support in 3,290 of 3,312 retained GUPPD features. The other 22 contain 44 feature-row population cells mapping to fill code 0 and none to 250. Keep those cells missing until an explicit exclusion or sensitivity rule is approved; do not silently convert fill to built-up or zero NDVI. Detailed audit files are under `pilots/us_local_qc_2019_v1/`.
+### Derived US GLC_FCS30D-to-NDVI table: completed sensitivity
 
-## 2. GUPPD urban polygons
+The controlled comparison used
+`glc_fcs30d_attribute_table_us_2019.csv`. It pools area-weighted raw NDVI sums
+over disjoint GUPPD city-state units plus the boundary residual. It reports class
+area, valid NDVI area, means, standard deviations, observation support and method
+metadata. Twenty-eight of 35 classes have valid NDVI on the US urban calibration
+domain; the seven unsupported classes occur on no population-supporting cells in
+the comparison. This is an in-sample US method sensitivity, not a globally
+validated lookup.
 
-**Source.** Center for International Earth Science Information Network (CIESIN), Columbia University, and Joint Research Centre, European Commission. 2024. *Global Urban Polygons and Points Dataset (GUPPD), Version 1*. NASA SEDAC. DOI `10.7927/brq1-xc29`.
+### Varun's run lookup: supplied, method pending
 
-GUPPD contains 123,034 named urban settlements and builds on the GHSL settlement hierarchy. It includes urban centres (level 30), dense urban clusters (level 23) and semi-dense urban clusters (level 22), with population attributes for 1975-2030 at five-year intervals. It is the boundary source named by the original model author. The repository filename `urban_boundaries_2019.gpkg` should not be interpreted as polygons observed in 2019; the exact geometry epoch and level selection must be recorded from GUPPD metadata.
+Varun confirmed that `raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv`
+was used in his run. The original public script at commit `f1822e2` instead names
+`glc_fcs30d_attribute_table_processed.csv`; record this as a filename/version
+difference, not evidence that the two files are identical. The supplied table
+has one value for each of 35 GLC classes, blank values for fill codes 0 and 250,
+and signed NDVI from −0.10 to 0.80, recorded to at most two decimal places.
+It has no class counts, uncertainty, exclusion rule, generation method or
+temporal/geographic metadata.
 
-**Local check (2026-10-16).** The supplied GeoPackage contains 123,034 features in each of its point and polygon layers. Filtering the polygon layer on `ISO = USA` gives 3,337 polygons: 324 level 30, 1,748 level 23 and 1,265 level 22. All are valid geometries and `SMOD_ID` is unique in this subset. `scripts/prepare_guppd_us.py DATA_ROOT` preserves all source attributes and adds stable `id`, `source_fid`, `country` and `iso3` fields. It writes `processed/guppd_us.gpkg` and `manifests/guppd_us_qc.json`. Settlement overlap and the model's FID join remain separate checks.
+Against the 28 supported classes in the independently derived US urban 2019
+table, its unweighted class-value mean absolute difference is **0.164 NDVI**,
+RMSE **0.205**, and mean signed difference **−0.084** (Varun minus US). The
+largest class gaps are sparse vegetation (−0.461), sparse herbaceous (−0.449)
+and deciduous shrubland (−0.390). Impervious surfaces are 0.20 versus 0.392.
+These comparisons show a material exposure-assignment difference, not which
+table is more accurate: the US values are in-sample urban estimates, and rare
+classes have weak support. We ran it as a **separate original-lookup
+sensitivity** on the same local population, GLC and city support, then compared
+national and city cases. Keep the published derived-table comparison labelled
+as such. A claim of empirical lookup quality requires the lookup's NDVI source,
+year/season, sampling domain, compositing, weighting, pixel counts, QA and edits.
 
-**Preprocessing checklist.**
+**Matched local sensitivity completed.** On the same 3,312 US polygons, native
+WorldPop cells, verified local 2019 GLC tiles, GBD rate and current-reference
+health equation, rerunning the local model with only the lookup changed gives
+**2.46 million** case equivalents for the US-derived table and **1.68 million** for Varun's table (**31.62% lower**). Both runs model
+the same **194.37 million** people after excluding 459 people on source fill.
+Among 2,307 cities with at least 100 cases in the derived-table run, the median
+city change is **−37.32%**. These are technical exposure sensitivities, not a
+reproduction of Varun's global run or evidence that either table is more valid.
+The paired [summary and city results](evidence/data/varun_2026_10/summary.json)
+are reproducible with `scripts/run_us_national_technical.py` and
+`scripts/summarize_varun_lookup_runs.py`; the raw run records are under
+`pilots/varun_lookup_matched_2019_v1/` in the data folder. A separate
+[fixed-5% calculation](evidence/data/varun_2026_10/us_lookup_value_sensitivity.json)
+uses the same class-population totals and is labelled a sensitivity.
 
-1. Inventory all GeoPackage layers, feature counts, CRS, geometry types and attribute fields.
-2. Select the polygon layer and filter to the United States using the authoritative ISO/country field.
-3. Decide and document which settlement levels are included. Check for overlapping units before aggregation so population and cases are not counted twice.
-4. Preserve the original GUPPD identifier, name, settlement level, ISO code and country name.
-5. Repair invalid geometry only when necessary, recording the count and method.
-6. Add the model fields `id`, `country` and `iso3` without replacing source identifiers. Use a country label that is explicitly crosswalked to IHME and the cost workbook.
-7. Use the full US subset for coverage checks, then select a small overlapping city only for the initial technical run.
-8. Verify that feature identifiers returned by zonal statistics map to the intended GeoPackage records. The current code's sequential-FID assumption requires an explicit test.
+**Owner-raster crossed sensitivity.** Using Varun's supplied 2019 land-cover
+raster, population mosaic and 3,309 non-Hawaii polygons, but holding the same
+GBD US rate, `p0`, OR, current-reference equation and US societal-cost proxy,
+his lookup gives **1.67 million** case equivalents (conditional effect limits
+0.50–3.08 million); the US-derived lookup gives **2.46 million**. Holding the
+lookup fixed while switching local tiles to Varun's raster changes national
+cases by **−0.90%** with Varun's lookup or **−0.34%** with the US-derived lookup.
+On Varun's raster, changing the lookup lowers cases by **32.01%**. These are
+four *full local technical runs*; the separate fixed-5% plus literal-original
+equation result of **1.54 million** is an algebraic re-evaluation of the saved
+class-population totals, not a fifth raster run. See the [scenario summary](evidence/data/varun_2026_10/source_lookup_factorial_summary.json)
+and saved receipts in `pilots/varun_lookup_matched_2019_v1/`.
 
-## 3. WorldPop population
+## 3. Population
 
-### Reproduction-compatible primary choice
+### US input used in the published run
 
-The original code points to a custom `100m_2019_global-mosaic.tif`. The email chain says it was made by stitching country-level WorldPop 100 m rasters. For a United States pilot, the closest identifiable source is the archived Global Project file:
+The selected file is the WorldPop Global 2 R2025A v1 retrospective 2019
+constrained raster:
 
-`https://data.worldpop.org/GIS/Population/Global_2000_2020/2019/USA/usa_ppp_2019.tif`
+`raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif`
 
-This is a 2019, approximately 100 m, EPSG:4326 population-count raster. The archive path is the unconstrained Global 2000-2020 product; `_UNadj` denotes a UN-adjusted variant; do not label the unsuffixed file as UN-adjusted. The exact adjustment basis remains to be confirmed with the source metadata. This identification should be confirmed against the original owner's mosaic manifest before claiming exact reproduction.
-
-### User-selected current release
-
-WorldPop Global 2 R2025A v1 supplies a retrospective 2019 constrained raster at 100 m:
-
+Direct URL:
 `https://data.worldpop.org/GIS/Population/Global_2015_2030/R2025A/2019/USA/v1/100m/constrained/usa_pop_2019_CN_100m_R2025A_v1.tif`
 
-The user-selected [WorldPop page 75977](https://hub.worldpop.org/geodata/summary?id=75977) links to this exact 2019 file (despite a 2024 preview-image filename). It describes R2025A as an alpha release. It is smaller and uses a newer modelling release, but it is not the same population surface as the original pipeline. Use it as an explicitly labelled updated-input scenario, not as an unnoticed replacement. A 1 km constrained version is available for low-resolution technical testing.
+The file is 1,511,305,409 bytes with SHA-256
+`8b0ef7a8994d7686e49298f4d5f0b5129460e053d92ad6ec9eef5a300f5cc66c`.
+It opens as a one-band float32 GeoTIFF in EPSG:4326, 430,706 by 62,971 cells,
+with 0.00083333333-degree pixels and nodata -99999. The raster was used in the
+local pilots, nationwide support audit and cloud production workflow. Its local
+record is `raw/worldpop/README.md`.
 
-**Download status.** The WorldPop file host stalled during this session and rejected byte-range resume. Partial files are retained only with an `.incomplete` suffix. A complete file must match the remote `Content-Length`, open successfully with GDAL/rasterio, have EPSG:4326 and plausible nonnegative counts after masking nodata. Record SHA-256 and the raster sum before use.
+### Varun's supplied WorldPop mosaic
 
-**Preprocessing.** Preserve population values as counts. Clip by a grid-aligned window without resampling when possible. If mosaicking country rasters, use a deterministic country list and order, preserve the native resolution and transform, mask each source nodata value, and check for overlaps/gaps. Do not average population counts. The land-cover raster should be aligned to this population grid, not the reverse.
+`raw/collaborator/varun_2026-10/worldpop/100m_2019_global-mosaic.tif` is the
+file named by Varun's original script (4,019,600,915 bytes; SHA-256
+`86bc5772d6cec40b21977bc88cb82ac981ef0a2c353ce614ede22a1d3bafef56`).
+It is one-band float32 EPSG:4326, 430,706 × 151,396 cells, with
+0.00083333333-degree resolution and nodata −99999. It shares the current US
+raster's origin, width and resolution.
 
-## 4. Effect estimate
+A complete comparison over the **3,312 active US urban polygons** found identical
+values and nodata status at all **17,669,067 valid population cell memberships**
+(19,058,233 polygon cell memberships checked); both sum to 194,367,283 people.
+The [cell audit](evidence/data/varun_2026_10/population_mosaic_us_urban_cell_audit.json)
+is reproduced by `scripts/check_varun_population_mosaic.py`. This closes US
+modeled-population equivalence on the declared cell-centre support, not global
+mosaic provenance or pixel identity outside those polygons. Keep the original
+published input fixed; use the supplied mosaic for a separately labelled owner
+rerun. For future global work, request its country-file releases, constrained
+status, mosaic command and overlap rule. Preserve population counts and align
+categorical land cover to its grid with nearest neighbor.
 
-The present workbook has one depression row with OR `0.931` and 95% CI `0.887-0.977` per 0.1 NDVI, citing Liu et al. (2023), DOI `10.1016/j.envres.2023.116303`. The model reads only `health_indicator`, `effect_size`, `ci_lower` and `ci_upper`. Preserve the additional exposure, effect-type and reference columns for review. The workbook is an input, not evidence that the selected OR and the land-cover-derived exposure metric are fully compatible.
+## 4. Urban polygons
 
-## 5. Country prevalence and treatment costs
+**Source.** CIESIN and the European Commission Joint Research Centre (2024),
+*Global Urban Polygons and Points Dataset (GUPPD), Version 1*, NASA SEDAC, DOI
+[`10.7927/brq1-xc29`](https://doi.org/10.7927/brq1-xc29).
 
-The primary prevalence source is the locally validated GBD 2023 table for 2019, both sexes, all ages, crude prevalence of depressive disorders. The US polygon label must resolve to its GBD location ID; do not silently fall back to a global 5% rate.
+The source GeoPackage has 123,034 features in each of its point and polygon
+layers. Filtering the polygon layer to `ISO = USA` gives 3,337 polygons: 324
+level 30, 1,748 level 23, and 1,265 level 22. All were valid and `SMOD_ID` was
+unique. `scripts/prepare_guppd_us.py` preserves source fields and adds stable
+`id`, `source_fid`, `country`, and `iso3` fields. The active derivative excludes
+25 Hawaii polygons and contains 3,312 features. Source and selected identifiers
+are recorded in `manifests/guppd_us_excluding_hawaii_qc.json`.
 
-The treatment-cost workbook must contain one unique row per included country with `country`, finite nonnegative `cost_per_case`, `currency = USD`, `price_year = 2019`, and Excel Boolean `ppp_adjusted = FALSE`. These declarations are a validation gate. The source rate, cost components, original currency/year, market exchange rate and inflation conversion still require independent provenance.
+Varun's original script at commit `f1822e2` reads the whole prepared
+`urban_boundaries_2019.gpkg` with no further level, country, area or population
+filter. His supplied copy contains **121,552** polygons worldwide, including
+levels **22 (17,302), 23 (91,174), and 30 (13,076)**; all IDs are present in
+the 123,034-feature GUPPD v1 source. It omits 1,482 source IDs, mostly with
+zero source 2020 population, but the exact preparation rule cannot be recovered
+from the GeoPackage alone. Its feature IDs are sequential in this copy, so the
+original code's sequential-FID join is consistent with this supplied file.
 
-**Supplied cost CSV audit (2026-10-16).** `processed/data_cost_mental_health.csv` contains 33 country rows, all with `year = 2018`, `Price_USD_PPP`, `dx_broad = mood disorders`, and `cost_broad_type = total societal cost`. The US value is 10,803.426 per patient. This is not an approved 2019 USD non-PPP depression treatment-cost input. Preserve the CSV unchanged; do not relabel it or merely inflate it to 2019. Obtain original local-currency costs, original price years, the PPP conversion source/factors if reversal is needed, market exchange rates, and the intended cost components. Broader mood-disorder societal costs need a separate endpoint/component justification even after currency conversion. Monetary output remains blocked pending this reconciliation.
+For the US, the owner layer contains **3,334** polygons (levels 22: 1,263;
+23: 1,747; 30: 324). All 3,334 geometries match the source exactly. After
+excluding its 25 Hawaii polygons, 3,309 owner IDs match our active selection;
+our selection retains three additional polygons (`22_15706`, `22_15770`,
+`23_88815`) that have zero modeled WorldPop cells and cases. Thus the US
+**modeled population and case totals are unaffected by those three IDs** under
+the current cell-centre rule, though feature counts differ. Varun's stored
+`population_2019` values are auxiliary attributes: on the 3,309 shared US
+non-Hawaii IDs they sum to 197.32 million, versus 194.37 million in our
+cell-centre raster calculation. Do not substitute those attributes for the
+model population. The [boundary audit](evidence/data/varun_2026_10/urban_boundaries_audit.json)
+and `scripts/audit_varun_inputs.py` record IDs, levels, source geometry and
+checksums. The owner's exact global selection rule remains a provenance request,
+not a blocker for the matched US lookup test.
 
-## 6. Land-cover/NDVI lookup: unresolved provenance
+## 5. Health inputs
 
-The Git history contains no lookup data or generation script. The model simply reads `glc_fcs30d_attribute_table_processed.csv`, takes `lc_code` and `lc_ndvi`, and assigns that single NDVI number to every raster cell in a class. The email chain shows another team member asking the original author to share the “code/attribute table” and the author saying project data would be placed in the shared submissions directory. No subsequent derivation appears in the supplied chain.
+**Effect.** `processed/effect_size.xlsx` contains one depression row with OR
+0.931 and 95% CI 0.887–0.977 per +0.1 NDVI from
+[Liu et al. (2023)](https://doi.org/10.1016/j.envres.2023.116303). Preserve its
+exposure, effect-type, outcome and reference columns. The workbook's presence
+does not by itself establish full compatibility between the meta-analytic effect
+and either exposure representation.
 
-The lookup therefore cannot currently be reproduced from public code. Do not infer NDVI values from class names or colours. Request the original table and method listed below. If it cannot be recovered, build a replacement as a separately versioned empirical product: select a documented satellite NDVI product and 2019 compositing period, apply QA/cloud/snow/water masks, align it with GLC_FCS30D, calculate a declared statistic for each class over a declared geography, report pixel counts and distributions, validate held-out locations, and keep water/fill/nodata handling explicit. A global class mean is a strong simplification and should be tested against region-specific values.
+**Prevalence: two declared scenarios.** The primary input is the locally
+validated [IHME GBD Results](https://vizhub.healthdata.org/gbd-results/) GBD
+2023 release table for 2019, both sexes, all ages, crude depressive-disorders
+prevalence (204 locations), joined by reviewed country crosswalk to all-age
+WorldPop. The original script at commit `f1822e2` explicitly sets
+`baseline_prevalence_rate = 0.05` for every country. Retain this fixed 5% as a
+second, labelled original-method sensitivity; it is an adult WHO approximate
+rate applied to an all-age denominator, not a country estimate. Never silently
+substitute one source for the other. The US GBD rate is **4.2433%**; on identical
+exposure/support and equation, changing only to 5% raises modeled cases and
+valuation by **17.83%**. Both versions are already present in the eight-scenario
+[controlled comparison](evidence/data/us_method_comparison_2019_v2_common/scenario_comparison.csv).
+This checks implementation sensitivity, not independent epidemiologic
+cross-validation: both runs share population, exposure and effect assumptions.
+Missing country joins stop a GBD run; the fixed-rate run must report its
+age-denominator mismatch.
 
-## 7. Files and information needed from the original repository owner
+**`p0`.** The default 0.115 is the health-record depression-diagnosis proportion
+for the lowest residential-NDVI quartile in Hystad et al. (2019), used in the
+approximate OR-to-RR conversion. It is a transported Quebec adult-cohort proxy,
+not the GBD country prevalence or a measured zero-NDVI risk. Its alternatives and
+structural sensitivity range are documented in `docs/DECISIONS_AND_TODOS.md`.
 
-### Essential for exact or close reproduction
+## 6. Costs and valuation
 
-1. **Original `glc_fcs30d_attribute_table_processed.csv`.** Include its checksum and all columns.
-2. **Lookup-generation code or notebook and precursor data.** Specify the NDVI product/sensor, year and months, compositing statistic, cloud/snow/water QA, spatial sampling extent, class statistic (mean, median or other), weighting, sample count per class, excluded pixels, treatment of codes 0/250 and any manual edits.
-3. **Original WorldPop mosaic manifest.** List every country file/URL, release, constrained versus unconstrained choice, UN-adjusted status, mosaic command/order, output CRS/transform/nodata, overlap rule and checksum of `100m_2019_global-mosaic.tif`.
-4. **Original GUPPD derivative.** Provide the exact GUPPD version and layer, geometry epoch, settlement-level filters, country filters, country-name edits/crosswalk, geometry repairs and checksum of `urban_boundaries_2019.gpkg`.
-5. **Original 32-country inclusion list and rationale.** Clarify whether countries were selected by urban coverage, cost availability or another rule.
-6. **Original treatment-cost sources and conversion ledger.** For each country, identify the source, cost components, original currency and price year, market exchange-rate source, inflation index and formula used to express the result in 2019 USD without PPP.
-7. **A small known-good run or checksums.** One city/country input bundle and expected intermediate/output summaries would support regression testing.
+### Existing 33-country source and US proxy
 
-### Already obtained locally but still subject to scientific review
+`processed/data_cost_mental_health.csv` contains 33 rows labelled 2018 USD PPP,
+`mood disorders`, and `total societal cost`. It is preserved unchanged. The
+Christensen paper first inflated costs within country to 2018 and then converted
+them with 2018 PPP factors, mainly OECD factors with World Bank/Quandl fallbacks.
 
-- The effect-size workbook.
-- The 2019 GBD country prevalence table.
-- The original code and email explanations of the high- and low-resolution workflows.
+The documented non-PPP conversion is:
 
-## 8. Validation gates before interpreting results
+`2019 USD = 2018 international dollars × PPP2018 (LCU/international dollar) × CPI2019/CPI2018 ÷ annual-average FX2019 (LCU/USD)`
 
-- Every land-cover code in the AOI is either mapped once or explicitly treated as nodata.
-- Population and land-cover grids overlap, use expected CRS/transforms and retain population counts.
-- Urban polygons do not create unintended overlap or double counting.
-- Polygon country labels match both GBD prevalence and cost rows.
-- Population sums, urban feature counts and zonal totals are compared with source summaries.
-- The model is first run on a fresh small output directory; intermediate rasters are visually inspected.
-- Reported uncertainty remains conditional unless prevalence, exposure, population and cost uncertainty are also propagated.
+PPP appears only to reverse the supplied normalization; the final conversion
+uses market exchange rates. Saved WDI responses and URLs are under
+`raw/cost_conversion/`; `manifests/cost_conversion_2019_usd.json` records hashes
+and factors. `scripts/convert_costs_2019_usd.py DATA_ROOT` reproduces the audit
+CSV and the US rate of $10,999.206774 per case equivalent in 2019 USD. The 30
+non-US numeric conversions use revised WDI GDP PPP and remain provisional; the
+exact historical OECD factor ledger was not recovered. Bulgaria and the Europe
+aggregate remain unresolved.
 
+All conversions retain `model_ready = False` because the source outcome is broad
+mood-disorder total societal cost per patient. The production report labels the
+US result as an exploratory societal-value proxy. Currency conversion does not
+make the endpoint depression-specific or establish causal savings.
 
-## Latest scope and cost conversion decisions (2026-10-16; supersedes earlier status)
+### Varun-supplied 199-country estimates and decision
 
-The user explicitly excluded Hawaii. The active US scope is now 49 states plus DC (Alaska included, territories excluded). `processed/guppd_us_excluding_hawaii.gpkg` retains 3,312 polygons; the 25 Hawaii identifiers and geographic selection envelope are recorded in `manifests/guppd_us_excluding_hawaii_qc.json`. The earlier 3,337-feature derivative remains preserved. The completed 114-tile acquisition includes neighboring-country tiles from conservative envelopes, but no Hawaii tile. Hawaii is an intentional scope exclusion, not a blocker.
+The supplied `treatment_cost.xlsx` has 199 unique country rows and two columns:
+`country` and `cost_per_case`. The United States value is 5,834.61 and Bhutan is
+398.07. There are no formulas or embedded metadata fields. The user confirmed
+on 21 October 2026 that the estimates are denominated in 2019 USD; this
+confirmation is recorded in the external-data manifest rather than written into
+the source workbook. The accompanying appendix describes a pooled depression
+and hypertension GDP-based meta-regression:
+a shared slope of 0.87 (SE 0.29; 95% CI 0.28–1.45), compared with 1.52 (SE 0.32)
+for depression alone. It also notes no depression observations below about
+$27,000 GDP per capita, differing cost definitions, and extrapolation for the
+lowest-income countries.
 
-The user supplied the complete WorldPop US 2019 constrained R2025A v1 raster. It has been validated and used in the local pilot, expanded tests, and nationwide land-cover support audit. Any older `.incomplete` transfer remains unusable.
+The two accompanying World Bank files are GDP per capita in current US dollars
+(`NY.GDP.PCAP.CD`) and the GDP deflator (`NY.GDP.DEFL.ZS`). They are predictor or
+inflation references, not a row-level proof of the non-PPP basis or prediction
+and conversion method.
+At the US rate, Varun's **$5,834.61** is **46.95% below** the Christensen-derived
+**$10,999.21**. Applied to the identical 2.45 million common-support direct-NDVI
+case equivalents, those alternatives give **$14.31 billion** and **$26.99
+billion**, respectively. This is a cost-input comparison, not two independent
+estimates of cases or a confidence interval. They differ in cost scope, source
+coverage (199 versus 33 countries), construction (regression prediction versus
+published review/conversion), and auditability. The Christensen US rate has a
+reproducible currency conversion but is a broad mood-disorder *total societal*
+proxy; Varun's workbook has broader coverage and a smaller US value but no
+row-level evidence for the cost components or non-PPP status. Neither currently
+supports a claim of depression-specific treatment savings.
 
-### Conversion of Christensen et al. costs to 2019 USD
+**Decision.** Retain the published US societal valuation as a clearly labelled
+exploratory baseline; show Varun's rate as a separate conditional valuation
+sensitivity using identical case outputs, without changing the published run.
+For a global production valuation, prioritize obtaining Varun's prediction and
+currency ledger, explicit non-PPP confirmation and country crosswalk, then make
+a reviewed derivative with `currency=USD`, `price_year=2019`,
+`ppp_adjusted=FALSE`, a cost-scope label and row-level provenance. If that
+cannot be recovered, report cases without monetary totals for unverified
+countries. Do not compare the dollar totals as if they measured the same
+cost construct.
 
-Source paper: Christensen et al. (2020), doi:10.1017/S204579602000075X, Methods / Data extraction. The paper inflated costs within each country to 2018 and converted with 2018 PPP factors, primarily OECD (accessed February 2020), with World Bank/Quandl fallbacks. Online Resource 2 was downloaded for the audit; an original factor ledger was not recovered from it.
+**Additional US price sensitivity.** The SNAPP project's Greenberg 2019
+adult-MDD anchor is $16,854 per case in reported 2019 USD. We applied it to
+the same four saved case outputs without changing cases; see the [three-rate
+comparison](evidence/varun_us_cost_comparison.md). This source is more explicit
+about US price year, but its adult-MDD endpoint differs from the model's
+all-age depressive-disorders endpoint. It remains a conditional valuation,
+not the selected production rate. The SNAPP 2024 pooled estimate was excluded
+because this project reports 2019 USD and its pooled calculation needs a small
+source/rounding reconciliation.
 
-The reproducible conversion is:
+## 7. Remaining requests, owners and decisions
 
-`2019 USD = supplied 2018 international dollars × PPP2018 (LCU/international dollar) × CPI2019/CPI2018 ÷ annual-average FX2019 (LCU/USD)`.
+The US polygon levels/geometries, modeled population equivalence, owner
+land-cover source difference and paired lookup effect are now checked. **No additional user modelling decision is needed
+for the next US technical comparisons.** Keep direct 2019 NDVI as the primary US
+exposure and retain the two class lookups as separate sensitivities. Do not
+replace the published production result with either lookup run.
 
-PPP is used only to reverse the source normalization. Final values use market exchange rates. The country CPI update occurs before the 2019 exchange-rate conversion. Current World Bank WDI series `PA.NUS.PPP`, `FP.CPI.TOTL`, and `PA.NUS.FCRF` (snapshot last updated 2026-10-08) are saved under `raw/cost_conversion/`; response hashes and URLs are recorded in `manifests/cost_conversion_2019_usd.json`. Run `python scripts/convert_costs_2019_usd.py DATA_ROOT` to reproduce the two derivative CSVs.
+| Status | Waiting on | Specific information or decision | Recommended action |
+| --- | --- | --- | --- |
+| **Ask Varun now: lookup provenance** | Varun | For the confirmed `glc_fcs30d_attribute_table_processed_updated.csv`: NDVI sensor/product, year and months, mask/composite, calibration geography, class statistic and weights, sample counts, fill/water treatment, manual edits, generation code; explain why the public script names `...processed.csv` | Keep his table as an original-run sensitivity until its source and sampling method can be checked; then test against held-out direct NDVI |
+| **Ask Varun now: cost provenance** | Varun | Row-level prediction/price ledger or code, source cost components, 2019 USD market-exchange basis, explicit PPP status and country crosswalk for `treatment_cost.xlsx` | Retain the US societal proxy as exploratory; display Varun's rate only as conditional cost sensitivity until non-PPP basis and cost scope are verified |
+| **Useful for later global replication** | Varun | Supplied land-cover mosaic’s GLC release, 2019 extraction/compositing and nodata/merge recipe; population mosaic country-source releases and build/overlap rule; GeoPackage selection rule and stored-population calculation; country inclusion list and one known-good original intermediate/final run | Supplied rasters permit the completed US comparison; request these records before claiming pixel-identical global reproduction |
+| **Internal, completed for US** | Project team | Compare Varun's GUPPD layer, population cells, land-cover raster and both lookup tables | Boundary/population audits, class-map audit and four crossed full runs are linked above; retain the published direct-NDVI result unchanged |
+| **Internal, still open** | Project team | Validate lookup against held-out areas/years, assess `p0` and endpoint compatibility, and propagate uncertainty beyond the OR interval | Do this before interpreting lookup differences as predictive accuracy or the intervals as full model uncertainty |
 
-- `processed/data_cost_mental_health_2019_usd_conversion_audit.csv`: all 33 original rows and source columns, added factors, converted values, and status flags. 31 rows have a numeric conversion. For 30 non-US countries this is a **provisional reconstruction using revised WDI GDP PPP**, not a verified reversal of the paper's exact OECD vintage.
-- `processed/data_cost_mental_health_US_2019_USD.csv`: US reference-currency conversion, from 10,803.426 to **10,999.206774445318 USD per patient in 2019 prices**. US PPP and FX factors are both 1; WDI CPI rises from 115.15730322479 to 117.244195476228.
-- Bulgaria is held because current PPP and historical FX values need currency-unit reconciliation. Europe is held because the aggregate cannot be reversed with a single country factor. No missing value is imputed as zero.
+The key request to Varun is **how the lookup was produced**, not another
+confirmation that he used it; his use of that file is already confirmed.
 
-All derivatives retain `model_ready = False`: the supplied values describe **mood-disorder total societal cost per patient**, which has not yet been accepted as a proxy for depression-specific cost. Currency conversion does not change the endpoint or cost components. The original CSV is unchanged, and no model workbook or run has been silently replaced. For exact non-US reversal, obtain the original 2018 PPP factors or the pre-PPP local-currency costs, then regenerate with a matched currency basis. The numerical round-trip check verifies arithmetic, not source validity.
+## 8. Reproduction and validation gates
 
-### NDVI lookup derivation record
+The original local code accepts explicit `--land-cover`, `--population`,
+`--ndvi-lookup`, `--effects`, `--urban-boundaries`, and `--costs` paths. The
+windowed nationwide technical runner additionally accepts
+`--land-cover-mosaic`, `--population-raster` and `--urban-boundaries` to
+reproduce the owner-input sensitivity without building a dense US mosaic. Use explicit paths for
+current data; the built-in filenames preserve Varun's historical directory
+layout. The national land cover is deliberately tiled, so the current local data
+folder is suited to tiled pilots and audits rather than an unreviewed dense
+Alaska-spanning mosaic. The published direct-NDVI national workflow ran in Earth
+Engine and is documented separately.
 
-The user supplied the shared Landsat script text and the community asset catalog. The catalog identifies `projects/sat-io/open-datasets/GLC-FCS30D/annual`; annual band 20 corresponds to 2019. The screenshot was an NLCD-format example, so its codes and values were not copied. The completed replacement derivation preserves the shared script's annual median of merged Landsat observations, narrows the period to 2019, adds the declared QA and minimum-observation rules, and aggregates signed NDVI by actual GLC_FCS30D class. Its class coverage and raw pooling terms are published with the comparison.
+Before interpreting a new run, check the status of the particular inputs used.
+The published direct-NDVI run and the new local lookup sensitivities have
+different evidence scopes.
 
+| Gate | Current status | Next action |
+| --- | --- | --- |
+| Urban support and population | **US technical check passed:** all 3,334 owner US geometries match GUPPD; the three IDs absent from the owner file have zero modeled population; all 17.67 million active urban population cell memberships match between the supplied mosaic and current US raster | Keep owner and current boundary selections separately named; obtain the global filter recipe only for global replication |
+| Land cover and lookup | **Four US technical runs complete:** both land-cover sources crossed with both lookups. The maps differ for 11.35% of both-valid population, but switching raster at a fixed lookup changes national cases by −0.34% to −0.90%; switching lookup changes cases by about −32%. The owner mosaic recipe, lookup calibration and held-out validity remain unknown | Request source and lookup-generation records; test both tables against held-out direct NDVI before promoting an exposure method |
+| Health inputs | GBD US crosswalk and fixed-5% sensitivities are complete; `p0` and pooled effect remain transported assumptions | Keep age denominators and reference state explicit; repeat country joins and `p0` sensitivity on expansion |
+| Valuation | Published US cost is documented 2019 USD non-PPP but a broad societal proxy. Varun workbook is user-labelled 2019 USD; PPP status and scope remain unverified | Keep monetary estimates conditional; obtain the prediction/currency ledger before adopting Varun's 199-country rates |
+| Run integrity and uncertainty | All four full local source/lookup runs have fresh output directories, input/output hashes and per-city results. The owner-raster runs use his 3,309-feature non-Hawaii layer. OR limits hold other inputs fixed | Preserve receipts; the 5%/literal-original result is an analytic sensitivity; extend uncertainty before claiming full intervals or causal savings |
 
-## Executable preparation and model wiring
+These completed technical checks support a **US method comparison**. A strict
+global reproduction still needs the owner records in Section 7.
 
-From the repository directory (replace `DATA_ROOT` with the local data directory):
+Useful local preparation commands are:
 
 ```sh
 GEP_DOWNLOAD_TRANSPORT=curl python scripts/fetch_glc_fcs30d_us.py DATA_ROOT --workers 2
+python scripts/prepare_guppd_us.py DATA_ROOT
 python scripts/check_us_boundaries.py DATA_ROOT
+python scripts/verify_land_cover_acquisition.py DATA_ROOT
 python scripts/convert_costs_2019_usd.py DATA_ROOT
 ```
 
-The earlier `derive_glc_ndvi_2019_gee.js` candidate remains a historical local prototype. The completed national cloud workflow is versioned in `Yingjie4Science/invest-gee` as `national_lookup_batch.js`, `serialize_national_lookup_batch.cjs`, `run_national_lookup_batch.py`, and `collect_national_lookup.py`. It exported 51 state/DC/residual groups, verified the exact 51 × 35 inventory, pooled raw weighted sums, and produced the published attribute table. The 2019 annual median and minimum-three-observation rule are documented replacement choices rather than recovered original-author settings. Community-asset versus local Zenodo-v2 file identity remains unverified.
-
-The model runner now accepts explicit file paths. A future validated run should include all six input flags plus `--country-prevalence-table` and `--country-crosswalk config/us_country_crosswalk.csv`, and use a new `--project-dir`. Do not run a national dense raster across Alaska's antimeridian extent without first reviewing memory/storage requirements and regional processing. The `--costs` input still requires the reviewed XLSX schema; the conversion audit CSV is not silently substituted.
-
-Verification completed in this implementation stage: 11 unit tests; JavaScript syntax; Python compilation; explicit US prevalence join; geometry-intersection audit. Remaining verification: isolated-environment completion, real raster run, pixel-level overlap checks, lookup export/coverage, cost-proxy interpretation and output maps/tables.
-
-
-## Retry and shared-script review update — 16 October 2026
-
-The user supplied the reference script text. Its review is now saved in [shared NDVI script review](evidence/shared_ndvi_script_review.md). The lookup adaptation preserves its annual median of merged Landsat observations, using L7 and L8 for 2019. It additionally masks snow and screens L7 saturation, declares a minimum-observation threshold, and introduces the previously absent GLC class aggregation. Script inspection is complete; Earth Engine execution, asset-version comparison and export validation remain incomplete.
-
-The national tile retry now uses 1 MiB compressed ranges because repeated 8 MiB ranges received only 4–7 MB before the timeout. Existing verified tiles and completed partial chunks are preserved. Growth of partial files confirms transfer progress but does not establish a verified tile. Eight tiles were verified at this retry checkpoint.
-
-The stalled Conda solve was stopped. A separate pilot venv at `.envs/urban-mental-health-pilot` inherits the existing invest environment's native geospatial packages and adds model dependencies locally. This pilot arrangement must be recorded with both the inherited package inventory and the venv package list; it is not a standalone portable environment. Full import/test results are recorded separately when complete. The original Conda recipe remains available for a clean build on another machine.
+See the [production report](evidence/us_direct_ndvi_production_run.md),
+[controlled comparison data](evidence/data/us_method_comparison_2019_v2_common/),
+and [decisions and remaining work](DECISIONS_AND_TODOS.md) for interpretation.

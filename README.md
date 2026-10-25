@@ -1,74 +1,183 @@
 # Global GEP Urban Mental Health Service
 
-**Direct-NDVI nationwide production calculation completed (17 October 2026):** all 133 Earth Engine batches completed with exactly 3,312 expected GUPPD receipts. The result is **2.45 million** additional depressive-disorder case equivalents (conditional effect limits **0.71–4.63 million**) and a **$26.99 billion** 2019 USD non-PPP societal-value proxy. Read these as conditional model outputs under the zero-positive-NDVI counterfactual. See the [concise production report](docs/evidence/us_direct_ndvi_production_run.md) and [machine-readable summaries](docs/evidence/data/us_direct_ndvi_2019_v1/).
+This project estimates additional depression-related case equivalents under a
+built-up-like counterfactual in which positive NDVI is set to zero. Results are
+conditional model estimates, not observed diagnoses, verified causal effects, or
+validated monetary savings.
 
-**Controlled original-method comparison completed:** a newly derived 2019 US urban GLC_FCS30D-to-NDVI attribute table was run in a full 2×2×2 comparison of exposure method, prevalence and health equation. On common valid support, the class lookup gives **2.43 million** case equivalents under the production prevalence/equation, **1.16% below** direct NDVI nationally, although city-level differences are often much larger. The configuration closest to the original code choices—class lookup, fixed 5% prevalence and the literal original equation—gives **2.18 million** and a **$24.00 billion** 2019 USD non-PPP proxy. The numeric table is newly calibrated because the original repository does not provide Varun's table. See the [comparison in the production report](docs/evidence/us_direct_ndvi_production_run.md#controlled-comparison-of-the-modelling-choices), [attribute table](docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv), and [validated comparison outputs](docs/evidence/data/us_method_comparison_2019_v2_common/).
+## Current US results
 
-The earlier five-region land-cover lookup run remains a technical comparator. All 114 official GLC_FCS30D tiles passed acquisition checks, but that lookup transferred poorly among test cities. See the [national technical-run evidence](docs/evidence/us_national_technical_run.md), [expanded source tests](docs/evidence/expanded_city_tests.md), and [original Fort Morgan pilot](docs/evidence/fort_morgan_pilot.md).
+**Direct-NDVI national production calculation (17 October 2026).** All 133 Earth
+Engine batches completed with exactly 3,312 expected GUPPD city receipts for 49
+states plus DC, including Alaska and excluding Hawaii. The result is **2.45
+million** additional depressive-disorder case equivalents, with effect-estimate
+limits of **0.71–4.63 million**, and an exploratory **$26.99 billion** 2019 USD
+non-PPP societal-value proxy. See the [concise production
+report](docs/evidence/us_direct_ndvi_production_run.md), [machine-readable
+summaries](docs/evidence/data/us_direct_ndvi_2019_v1/), and [public Earth Engine
+app](https://natcap-gep.projects.earthengine.app/view/us-urban-mental-health).
 
-This repository estimates additional depression-related cases under a built-up-like, zero-positive-NDVI counterfactual relative to estimated observed 2019 cases. It uses 2019 country-specific, all-age GBD depressive-disorders prevalence with 2019 all-age WorldPop. The resulting cases and costs are conditional model estimates, not observed avoided diagnoses or validated societal savings.
+**Controlled original-method comparison.** On common population support, the
+newly derived 2019 US urban GLC_FCS30D class lookup gives **2.43 million** case
+equivalents under the production prevalence and health equation, **1.16% below**
+direct NDVI nationally. City differences are often much larger. The configuration
+closest to the original code choices—class lookup, fixed 5% prevalence and the
+literal original equation—gives **2.18 million** and a **$24.00 billion** proxy.
+See the [comparison](docs/evidence/us_direct_ndvi_production_run.md#controlled-comparison-of-the-modelling-choices)
+and [validated outputs](docs/evidence/data/us_method_comparison_2019_v2_common/).
 
-## Status and evidence boundary
+Varun confirmed that his supplied 35-class lookup was used in his run. A new
+matched local sensitivity gives **1.68 million** case equivalents with his table
+versus **2.46 million** with our US-derived table on identical 2019 GLC and
+population support. This is a technical lookup comparison; the published
+direct-NDVI result remains the primary estimate. His GUPPD layer, WorldPop mosaic and 2019 land-cover raster are now present.
+The population cells match, while land-cover class assignments differ for
+**11.35%** of population on cells valid in both sources. The crossed full runs
+show **1.67 million** cases with his land cover and lookup under our GBD/current-reference
+health settings; changing the raster alone shifts cases by less than 1% nationally,
+while changing the lookup lowers cases by about 32%. See the [data guide](docs/DATA_SOURCES_AND_PREPROCESSING.md)
+and [four-scenario evidence](docs/evidence/data/varun_2026_10/source_lookup_factorial_summary.json).
+The [US cost comparison](docs/evidence/varun_us_cost_comparison.md) applies
+Varun's rate, the current project proxy and a directly reported 2019 USD
+adult-MDD rate from SNAPP to these same case outputs; all dollar totals are
+conditional on their different cost definitions.
 
-The direct-NDVI production summaries, task manifest and checksums are now included. Internal receipt, aggregation, interval and valuation checks pass. Earth Engine's reporting geometries include 6,191.371 more people (0.00319%) than the independent local native-cell-centre audit; this known cross-engine boundary sensitivity is retained rather than silently rescaled. The source rasters and collaborator workbooks remain outside Git. The default `p0 = 0.115`, exposure-response effect, prevalence and cost proxy remain transported inputs, and the reported confidence limits cover only the effect estimate.
+## Model workflow
 
-## Workflow
+The two exposure paths share the health calculation but estimate baseline NDVI
+differently:
 
-The original/local code path maps GLC_FCS30D classes to fixed NDVI values. The US production calculation instead samples 2019 Landsat NDVI directly at WorldPop cell centres. The completed controlled comparison runs both exposure representations on the same valid population cells and then varies the prevalence and health equation. This separates exposure smoothing from the 5% prevalence assumption and the case-reference-state choice.
+```text
+2019 WorldPop + GUPPD cities
+             │
+             ├── production: sample annual-median 2019 Landsat NDVI
+             │
+             └── sensitivity: map 2019 GLC_FCS30D classes to fixed NDVI
+                              values from an attribute table
+             │
+             ▼
+set positive NDVI to zero in the counterfactual
+             │
+             ▼
+OR → approximate RR using p0; calculate population case factor
+             │
+             ▼
+apply matched 2019 prevalence; aggregate city → state → national
+             │
+             ▼
+apply the labelled 2019 USD non-PPP cost proxy
+```
 
-1. Nearest-neighbor warp 2019 GLC_FCS30D land cover (approximately 30 m) to the 2019 WorldPop population grid (approximately 100 m).
-2. Assign NDVI to each land-cover code from `glc_fcs30d_attribute_table_processed.csv`. This code does not calculate Landsat NDVI or a residential buffer average.
-3. Set every positive mapped NDVI value to zero for a built-up-like exposure counterfactual. Zero and negative values remain unchanged; land-cover codes do not change.
-4. Calculate `delta_NDVI = baseline_NDVI - counterfactual_NDVI`.
-5. Convert the Liu et al. (2023) depression odds ratio per +0.1 NDVI to an approximate risk ratio using `RR = OR / (1 - p0 + p0 * OR)`. Compute a pixel **case factor at prevalence 1** as `population × (RR^(-10 × delta_NDVI) - 1)`. This treats 2019 prevalence-derived cases as the observed reference state.
-6. Sum case factors within urban polygons and multiply each polygon by its matched country 2019 GBD depressive-disorders prevalence. Sum regional cases by country and apply matched 2019 USD non-PPP cost-per-case rates. Unmatched prevalence or cost countries stop the run.
+For the local class-lookup code path:
 
-The agreed primary workflow requires `--country-prevalence-table` pointing to the validated 204-location CSV documented in the local `gep-global/depression_prevalence_review` folder. The table must have `location_id`, `country_as_gbd`, `year = 2019`, `prevalence_fraction`, and `gbd_release = GBD 2023`. Exact polygon-country/GBD-name matches are used by default. A reviewed crosswalk CSV (`polygon_country,gbd_location_id`) can resolve differences; missing matches fail. The historical 0.05 WHO adult proxy is available only via explicit `--baseline-prevalence 0.05` sensitivity run, not the primary default.
+1. Warp 2019 GLC_FCS30D classes to the WorldPop grid with nearest-neighbor
+   resampling.
+2. Assign one NDVI value to each class from the selected lookup table.
+3. Set positive mapped NDVI to zero in the counterfactual; retain zero and
+   negative values and do not change class codes.
+4. Calculate `delta_NDVI = observed_NDVI - counterfactual_NDVI`.
+5. Convert the Liu et al. (2023) OR per +0.1 NDVI to an approximate RR with
+   `RR = OR / (1 - p0 + p0 × OR)`.
+6. Calculate a pixel case factor at prevalence 1 as
+   `population × (RR^(-10 × delta_NDVI) - 1)`.
+7. Aggregate by urban polygon, multiply by matched 2019 prevalence, and then
+   apply a reviewed cost rate.
 
-The separate default `p0 = 0.115` is the health-record diagnosis proportion for the lowest residential-NDVI quartile in Table 1 of [Hystad et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/33778335/), a Quebec adult cohort. It is not a GBD country prevalence or measured zero-NDVI risk. [Zhang and Yu (1998)](https://doi.org/10.1001/jama.280.19.1690) give the approximate OR-to-RR conversion. The model's cost and case interpretations still depend on outcome/effect compatibility and data validation.
+The production workflow instead samples signed Landsat NDVI directly at native
+WorldPop cell centres. The controlled comparison runs both exposure paths on the
+same valid cells and independently varies prevalence and health equation.
 
-The full Liu NDVI study extraction found nine named studies and 13 forest estimates, mixed depression outcomes, repeated cohorts, very high heterogeneity, and no fully matched low-exposure probability for an individual forest effect. The project therefore retains `p0 = 0.115` as a labelled legacy scenario, `0.096` as a separate Hystad self-report scenario, and `0.03–0.20` as structural sensitivity analysis. See the [decision and to-do record](docs/DECISIONS_AND_TODOS.md), [evidence audit](docs/evidence/liu_2023_ndvi_p0_review.md), and [row-level extraction](docs/evidence/liu_2023_ndvi_study_extraction.csv).
+## Health inputs and interpretation
 
-## Input data record
+The primary prevalence input is the locally validated IHME GBD 2023 table for
+2019, both sexes, all ages, crude prevalence of depressive disorders. It matches
+the all-age WorldPop denominator. The historical 5% WHO adult prevalence is an
+explicit sensitivity only.
 
-Source selection, current US pilot availability, preprocessing steps, and the exact files/methods still needed from the original owner are recorded in [`docs/DATA_SOURCES_AND_PREPROCESSING.md`](docs/DATA_SOURCES_AND_PREPROCESSING.md). Large source rasters and collaborator workbooks remain outside Git under `../data/urban_mental_health/`.
+The default `p0 = 0.115` is the health-record depression-diagnosis proportion in
+the lowest residential-NDVI quartile in Table 1 of [Hystad et al.
+(2019)](https://pubmed.ncbi.nlm.nih.gov/33778335/). It is a transported Quebec
+adult-cohort proxy for OR-to-RR conversion, not a GBD prevalence or measured
+zero-NDVI risk. The project also retains 0.096 as a Hystad self-report scenario
+and 0.03–0.20 as structural sensitivity. See the [decision
+record](docs/DECISIONS_AND_TODOS.md) and [evidence
+review](docs/evidence/liu_2023_ndvi_p0_review.md).
 
-## Reproduce a run
+The reported 95% limits propagate only Liu et al.'s OR limits. They hold `p0`,
+prevalence, population, exposure, model structure and costs fixed.
 
-Create the environment from `environment.yml` and provide the six external spatial, effect and cost inputs at the paths below, relative to `--base-data-dir`:
+## Current data layout
 
-| Input | Expected path |
-| --- | --- |
-| 2019 WorldPop mosaic | `worldpop/100m_2019_global-mosaic.tif` |
-| Land-cover NDVI lookup | `glc_fcs30d_attribute_table_processed.csv` |
-| Effect sizes | `effect_size.xlsx` |
-| Urban polygons | `urban_boundaries_2019.gpkg` |
-| Cost per case | `treatment_cost.xlsx` |
-| 2019 GLC_FCS30D land cover | `../../lulc/glc_fcs30d/lulc_glc_fcs30d_2019.tif` |
+The inventory is organized below by **scientific category**, so each source and
+its prepared derivative remain together conceptually. Large files are physically
+stored outside Git under `../data/urban_mental_health/` using provenance stages:
+`raw/` for unchanged sources, `processed/` for prepared derivatives,
+`manifests/` for traceability, and `pilots/` for run outputs. The stage folder
+does not define the scientific category or imply that a file is model-ready.
 
-The effect-size workbook must have exactly one `health_indicator = depression` row with numeric `effect_size`, `ci_lower`, and `ci_upper` columns. These must be an OR and its 95% confidence limits per +0.1 NDVI. The published Liu et al. (2023) example is 0.931 (0.887–0.977).
+| Main category | Source or raw record | Prepared or selected input | Current use and status |
+| --- | --- | --- | --- |
+| **Land cover and exposure** | GLC_FCS30D annual source tiles: `raw/glc_fcs30d/` ([Zenodo 15063683](https://zenodo.org/records/15063683)); Varun’s supplied 2019 mosaic: `raw/collaborator/varun_2026-10/lulc_glc_fcs30d_2019.tif`; direct NDVI: Earth Engine Landsat 7/8 | 2019 local tiles: `processed/lulc_2019_us/`; derived US lookup in `docs/evidence/data/us_method_comparison_2019_v2_common/` | Direct NDVI remains the production exposure. Both class rasters and both lookup tables have crossed US technical runs; owner mosaic and lookup generation remain to document. |
+| **Population** | WorldPop record [75977](https://hub.worldpop.org/geodata/summary?id=75977) | `raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif` | Complete 2019 constrained R2025A count raster used in the published US run. Varun's global mosaic is available; all modeled US urban cell values and nodata statuses match the selected raster. |
+| **Urban boundaries** | GUPPD v1 source: `raw/guppd/Urban_boundaries/` ([DOI](https://doi.org/10.7927/brq1-xc29)); Varun’s supplied global GeoPackage | `processed/guppd_us_excluding_hawaii.gpkg`; owner US subset `processed/varun_us_excluding_hawaii.gpkg` | 3,312 current versus 3,309 owner non-Hawaii polygons; the three current-only IDs carry zero modeled population. |
+| **Health parameters** | Liu et al. effect evidence and IHME GBD Results | `processed/effect_size.xlsx`; `../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv` | OR 0.931 with 95% CI 0.887–0.977; primary prevalence is 2019 both-sex all-age depressive disorders. `p0` remains a labelled transported parameter. |
+| **Valuation** | Christensen source table and Varun's reference bundle | US proxy: `processed/data_cost_mental_health_US_2019_USD.csv`; conversion audit beside it | Published US values use the explicitly exploratory $10,999.206774 societal-cost proxy. Varun's 199-country workbook is user-confirmed as 2019 USD but still needs explicit non-PPP confirmation and a prediction ledger. |
+| **Reproducibility records** | Acquisition and source manifests | `manifests/current_data_inventory_2026-10-21.json`; published evidence under `docs/evidence/data/` | Current file/hash register, validation receipts, run summaries and cleanup history. |
 
-The cost workbook must have one row per country with `country`, nonnegative `cost_per_case`, `currency = USD`, `price_year = 2019`, and `ppp_adjusted = FALSE` (an Excel boolean). The script stops if any row lacks this declaration and labels its output `cost_savings_2019_usd`. **These declarations are not proof of the rates' basis.** For each source rate, retain a citation and its original currency and price year. If conversion is needed, document the market exchange rate and inflation index used to express it in 2019 USD; do not use PPP conversion factors. The public repository lacks `treatment_cost.xlsx`, so its current rates and conversion history remain unverified.
+This organization separates four different states that should not be conflated:
+an unchanged source, a prepared derivative, an input selected for a run, and an
+output from that run. See [Data sources and
+preprocessing](docs/DATA_SOURCES_AND_PREPROCESSING.md) for the category-specific
+file register, source links, transformations, validation status and remaining
+actions.
 
-Run from this directory with a fresh output directory:
+## Reproducing work
+
+The published direct-NDVI national calculation ran in Earth Engine. Its batch
+receipts, validation, summaries and checksums are versioned under
+`docs/evidence/data/us_direct_ndvi_2019_v1/`; the cloud source is in
+`Yingjie4Science/invest-gee/urban_mental_health/`.
+
+`run_urban_mental_health.py` implements the local land-cover lookup path. It
+accepts explicit paths for all inputs; use these flags with the current data
+layout because its default filenames preserve Varun's historical folder layout:
 
 ```bash
 python run_urban_mental_health.py \
-  --base-data-dir /path/to/urban_mental_health_inputs \
-  --country-prevalence-table /path/to/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --land-cover /path/to/one_2019_categorical_land_cover_raster.tif \
+  --population ../data/urban_mental_health/raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif \
+  --ndvi-lookup /path/to/reviewed_lookup.csv \
+  --effects ../data/urban_mental_health/processed/effect_size.xlsx \
+  --urban-boundaries ../data/urban_mental_health/processed/guppd_us_excluding_hawaii.gpkg \
+  --costs /path/to/reviewed_2019_usd_non_ppp_costs.xlsx \
+  --country-prevalence-table ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --country-crosswalk config/us_country_crosswalk.csv \
   --project-dir /path/to/new_run
 ```
 
-Omit `--country-crosswalk` only if every polygon country label exactly matches the GBD table. Use `--baseline-prevalence` for an explicitly labelled scalar sensitivity run **instead of** the country table; use `--p0` for a reference-risk sensitivity run. `p0` should correspond to the least-green reference group for the OR. The default output directory is timestamped. Earlier land-cover and NDVI tasks still skip existing files, so a fresh directory is needed when inputs change.
+The 114 national land-cover tiles are intentionally kept tiled; a single dense
+national raster spanning Alaska's antimeridian has not been created. Use the
+tiled pilot and cloud workflows unless a reviewed regional mosaic strategy is
+added. The Varun cost workbook is not used in the command above until its missing
+non-PPP and model-provenance fields are resolved.
 
-After successful execution, `run_manifest.json` records parameter values and provenance notes, the Git commit when available, Python version, and SHA-256 checksums of inputs, source files, and key outputs. Hashing large rasters adds I/O time. The manifest is local output and should be reviewed for machine paths before any publication.
-
-## Conditional 95% effect-size limits
-
-The pipeline writes point and effect-limit **case-factor** rasters (each at prevalence 1) and matching urban-region case and country-cost CSVs. It propagates the two reported OR limits through the same OR-to-RR conversion and model formula. For this code's nonnegative exposure change, a lower OR produces a larger case-equivalent estimate. Therefore, the lower output limit uses the **upper OR limit**, and the upper output limit uses the **lower OR limit**. Direct endpoint transformation gives the conditional bounds for one shared monotone effect parameter; sampling that parameter by Monte Carlo would converge to the same result.
-
-The interval holds p0, baseline prevalence, land-cover-derived NDVI, population, and cost rates fixed. It does not cover their uncertainty, the substantial heterogeneity of the source literature, or the assumptions needed for a causal interpretation. Fractional region estimates are retained through country aggregation; values are rounded only in final country CSV presentation.
+Use `--baseline-prevalence 0.05` for the explicitly labelled original-method
+prevalence scenario instead of the country table; the 2019 GBD version remains
+the primary run. The [controlled comparison](docs/evidence/us_direct_ndvi_production_run.md#controlled-comparison-of-the-modelling-choices)
+already includes both on common US support. Use `--p0` for a
+reference-risk sensitivity. Always use a fresh output directory when inputs change. `run_manifest.json` records parameters,
+code revision and SHA-256 checksums; review machine paths before publication.
 
 ## Review gates
 
-Before reporting case or monetary values, verify the GBD-country/polygon join and outcome match, transportability and sensitivity of the Quebec p0 proxy, land-cover-to-NDVI lookup provenance, polygon feature-ID mapping, cost scope, each rate's 2019 USD non-PPP provenance, and the observed-case reference-state assumption. These checks require the unpublished input files and a completed run.
+Before reporting a new run, verify:
+
+- exposure and outcome definitions match the effect estimate;
+- the GBD country join is complete and age denominators match WorldPop;
+- `p0` transportability and sensitivity are reported;
+- every populated land-cover code has one reviewed lookup value or is explicit
+  nodata;
+- polygon IDs and aggregation totals reconcile without double counting;
+- every cost rate is auditable 2019 USD with `ppp_adjusted = FALSE` and a stated
+  cost scope; and
+- output limits are labelled as conditional on all inputs not propagated.
