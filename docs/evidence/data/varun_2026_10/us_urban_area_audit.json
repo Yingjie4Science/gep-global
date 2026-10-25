@@ -1,0 +1,42 @@
+{
+  "status": "unique_footprint_area_of_saved_non_hawaii_us_guppd_polygons",
+  "local": {
+    "path": "../data/urban_mental_health/processed/guppd_us_excluding_hawaii.gpkg",
+    "sha256": "15e65899aeca57f7c6fa4929311e18dc3609aa59a5a4022fe8f83239053893fb",
+    "feature_count": 3312,
+    "input_crs": "EPSG:4326",
+    "area_method": "reproject polygon geometry to EPSG:5070; shapely.union_all; area / 1e6",
+    "unique_area_km2": 129240.83128903562,
+    "polygon_area_sum_km2": 129240.83193331413,
+    "overlap_km2": 0.0006442785088438541
+  },
+  "varun": {
+    "path": "../data/urban_mental_health/processed/varun_us_excluding_hawaii.gpkg",
+    "sha256": "34a4c2d0f2f6862726f0fc3a31b92a4a42e6bf9b52d5184586e02d97c0b46f22",
+    "feature_count": 3309,
+    "input_crs": "EPSG:4326",
+    "area_method": "reproject polygon geometry to EPSG:5070; shapely.union_all; area / 1e6",
+    "unique_area_km2": 129239.81415785408,
+    "polygon_area_sum_km2": 129239.81480213263,
+    "overlap_km2": 0.0006442785524995998
+  },
+  "snapp_metropolitan_counties": {
+    "path": "../../SNAPP/data/national/counties.gpkg",
+    "sha256": "bf5980befaa1d5d3aee0ca718d71b6ecf188b9c719209671c9d8fc8733b8b7b4",
+    "feature_count": 1167,
+    "input_crs": "EPSG:4269",
+    "area_method": "reproject polygon geometry to EPSG:5070; shapely.union_all; area / 1e6",
+    "unique_area_km2": 2526402.137032878,
+    "polygon_area_sum_km2": 2526402.137032883,
+    "overlap_km2": 4.6566128730773926e-09,
+    "region_list_path": "../../SNAPP/config/regions.csv",
+    "region_list_sha256": "8ebbf4515ea435dc2a7f5d0ba981451a438737af7a6fba158554ac0a01fe9095"
+  },
+  "local_only_ids": [
+    "22_15706",
+    "22_15770",
+    "23_88815"
+  ],
+  "unique_area_difference_km2": 1.0171311815356603,
+  "interpretation": "Polygon footprint only; not populated area or valid-NDVI area. SNAPP metropolitan county geography is a different spatial support."
+}

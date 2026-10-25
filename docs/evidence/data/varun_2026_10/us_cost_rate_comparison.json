@@ -1,0 +1,56 @@
+{
+  "status": "cost_only_postprocessing_comparison_not_new_case_model_run",
+  "scope": "Same four 2019 US non-Hawaii technical case runs; only cost per case changes.",
+  "source_sha256": {
+    "docs/evidence/data/varun_2026_10/source_lookup_factorial_summary.json": "0c66772be234255313fac4ea23ca32ed85cf42c2c6a210b57e7321e5e976e38f",
+    "../data/urban_mental_health/raw/collaborator/varun_2026-10/treatment_cost.xlsx": "1ee6cc8a2f4747d252bfd40c1b06e9726952fe71b99761606fe8a5962f1a038f"
+  },
+  "costs": {
+    "project_exploratory_us_societal_proxy_per_case_2019_usd_non_ppp": 10999.206774445318,
+    "varun_workbook_us_row_per_case_user_confirmed_2019_usd_ppp_status_unverified": 5834.61,
+    "owner_minus_project_per_case_percent": -46.95426570618103
+  },
+  "scenarios": {
+    "local_landcover_us_lookup": {
+      "case_equivalents_unchanged": 2464031.343563511,
+      "effect_lower_unchanged": 726285.715995171,
+      "effect_upper_unchanged": 4584415.584224306,
+      "project_cost_value_usd": 27102390246.569374,
+      "varun_cost_value_usd_conditional": 14376661917.469097,
+      "varun_cost_effect_lower_value_usd_conditional": 4237593901.4025846,
+      "varun_cost_effect_upper_value_usd_conditional": 26748277011.870975,
+      "difference_usd": -12725728329.100277
+    },
+    "local_landcover_varun_lookup": {
+      "case_equivalents_unchanged": 1684807.7155295734,
+      "effect_lower_unchanged": 500900.86635407904,
+      "effect_upper_unchanged": 3114721.5985293174,
+      "project_cost_value_usd": 18531548438.290623,
+      "varun_cost_value_usd_conditional": 9830195945.106003,
+      "varun_cost_effect_lower_value_usd_conditional": 2922561203.838173,
+      "varun_cost_effect_upper_value_usd_conditional": 18173185785.99514,
+      "difference_usd": -8701352493.18462
+    },
+    "varun_landcover_us_lookup": {
+      "case_equivalents_unchanged": 2455743.6083112173,
+      "effect_lower_unchanged": 724042.7467907418,
+      "effect_upper_unchanged": 4567595.0538143795,
+      "project_cost_value_usd": 27011231732.837532,
+      "varun_cost_value_usd_conditional": 14328306214.48871,
+      "varun_cost_effect_lower_value_usd_conditional": 4224507050.85273,
+      "varun_cost_effect_upper_value_usd_conditional": 26650135776.935917,
+      "difference_usd": -12682925518.348822
+    },
+    "varun_landcover_varun_lookup": {
+      "case_equivalents_unchanged": 1669564.5275967636,
+      "effect_lower_unchanged": 496713.92287618463,
+      "effect_upper_unchanged": 3084186.8476458336,
+      "project_cost_value_usd": 18363885462.31592,
+      "varun_cost_value_usd_conditional": 9741257888.361353,
+      "varun_cost_effect_lower_value_usd_conditional": 2898132021.5526156,
+      "varun_cost_effect_upper_value_usd_conditional": 17995027423.142857,
+      "difference_usd": -8622627573.954569
+    }
+  },
+  "interpretation": "Case counts and OR-only effect limits are unchanged. The two rates may measure different cost constructs. Varun workbook is user-confirmed as 2019 USD, but does not itself record currency year, PPP status, cost components, or country estimation ledger. Varun-valued totals are conditional illustrations, not approved non-PPP production values or treatment savings."
+}

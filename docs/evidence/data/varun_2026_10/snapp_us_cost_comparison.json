@@ -1,0 +1,77 @@
+{
+  "status": "three_cost_rate_postprocessing_comparison_on_four_unchanged_us_case_runs",
+  "scope": "2019 non-Hawaii US technical case equivalents; GBD all-age depressive-disorders endpoint; no case model rerun",
+  "sources": {
+    "factorial_summary_sha256": "0c66772be234255313fac4ea23ca32ed85cf42c2c6a210b57e7321e5e976e38f",
+    "existing_cost_comparison_sha256": "177bc64c17f5843c8f53717da398aeef20fe4949813e0142f39e2261a565b0e7",
+    "snapp_cost_studies_sha256": "93616df294279ed95cf35159d11427189891a8b6823f3f422c549ad207e4d96a",
+    "snapp_cost_note_sha256": "154b43394583e88c969867b714409666ae62910e92d4049a2b42ff67bc9ca39d",
+    "snapp_study_doi": "10.1007/s12325-023-02622-x",
+    "primary_paper_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10499687/",
+    "snapp_study_row": {
+      "study": "Greenberg et al. 2023 (Advances in Therapy)",
+      "base_year": "2019",
+      "total_burden_usd": "382400000000",
+      "usd_basis_year": "2023",
+      "us_adults_mdd": "19800000",
+      "per_case_reported_usd": "16854",
+      "per_case_2024_usd": "19882",
+      "pooled": "yes",
+      "doi": "10.1007/s12325-023-02622-x",
+      "notes": "reported $16,854/adult in 2019 USD; healthcare 38.1% / household 24% / presenteeism 13% / absenteeism 11.5%"
+    }
+  },
+  "rates_per_case_usd": {
+    "varun_conditional_2019_usd_ppp_and_scope_unverified": 5834.61,
+    "project_exploratory_2019_usd_non_ppp_mood_disorders_proxy": 10999.206774445318,
+    "snapp_greenberg_adult_mdd_incremental_societal_2019_usd": 16854.0
+  },
+  "comparison": {
+    "local_landcover_us_lookup": {
+      "case_equivalents_unchanged": 2464031.343563511,
+      "effect_lower_unchanged": 726285.715995171,
+      "effect_upper_unchanged": 4584415.584224306,
+      "varun_value_usd_conditional": 14376661917.469097,
+      "project_value_usd_exploratory": 27102390246.56937,
+      "snapp_value_usd_conditional": 41528784264.41942,
+      "snapp_effect_lower_value_usd_conditional": 12240819457.382612,
+      "snapp_effect_upper_value_usd_conditional": 77265740256.51645
+    },
+    "local_landcover_varun_lookup": {
+      "case_equivalents_unchanged": 1684807.7155295734,
+      "effect_lower_unchanged": 500900.86635407904,
+      "effect_upper_unchanged": 3114721.5985293174,
+      "varun_value_usd_conditional": 9830195945.106003,
+      "project_value_usd_exploratory": 18531548438.290623,
+      "snapp_value_usd_conditional": 28395749237.53543,
+      "snapp_effect_lower_value_usd_conditional": 8442183201.531649,
+      "snapp_effect_upper_value_usd_conditional": 52495517821.61311
+    },
+    "varun_landcover_us_lookup": {
+      "case_equivalents_unchanged": 2455743.6083112173,
+      "effect_lower_unchanged": 724042.7467907418,
+      "effect_upper_unchanged": 4567595.0538143795,
+      "varun_value_usd_conditional": 14328306214.48871,
+      "project_value_usd_exploratory": 27011231732.837532,
+      "snapp_value_usd_conditional": 41389102774.47726,
+      "snapp_effect_lower_value_usd_conditional": 12203016454.411161,
+      "snapp_effect_upper_value_usd_conditional": 76982247036.98755
+    },
+    "varun_landcover_varun_lookup": {
+      "case_equivalents_unchanged": 1669564.5275967636,
+      "effect_lower_unchanged": 496713.92287618463,
+      "effect_upper_unchanged": 3084186.8476458336,
+      "varun_value_usd_conditional": 9741257888.361353,
+      "project_value_usd_exploratory": 18363885462.315918,
+      "snapp_value_usd_conditional": 28138840548.115852,
+      "snapp_effect_lower_value_usd_conditional": 8371616456.155216,
+      "snapp_effect_upper_value_usd_conditional": 51980885130.22288
+    }
+  },
+  "limitations": [
+    "SNAPP/Greenberg rate is annual incremental societal cost per US adult with MDD, while modeled cases use all-age GBD depressive-disorders prevalence. Endpoint and age denominator differ.",
+    "Varun workbook is user-labelled 2019 USD; PPP status and cost components are not embedded. Cost constructs may differ.",
+    "The SNAPP 2024 pooled value is excluded because the project reports 2019 USD; its documentation also differs from the script output due to component shares summing to 100.2%.",
+    "Multiplying case equivalents by cost per prevalent case is a valuation sensitivity, not a measured causal reduction in spending."
+  ]
+}
