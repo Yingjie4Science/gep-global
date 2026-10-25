@@ -1,0 +1,15 @@
+{
+  "features_checked": 3312,
+  "polygon_cells_checked": 19058233,
+  "cells_with_current_valid_population": 17669067,
+  "value_mismatches": 0,
+  "nodata_mismatches": 0,
+  "population_current": 194367282.99912617,
+  "population_owner": 194367282.99912617,
+  "max_abs_difference": 0.0,
+  "first_mismatch_ids": [],
+  "status": "matched_all_active_us_urban_polygon_cell_centres",
+  "scope": "Current 3312 GUPPD US features excluding Hawaii; native WorldPop cell-centre membership, including repeated feature memberships if any.",
+  "mosaic_sha256": "86bc5772d6cec40b21977bc88cb82ac981ef0a2c353ce614ede22a1d3bafef56",
+  "current_us_sha256": "8b0ef7a8994d7686e49298f4d5f0b5129460e053d92ad6ec9eef5a300f5cc66c"
+}
