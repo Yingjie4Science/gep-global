@@ -1,0 +1,28 @@
+{
+  "status": "complete_matched_local_lookup_runs",
+  "comparison": "Same local 2019 Zenodo GLC classes, WorldPop raster, 3312 GUPPD features, OR/p0, GBD prevalence and cost proxy; only lookup CSV differs.",
+  "input_sha256": {
+    "derived_city_results": "f2cea9b64b347e084a6eee8e9e27564d4840e319e7f0644a9496c3cdd60fa8be",
+    "varun_city_results": "d071f18a64eabd33ee80d83f560b428695f549910b16228794d0857bef4e8822"
+  },
+  "derived_run_record_sha256": "008131023f42c5c10b829dc928e5c72e1adba95af44095c6d84c3efa00ca8e04",
+  "varun_run_record_sha256": "885888fd62dfe695cab0b986ffe8dabe7eee62970897a0892993f1fe22a9b036",
+  "city_rows": 3312,
+  "population_total": 194367282.999126,
+  "population_modelled": 194366823.90610072,
+  "derived_cases": 2464031.343563511,
+  "varun_lookup_cases": 1684807.7155295734,
+  "percent_difference": -31.623933277854142,
+  "varun_conditional_effect_limits": [
+    500900.86635407904,
+    3114721.5985293174
+  ],
+  "cities_with_derived_cases_at_least_100": 2307,
+  "median_city_percent_difference_at_least_100": -37.32113033748532,
+  "city_percent_difference_5th_95th_at_least_100": [
+    -49.54747720146513,
+    -8.15900398155518
+  ],
+  "fraction_cities_absolute_difference_over_10_percent_at_least_100": 0.9822280017338535,
+  "limitation": "Technical lookup sensitivity, not Varun full-run reproduction or empirical validation. Both runs use current 3312-feature US selection and current cost proxy; Varun supplied polygon layer and cost workbook are not substituted. Effect limits hold other inputs fixed."
+}

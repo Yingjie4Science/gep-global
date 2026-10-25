@@ -1,0 +1,135 @@
+{
+  "status": "four_full_us_technical_runs_and_three_analytic_health_sensitivities",
+  "scope": "2019 US non-Hawaii, owner and local categorical land cover crossed with owner and US-derived lookup. Full runs hold GBD US all-age prevalence, p0, OR, current-reference health equation, and exploratory US cost proxy fixed.",
+  "comparability": "Owner runs use 3309 owner polygons, owner population and land-cover mosaics; local runs use 3312 current polygons, current US population and Zenodo 2019 tiles. Audits confirm equal population cell values on active support, and the three current-only IDs have zero modeled population and cases. Source fill differs by 459.093 people.",
+  "scenarios": {
+    "local_landcover_us_lookup": {
+      "feature_count": 3312,
+      "common_feature_count": 3309,
+      "population_total": 194367282.999126,
+      "population_modelled": 194366823.90610072,
+      "population_source_fill": 459.0930252801627,
+      "additional_cases": 2464031.343563511,
+      "effect_lower": 726285.715995171,
+      "effect_upper": 4584415.584224306,
+      "value_2019_usd_societal_proxy": 27102390246.569374,
+      "prevalence": 0.0424332878,
+      "p0": 0.115,
+      "input_sha256": {
+        "docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv": "4d2f654319a1a937efcb23eb9846c0d997b60485e8f8af053ff665c4d2b45702",
+        "../data/urban_mental_health/processed/effect_size.xlsx": "3aab4a8bad100862e11d729bc58aac17271c72d3da711570ce4be04850ce7c15",
+        "../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv": "94576d6ad7512dfbc426b7a802045743ac9d24b5ebe5e0b5058528f93678b0ca",
+        "config/us_country_crosswalk.csv": "cf70a2e8a5fa9e88a103fb9a03a8857333a795ac869168b22ced2046155d1865",
+        "../data/urban_mental_health/processed/data_cost_mental_health_US_2019_USD.csv": "58bc4e97d74511a71902f7957270b94cb8fc6e79e34b6e388d419897807fa36b",
+        "../data/urban_mental_health/processed/guppd_us_excluding_hawaii.gpkg": "15e65899aeca57f7c6fa4929311e18dc3609aa59a5a4022fe8f83239053893fb",
+        "../data/urban_mental_health/raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif": "8b0ef7a8994d7686e49298f4d5f0b5129460e053d92ad6ec9eef5a300f5cc66c",
+        "../data/urban_mental_health/manifests/glc_us_download_plan.json": "3c85fa9c518f47071fc813f12858866a94d95c6eb6d076b3ca386116de89e58d"
+      },
+      "run_output_sha256": {
+        "urban_feature_results.csv": "f2cea9b64b347e084a6eee8e9e27564d4840e319e7f0644a9496c3cdd60fa8be",
+        "class_population_summary.csv": "66d4647fb288732440578f834b5e5430d7c758edeed142afa314dc3ccc1080ac",
+        "national_summary.json": "654f31f12cec65094d94f607054dde66babe287c52a65cb01080e19391f28cd4",
+        "national_summary.csv": "db9004bbb35672bc1a9e75c5edf18d00a488ed245d459c2f857235865c685ed7"
+      }
+    },
+    "local_landcover_varun_lookup": {
+      "feature_count": 3312,
+      "common_feature_count": 3309,
+      "population_total": 194367282.999126,
+      "population_modelled": 194366823.90610072,
+      "population_source_fill": 459.0930252801627,
+      "additional_cases": 1684807.7155295734,
+      "effect_lower": 500900.86635407904,
+      "effect_upper": 3114721.5985293174,
+      "value_2019_usd_societal_proxy": 18531548438.290623,
+      "prevalence": 0.0424332878,
+      "p0": 0.115,
+      "input_sha256": {
+        "../data/urban_mental_health/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv": "a00968fd800ccb1214635509a193f0b426d43c801c374a0d9b4bbfe1b3cd5fab",
+        "../data/urban_mental_health/processed/effect_size.xlsx": "3aab4a8bad100862e11d729bc58aac17271c72d3da711570ce4be04850ce7c15",
+        "../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv": "94576d6ad7512dfbc426b7a802045743ac9d24b5ebe5e0b5058528f93678b0ca",
+        "config/us_country_crosswalk.csv": "cf70a2e8a5fa9e88a103fb9a03a8857333a795ac869168b22ced2046155d1865",
+        "../data/urban_mental_health/processed/data_cost_mental_health_US_2019_USD.csv": "58bc4e97d74511a71902f7957270b94cb8fc6e79e34b6e388d419897807fa36b",
+        "../data/urban_mental_health/processed/guppd_us_excluding_hawaii.gpkg": "15e65899aeca57f7c6fa4929311e18dc3609aa59a5a4022fe8f83239053893fb",
+        "../data/urban_mental_health/raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif": "8b0ef7a8994d7686e49298f4d5f0b5129460e053d92ad6ec9eef5a300f5cc66c",
+        "../data/urban_mental_health/manifests/glc_us_download_plan.json": "3c85fa9c518f47071fc813f12858866a94d95c6eb6d076b3ca386116de89e58d"
+      },
+      "run_output_sha256": {
+        "urban_feature_results.csv": "d071f18a64eabd33ee80d83f560b428695f549910b16228794d0857bef4e8822",
+        "class_population_summary.csv": "2699cad0c61c457888dacbbdbfa4ce045076170c9983c95d56bebc7e3d8952c1",
+        "national_summary.json": "db2f66509311ea8331fe4f601bc036fb3f7e6ec55a17c21abdc04e6f83227d77",
+        "national_summary.csv": "210deb9d22fb23866f61e0d756c8fccb5136ecda13a002b1b5991b7c43f96417"
+      }
+    },
+    "varun_landcover_us_lookup": {
+      "feature_count": 3309,
+      "common_feature_count": 3309,
+      "population_total": 194367282.99912602,
+      "population_modelled": 194367282.99912602,
+      "population_source_fill": 0.0,
+      "additional_cases": 2455743.6083112173,
+      "effect_lower": 724042.7467907418,
+      "effect_upper": 4567595.0538143795,
+      "value_2019_usd_societal_proxy": 27011231732.837532,
+      "prevalence": 0.0424332878,
+      "p0": 0.115,
+      "input_sha256": {
+        "docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv": "4d2f654319a1a937efcb23eb9846c0d997b60485e8f8af053ff665c4d2b45702",
+        "../data/urban_mental_health/processed/effect_size.xlsx": "3aab4a8bad100862e11d729bc58aac17271c72d3da711570ce4be04850ce7c15",
+        "../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv": "94576d6ad7512dfbc426b7a802045743ac9d24b5ebe5e0b5058528f93678b0ca",
+        "config/us_country_crosswalk.csv": "cf70a2e8a5fa9e88a103fb9a03a8857333a795ac869168b22ced2046155d1865",
+        "../data/urban_mental_health/processed/data_cost_mental_health_US_2019_USD.csv": "58bc4e97d74511a71902f7957270b94cb8fc6e79e34b6e388d419897807fa36b",
+        "../data/urban_mental_health/processed/varun_us_excluding_hawaii.gpkg": "34a4c2d0f2f6862726f0fc3a31b92a4a42e6bf9b52d5184586e02d97c0b46f22",
+        "../data/urban_mental_health/raw/collaborator/varun_2026-10/worldpop/100m_2019_global-mosaic.tif": "86bc5772d6cec40b21977bc88cb82ac981ef0a2c353ce614ede22a1d3bafef56",
+        "../data/urban_mental_health/raw/collaborator/varun_2026-10/lulc_glc_fcs30d_2019.tif": "05c1aeb0a827ea0de956c88c0314bfcbaa80896cf617f65d2e9e68be674dcdf2"
+      },
+      "run_output_sha256": {
+        "urban_feature_results.csv": "167a2c9b23e0c06ea63d1058e88ba1ff06edced72abcd962ed1e399e58111e1c",
+        "class_population_summary.csv": "fc2581d414c54a9f5181810ab3fdb4c224494a4f260b408f678e9f455bd2850d",
+        "national_summary.json": "96bd7b7b382c2b67b2936f900f42824702da398c81690fd74b27fb00ebc761b4",
+        "national_summary.csv": "c99ef559399b882c948f883739838e2d70387bcfbb36810af5b78772a10bc9a7"
+      }
+    },
+    "varun_landcover_varun_lookup": {
+      "feature_count": 3309,
+      "common_feature_count": 3309,
+      "population_total": 194367282.99912602,
+      "population_modelled": 194367282.99912602,
+      "population_source_fill": 0.0,
+      "additional_cases": 1669564.5275967636,
+      "effect_lower": 496713.92287618463,
+      "effect_upper": 3084186.8476458336,
+      "value_2019_usd_societal_proxy": 18363885462.31592,
+      "prevalence": 0.0424332878,
+      "p0": 0.115,
+      "input_sha256": {
+        "../data/urban_mental_health/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv": "a00968fd800ccb1214635509a193f0b426d43c801c374a0d9b4bbfe1b3cd5fab",
+        "../data/urban_mental_health/processed/effect_size.xlsx": "3aab4a8bad100862e11d729bc58aac17271c72d3da711570ce4be04850ce7c15",
+        "../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv": "94576d6ad7512dfbc426b7a802045743ac9d24b5ebe5e0b5058528f93678b0ca",
+        "config/us_country_crosswalk.csv": "cf70a2e8a5fa9e88a103fb9a03a8857333a795ac869168b22ced2046155d1865",
+        "../data/urban_mental_health/processed/data_cost_mental_health_US_2019_USD.csv": "58bc4e97d74511a71902f7957270b94cb8fc6e79e34b6e388d419897807fa36b",
+        "../data/urban_mental_health/processed/varun_us_excluding_hawaii.gpkg": "34a4c2d0f2f6862726f0fc3a31b92a4a42e6bf9b52d5184586e02d97c0b46f22",
+        "../data/urban_mental_health/raw/collaborator/varun_2026-10/worldpop/100m_2019_global-mosaic.tif": "86bc5772d6cec40b21977bc88cb82ac981ef0a2c353ce614ede22a1d3bafef56",
+        "../data/urban_mental_health/raw/collaborator/varun_2026-10/lulc_glc_fcs30d_2019.tif": "05c1aeb0a827ea0de956c88c0314bfcbaa80896cf617f65d2e9e68be674dcdf2"
+      },
+      "run_output_sha256": {
+        "urban_feature_results.csv": "408d854184a040dae639a2c69ea03a8fe7279c8ad2bc115a1d3433b48fa6a7cb",
+        "class_population_summary.csv": "3cbaff091724b1a12c148dcbb42c9f5f88b4525b8efe24da1175b804cdcb861d",
+        "national_summary.json": "a41aa77514f6d1703ea96ed94f27a5cee2c412c633f16c20954bbd3964a65ee4",
+        "national_summary.csv": "d6bfbcd47ea64dde464343696775b21a39bfc029802a4bdfa998ac85fa5c9c4e"
+      }
+    }
+  },
+  "contrasts": {
+    "varun_lookup_minus_us_lookup_percent_on_local_landcover": -31.623933277854142,
+    "varun_lookup_minus_us_lookup_percent_on_varun_landcover": -32.01389094747961,
+    "varun_landcover_minus_local_percent_with_us_lookup": -0.33634861317582976,
+    "varun_landcover_minus_local_percent_with_varun_lookup": -0.9047434785766306
+  },
+  "analytic_sensitivities": {
+    "varun_landcover_varun_lookup_fixed_5_percent_current_reference": 1967281.6014939602,
+    "varun_landcover_varun_lookup_gbd_literal_original": 1310267.0257310136,
+    "varun_landcover_varun_lookup_fixed_5_percent_literal_original": 1543914.0986513586
+  },
+  "limits": "Effect lower/upper values are conditional 95% OR limits only. Neither land-cover nor lookup is independently validated by this comparison. Monetary values use a broad US societal proxy, not Varun's cost workbook."
+}

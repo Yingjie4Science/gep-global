@@ -26,7 +26,6 @@ from rasterio.warp import Resampling, reproject
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import effect_size_uncertainty
-import urban_mental_health_functions as model
 from prevalence_inputs import resolve_country_rates
 
 
@@ -36,6 +35,24 @@ def sha256(path):
         for block in iter(lambda: source.read(1024 * 1024), b''):
             digest.update(block)
     return digest.hexdigest()
+
+
+def load_depression_effect_sizes(path):
+    """Read and validate the sole depression OR row without raster-model imports."""
+    table = pd.read_excel(path)
+    required = {'health_indicator', 'effect_size', 'ci_lower', 'ci_upper'}
+    missing = required.difference(table.columns)
+    if missing:
+        raise ValueError(f'Effect size table is missing columns: {sorted(missing)}')
+    rows = table.loc[table['health_indicator'] == 'depression']
+    if len(rows) != 1:
+        raise ValueError('Effect size table must contain exactly one depression row')
+    values = {key: float(rows.iloc[0][key]) for key in ('effect_size', 'ci_lower', 'ci_upper')}
+    if not all(np.isfinite(value) and value > 0 for value in values.values()):
+        raise ValueError('Depression OR and CI limits must be finite and positive')
+    if not values['ci_lower'] <= values['effect_size'] <= values['ci_upper']:
+        raise ValueError('Depression OR must lie within its 95% CI')
+    return values
 
 
 def window_for_geometry(dataset, geometry):
@@ -83,6 +100,9 @@ def main():
     parser.add_argument('--crosswalk', type=Path, required=True)
     parser.add_argument('--cost', type=Path, required=True)
     parser.add_argument('--p0', type=float, default=0.115)
+    parser.add_argument('--population-raster', type=Path, help='Optional population raster; default is the current US WorldPop file')
+    parser.add_argument('--urban-boundaries', type=Path, help='Optional prepared urban GeoPackage; default is current US GUPPD selection')
+    parser.add_argument('--land-cover-mosaic', type=Path, help='Optional single categorical raster instead of verified local tiles')
     args = parser.parse_args()
     if args.output_dir.exists() and any(args.output_dir.iterdir()):
         raise FileExistsError('Choose a fresh output directory; technical runs never reuse cached outputs')
@@ -96,7 +116,7 @@ def main():
         raise ValueError('Lookup values must be finite NDVI values in [-1, 1]')
     max_positive_ndvi = max(0.0, max(lookup.values()))
 
-    effects = model.load_depression_effect_sizes(args.effects)
+    effects = load_depression_effect_sizes(args.effects)
     odds = {
         'additional_cases': effects['effect_size'],
         'additional_cases_lower': effects['ci_upper'],
@@ -117,19 +137,21 @@ def main():
         raise ValueError('Cost row must explicitly declare United States, 2019 USD and no PPP adjustment')
     cost_per_case = float(cost_row['cost_per_case'])
 
-    cities_path = args.data_root / 'processed/guppd_us_excluding_hawaii.gpkg'
-    population_path = args.data_root / 'raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif'
+    cities_path = args.urban_boundaries or args.data_root / 'processed/guppd_us_excluding_hawaii.gpkg'
+    population_path = args.population_raster or args.data_root / 'raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif'
     plan_path = args.data_root / 'manifests/glc_us_download_plan.json'
     cities = gpd.read_file(cities_path)
-    plan = json.loads(plan_path.read_text())['tiles']
+    plan = []
     tile_specs = []
-    for item in plan:
-        name = Path(item['member']).name.replace('20002022', '2019')
-        output = args.data_root / 'processed/lulc_2019_us' / name
-        status_path = args.data_root / 'manifests/glc_us_tiles' / (Path(item['member']).name + '.json')
-        if not output.is_file() or not status_path.is_file() or json.loads(status_path.read_text()).get('status') != 'verified':
-            raise ValueError(f'Land-cover tile is not independently verified: {name}')
-        tile_specs.append((item['bounds'], output))
+    if args.land_cover_mosaic is None:
+        plan = json.loads(plan_path.read_text())['tiles']
+        for item in plan:
+            name = Path(item['member']).name.replace('20002022', '2019')
+            output = args.data_root / 'processed/lulc_2019_us' / name
+            status_path = args.data_root / 'manifests/glc_us_tiles' / (Path(item['member']).name + '.json')
+            if not output.is_file() or not status_path.is_file() or json.loads(status_path.read_text()).get('status') != 'verified':
+                raise ValueError(f'Land-cover tile is not independently verified: {name}')
+            tile_specs.append((item['bounds'], output))
 
     class_cells = Counter()
     class_population = defaultdict(float)
@@ -137,6 +159,9 @@ def main():
     with ExitStack() as stack:
         population = stack.enter_context(rasterio.open(population_path))
         tile_sources = [(bounds, stack.enter_context(rasterio.open(path))) for bounds, path in tile_specs]
+        mosaic = stack.enter_context(rasterio.open(args.land_cover_mosaic)) if args.land_cover_mosaic else None
+        if mosaic is not None and mosaic.crs != population.crs:
+            raise ValueError('Population and land-cover CRS differ; inspect reprojection before this technical run')
         overlap_records = exact_overlap_audit(cities, population)
         shared_cells = sum(row['shared_population_cells'] for row in overlap_records)
         if shared_cells:
@@ -148,31 +173,39 @@ def main():
             transform = population.window_transform(window)
             inside = geometry_mask([city.geometry], pop.shape, transform, invert=True, all_touched=False)
             valid = inside & np.isfinite(pop) & (pop >= 0)
-            land = np.zeros(pop.shape, dtype='uint16')
+            land = np.full(pop.shape, 255 if mosaic is not None else 0, dtype='uint16')
             xmin, ymin, xmax, ymax = city.geometry.bounds
             used_tiles = []
-            for bounds, source in tile_sources:
-                if bounds[0] >= xmax or bounds[2] <= xmin or bounds[1] >= ymax or bounds[3] <= ymin:
-                    continue
+            if mosaic is not None:
                 reproject(
-                    source=rasterio.band(source, 1), destination=land,
-                    src_transform=source.transform, src_crs=source.crs, src_nodata=0,
-                    dst_transform=transform, dst_crs=population.crs, dst_nodata=0,
+                    source=rasterio.band(mosaic, 1), destination=land,
+                    src_transform=mosaic.transform, src_crs=mosaic.crs, src_nodata=mosaic.nodata,
+                    dst_transform=transform, dst_crs=population.crs, dst_nodata=255,
                     init_dest_nodata=False, resampling=Resampling.nearest)
-                used_tiles.append(Path(source.name).name)
+                used_tiles.append(Path(mosaic.name).name)
+            else:
+                for bounds, source in tile_sources:
+                    if bounds[0] >= xmax or bounds[2] <= xmin or bounds[1] >= ymax or bounds[3] <= ymin:
+                        continue
+                    reproject(
+                        source=rasterio.band(source, 1), destination=land,
+                        src_transform=source.transform, src_crs=source.crs, src_nodata=0,
+                        dst_transform=transform, dst_crs=population.crs, dst_nodata=0,
+                        init_dest_nodata=False, resampling=Resampling.nearest)
+                    used_tiles.append(Path(source.name).name)
 
             ndvi = np.full(pop.shape, np.nan, dtype='float64')
             for code, value in lookup.items():
                 ndvi[land == code] = value
-            fill = valid & np.isin(land, [0, 250])
-            missing_lookup = valid & ~np.isin(land, [0, 250]) & ~np.isfinite(ndvi)
+            fill = valid & np.isin(land, [0, 250, 255])
+            missing_lookup = valid & ~np.isin(land, [0, 250, 255]) & ~np.isfinite(ndvi)
             supported = valid & np.isfinite(ndvi)
             delta = np.maximum(ndvi[supported], 0.0)
             supported_pop = pop[supported].astype('float64')
             result = {
                 'region_id': str(city.id),
-                'region_name': str(city.CIESIN_NAME),
-                'smod_level': int(city.SMOD_LEVEL),
+                'region_name': str(city.get('CIESIN_NAME', city.get('region_name', ''))),
+                'smod_level': int(city.get('SMOD_LEVEL', str(city.id).split('_')[0])),
                 'country': str(city.country),
                 'population_cells': int(valid.sum()),
                 'population_total': float(pop[valid].sum(dtype='float64')),
@@ -213,7 +246,7 @@ def main():
         'lc_code': code,
         'feature_row_cells': class_cells[code],
         'feature_row_population': class_population[code],
-        'lookup_status': 'represented' if code in lookup else ('source_fill' if code in (0, 250) else 'missing_lookup'),
+        'lookup_status': 'represented' if code in lookup else ('source_fill' if code in (0, 250, 255) else 'missing_lookup'),
         'lc_ndvi': lookup.get(code),
     } for code in sorted(class_cells)]
     pd.DataFrame(class_rows).to_csv(args.output_dir / 'class_population_summary.csv', index=False)
@@ -228,15 +261,18 @@ def main():
     summary = {
         'status': 'exploratory_nationwide_technical_run',
         'created_utc': datetime.now(timezone.utc).isoformat(),
-        'scope': '3,312 GUPPD source features; 49 states plus DC; Alaska included; Hawaii and territories excluded.',
+        'scope': f'{len(features):,} GUPPD features; selected prepared boundaries; Hawaii excluded by input selection.',
         'membership_rule': 'WorldPop native cell centres inside each source polygon; rasterio geometry_mask all_touched=False.',
         'overlap_audit': overlap_records,
         'summation_valid': True,
         'feature_count': len(features),
-        'lookup_status': 'Five-region exploratory pooled lookup derived with community GLC class map; not production or Zenodo-class validated.',
-        'primary_missing_data_rule': 'Exclude source fill codes 0/250 and any class without a lookup from modelled population and cases.',
+        'lookup_status': 'Selected lookup supplied by --lookup; see source path and hash in run_record.json. Scientific validation is separate.',
+        'land_cover_source': str(args.land_cover_mosaic or 'verified local Zenodo 2019 tiles'),
+        'population_source': str(population_path),
+        'urban_boundary_source': str(cities_path),
+        'primary_missing_data_rule': 'Exclude source fill codes 0/250/255 and any class without a lookup from modelled population and cases.',
         'missing_exposure_sensitivity': (
-            'Lower assigns zero additional cases; upper assigns every unsupported person the maximum positive pooled class NDVI. '
+            'Lower assigns zero additional cases; upper assigns every unsupported person the maximum positive selected lookup NDVI. '
             'This is a structural bound, not a confidence interval.'
         ),
         'effect_interval': 'Conditional 95% effect-size limits only; all other inputs and assumptions fixed.',
@@ -252,7 +288,7 @@ def main():
     pd.DataFrame([totals]).to_csv(args.output_dir / 'national_summary.csv', index=False)
 
     inputs = [args.lookup, args.effects, args.prevalence, args.crosswalk, args.cost,
-              cities_path, population_path, plan_path]
+              cities_path, population_path, args.land_cover_mosaic or plan_path]
     outputs = [args.output_dir / name for name in [
         'urban_feature_results.csv', 'class_population_summary.csv', 'national_summary.json', 'national_summary.csv']]
     record = {

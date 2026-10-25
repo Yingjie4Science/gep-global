@@ -1,0 +1,122 @@
+{
+  "status": "national_lookup_value_sensitivity_from_existing_class_population_totals",
+  "scope": "Local Zenodo 2019 land-cover classes on the current 3312-feature non-Hawaii US selection, sampled at WorldPop cell centres; same populated class support for both lookups.",
+  "input_sha256": {
+    "pilots/us_national_technical_2019_v1/run_002/class_population_summary.csv": "ece766cdcd790f71674b1eafad63e3c51e09d57f561bf17c4a785f1c2dc773b3",
+    "pilots/us_national_technical_2019_v1/run_002/national_summary.json": "c35ae09ad0d1ddcce26cfcf580e582ee855d904bb225b31fb12c37fedf5c408a",
+    "raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv": "a00968fd800ccb1214635509a193f0b426d43c801c374a0d9b4bbfe1b3cd5fab",
+    "docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv": "4d2f654319a1a937efcb23eb9846c0d997b60485e8f8af053ff665c4d2b45702"
+  },
+  "source_run_reconstruction": {
+    "previous_cases_recomputed": 2522626.767240223,
+    "previous_cases_reported": 2522626.7672402267,
+    "absolute_difference": 3.725290298461914e-09
+  },
+  "common_class_codes": [
+    10,
+    11,
+    20,
+    51,
+    52,
+    61,
+    62,
+    71,
+    72,
+    81,
+    82,
+    91,
+    120,
+    121,
+    130,
+    140,
+    150,
+    153,
+    181,
+    182,
+    183,
+    185,
+    186,
+    187,
+    190,
+    200,
+    210
+  ],
+  "common_population": 194366823.90610048,
+  "source_fill_population_excluded": 459.0930252801627,
+  "scenarios": [
+    {
+      "lookup": "US_2019_derived",
+      "prevalence": "GBD_2019_US_all_age",
+      "health_equation": "current_reference",
+      "common_population": 194366823.90610048,
+      "case_equivalents": 2464031.343563508,
+      "effect_lower": 726285.71599517,
+      "effect_upper": 4584415.5842242995
+    },
+    {
+      "lookup": "Varun_confirmed_run_lookup",
+      "prevalence": "GBD_2019_US_all_age",
+      "health_equation": "current_reference",
+      "common_population": 194366823.90610048,
+      "case_equivalents": 1684807.7155295713,
+      "effect_lower": 500900.86635407846,
+      "effect_upper": 3114721.5985293137
+    },
+    {
+      "lookup": "US_2019_derived",
+      "prevalence": "GBD_2019_US_all_age",
+      "health_equation": "literal_original",
+      "common_population": 194366823.90610048,
+      "case_equivalents": 1871923.29799744,
+      "effect_lower": 664332.5196728968,
+      "effect_upper": 2886512.5288581937
+    },
+    {
+      "lookup": "Varun_confirmed_run_lookup",
+      "prevalence": "GBD_2019_US_all_age",
+      "health_equation": "literal_original",
+      "common_population": 194366823.90610048,
+      "case_equivalents": 1319733.2896374424,
+      "effect_lower": 462803.2502147722,
+      "effect_upper": 2062147.7561418451
+    },
+    {
+      "lookup": "US_2019_derived",
+      "prevalence": "fixed_5_percent",
+      "health_equation": "current_reference",
+      "common_population": 194366823.90610048,
+      "case_equivalents": 2903417.8958476894,
+      "effect_lower": 855797.1272675813,
+      "effect_upper": 5401909.470027326
+    },
+    {
+      "lookup": "Varun_confirmed_run_lookup",
+      "prevalence": "fixed_5_percent",
+      "health_equation": "current_reference",
+      "common_population": 194366823.90610048,
+      "case_equivalents": 1985242.9576875395,
+      "effect_lower": 590221.6070493582,
+      "effect_upper": 3670139.364653844
+    },
+    {
+      "lookup": "US_2019_derived",
+      "prevalence": "fixed_5_percent",
+      "health_equation": "literal_original",
+      "common_population": 194366823.90610048,
+      "case_equivalents": 2205725.0275071077,
+      "effect_lower": 782796.4248305275,
+      "effect_upper": 3401236.008936119
+    },
+    {
+      "lookup": "Varun_confirmed_run_lookup",
+      "prevalence": "fixed_5_percent",
+      "health_equation": "literal_original",
+      "common_population": 194366823.90610048,
+      "case_equivalents": 1555068.3885935452,
+      "effect_lower": 545330.4165306422,
+      "effect_upper": 2429870.348323381
+    }
+  ],
+  "primary_varun_minus_derived_percent": -31.62393327785413,
+  "interpretation": "Isolates fixed lookup values on existing national class-population totals. It does not rerun raster preprocessing, produce city results, verify the owner lookup derivation, or validate either lookup against outcomes. OR limits are conditional on all other inputs."
+}
