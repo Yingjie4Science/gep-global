@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-27",
+  "purpose": "Separate official source download, model-ready prevalence, processing code and dated research notes",
+  "files": [
+    {
+      "old_path": "depression_prevalence_review/IHME-GBD_2023_DATA-c1431a53-1.csv",
+      "new_path": "data/raw/ihme_gbd_2023/IHME-GBD_2023_DATA-c1431a53-1.csv",
+      "bytes": 31542,
+      "sha256": "3914f7ec30b38d4900c280330d28f5f4603436435dcb1ccc69beea9c5229432b"
+    },
+    {
+      "old_path": "depression_prevalence_review/IHME-GBD_2023_DATA-c1431a53-1.zip",
+      "new_path": "data/raw/ihme_gbd_2023/IHME-GBD_2023_DATA-c1431a53-1.zip",
+      "bytes": 9192,
+      "sha256": "c084fe7fdb42ebe44e618d1078b2ef604ff6830712e0e4e7132132880212cb04"
+    },
+    {
+      "old_path": "depression_prevalence_review/citation.txt",
+      "new_path": "data/raw/ihme_gbd_2023/citation.txt",
+      "bytes": 327,
+      "sha256": "339dc2be55e1576d87c0a9640ee20865e222e4f7d19e6d30a7731a0f8e476874"
+    },
+    {
+      "old_path": "depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv",
+      "new_path": "data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv",
+      "bytes": 24799,
+      "sha256": "94576d6ad7512dfbc426b7a802045743ac9d24b5ebe5e0b5058528f93678b0ca"
+    },
+    {
+      "old_path": "depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.manifest.json",
+      "new_path": "data/manifests/gbd_2023_2019_depressive_disorders_country_prevalence.manifest.json",
+      "bytes": 1204,
+      "sha256": "e9246970204e1f7989c36828d4f0f3f4cdc39eed7a657b20b4f4fde793ba1582"
+    },
+    {
+      "old_path": "depression_prevalence_review/who_depression_prevalence_2015_country.csv",
+      "new_path": "data/processed/who_depression_prevalence_2015_country.csv",
+      "bytes": 11278,
+      "sha256": "29a00066a753264fd4d40e0fe5d2cf651f4322f28693b77cbd4686c9d7402bfc"
+    },
+    {
+      "old_path": "depression_prevalence_review/import_gbd_depressive_disorders.py",
+      "new_path": "scripts/01_inputs/import_gbd_depressive_disorders.py",
+      "bytes": 6148,
+      "sha256": "05363fedf4433ace4d88fff31a28691b19becc2caade18cd943c480e6fa90259"
+    },
+    {
+      "old_path": "depression_prevalence_review/extract_who_depression_2015.py",
+      "new_path": "scripts/01_inputs/extract_who_depression_2015.py",
+      "bytes": 2583,
+      "sha256": "dee3f88d8db18ea49f3fbfdaa144c2a847f8fffdc4f6b1959f0637b251e3a748"
+    },
+    {
+      "old_path": "depression_prevalence_review/README.md",
+      "new_path": "docs/archive/health_prevalence_2026-10-08/README.md",
+      "bytes": 13032,
+      "sha256": "b9a9300b9b4f4d4696d9db6de97456e91b7e5b20334a181872801dff76f02085"
+    },
+    {
+      "old_path": "depression_prevalence_review/p0_pilot_findings.md",
+      "new_path": "docs/archive/health_prevalence_2026-10-08/p0_pilot_findings.md",
+      "bytes": 5093,
+      "sha256": "1e8ca30ecbf23efab91056b994172287f53e59c54a42dcac8b2e70084fb1a26d"
+    },
+    {
+      "old_path": "depression_prevalence_review/p0_evidence_expansion.md",
+      "new_path": "docs/archive/health_prevalence_2026-10-08/p0_evidence_expansion.md",
+      "bytes": 9915,
+      "sha256": "47425eb3465ef9513fa59476502dab2514010aceeae981bff490bd0c3e0637ab"
+    },
+    {
+      "old_path": "depression_prevalence_review/p0_source_and_strategy_review.md",
+      "new_path": "docs/archive/health_prevalence_2026-10-08/p0_source_and_strategy_review.md",
+      "bytes": 11052,
+      "sha256": "3375518a56e4b08f7819db93182d58483fd324b24aa7aa9b5e49f965d7f5e264"
+    },
+    {
+      "old_path": "depression_prevalence_review/liu_2023_ndvi_synthesis_audit.md",
+      "new_path": "docs/archive/health_prevalence_2026-10-08/liu_2023_ndvi_synthesis_audit.md",
+      "bytes": 8177,
+      "sha256": "ccf05a5ecbd50123432cda16875117dc4709d5c6ae90082a1fc456ccb22ec1a5"
+    },
+    {
+      "old_path": "depression_prevalence_review/p0_evidence_matrix.csv",
+      "new_path": "docs/archive/health_prevalence_2026-10-08/p0_evidence_matrix.csv",
+      "bytes": 2451,
+      "sha256": "3e2d567c465c149e37796eeeb88aa65da5310835f0b1c944fdf4e7e10e3ce9e3"
+    },
+    {
+      "old_path": "depression_prevalence_review/p0_pilot_sensitivity_2019.csv",
+      "new_path": "docs/archive/health_prevalence_2026-10-08/p0_pilot_sensitivity_2019.csv",
+      "bytes": 1367,
+      "sha256": "1f5c84e9a39fa2a8086b7320118f706f728866147d4d1c2709f90bdfa4b83b26"
+    },
+    {
+      "old_path": "depression_prevalence_review/liu_2023_ndvi_study_extraction.csv",
+      "new_path": "docs/archive/health_prevalence_2026-10-08/liu_2023_ndvi_study_extraction.csv",
+      "bytes": 5333,
+      "sha256": "991f96e0a39b8513ce92982147a58dd1cc900ea79cb8ba92c199cf012759ff07"
+    }
+  ],
+  "published_evidence_note": "Existing docs/evidence/liu_2023_ndvi_study_extraction.csv has the same SHA256 as the archived review copy; frozen published evidence unchanged.",
+  "historical_manifest_note": "The 7 October GBD manifest records absolute paths from the original extraction. Keep it unchanged and use this map for current locations."
+}

@@ -1,0 +1,16 @@
+p0,p0_interpretation,liu_or_per_0_1_ndvi,converted_rr,additional_cases_per_100_observed_for_delta_ndvi_0_1,additional_cases_per_100_observed_for_delta_ndvi_0_3
+0.03,illustrative low scenario,0.887,0.89001716,12.3574,41.8420
+0.03,illustrative low scenario,0.931,0.93293117,7.1890,23.1548
+0.03,illustrative low scenario,0.977,0.97767460,2.2835,7.0082
+0.05,illustrative middle scenario,0.887,0.89204003,12.1026,40.8792
+0.05,illustrative middle scenario,0.931,0.93422307,7.0408,22.6445
+0.05,illustrative middle scenario,0.977,0.97812484,2.2364,6.8605
+0.096,Hystad lowest 250m NDVI quartile self-reported doctor diagnosis,0.887,0.89672770,11.5166,38.6814
+0.096,Hystad lowest 250m NDVI quartile self-reported doctor diagnosis,0.931,0.93720807,6.6999,21.4764
+0.096,Hystad lowest 250m NDVI quartile self-reported doctor diagnosis,0.977,0.97916199,2.1281,6.5213
+0.115,current Hystad lowest 500m NDVI quartile health-record diagnosis,0.887,0.89867832,11.2745,37.7803
+0.115,current Hystad lowest 500m NDVI quartile health-record diagnosis,0.931,0.93844657,6.5591,20.9961
+0.115,current Hystad lowest 500m NDVI quartile health-record diagnosis,0.977,0.97959102,2.0834,6.3814
+0.2,illustrative high scenario,0.887,0.90750972,10.1917,33.7969
+0.2,illustrative high scenario,0.931,0.94402758,5.9291,18.8628
+0.2,illustrative high scenario,0.977,0.98151497,1.8833,5.7570
