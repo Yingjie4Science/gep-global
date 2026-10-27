@@ -53,7 +53,8 @@ owner/status list. Full local comparisons are in `data/outputs/`; older runs are
 resolves paths in historical receipts.
 The small US-derived lookup in `data/processed/ndvi_lookup/` is tracked by Git.
 The remaining local data must be supplied separately for a new clone.
-Its original IHME export is under `data/raw/ihme_gbd_2023/`; the model-ready
+The original IHME export for the GBD prevalence table is under
+`data/raw/ihme_gbd_2023/`; the model-ready
 2019 country table is under `data/processed/`.
 
 ## Workflow

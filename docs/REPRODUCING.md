@@ -184,6 +184,9 @@ The frozen evidence checksum list is a preservation baseline for the 27 October
 reorganization. A future intentional update to published outputs must update its
 entry with a reviewable reason; it is not an invitation to recompute historical
 receipts against changed inputs.
+Run `python scripts/check_repository.py` to validate the frozen checksum lists.
+It resolves the moved lookup through the [input migration record](../config/input_evidence_migration_2026-10-27.json)
+while preserving the original checksum list and run receipts byte for byte.
 
 ## Script catalog
 

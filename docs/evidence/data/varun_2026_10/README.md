@@ -31,32 +31,44 @@ literature and internal ordering across classes. He cited
 cited paper describes NDVI thresholding from Sentinel-2 and Landsat median
 composites; it is not a derivation or validation record for the supplied lookup.
 
-Rebuild the comparison from the repository root:
+Rebuild the comparison from the repository root. Choose a new review directory
+name for each inspection. The commands below
+write there, leaving the published snapshots intact.
 
 ```sh
+REVIEW=data/outputs/varun_input_audit_review
+mkdir "$REVIEW"
 python scripts/04_reports/plot_lookup_comparison.py \
   data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv \
   data/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv \
-  docs/evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv \
-  docs/evidence/glc_fcs30d_lookup_comparison.png \
-  docs/evidence/data/varun_2026_10/lookup_lc_ndvi_comparison_summary.json
+  "$REVIEW/lookup_lc_ndvi_comparison.csv" \
+  "$REVIEW/glc_fcs30d_lookup_comparison.png" \
+  "$REVIEW/lookup_lc_ndvi_comparison_summary.json"
 ```
 
 The full run files and hashes are preserved outside Git at
 `data/outputs/varun_lookup_matched_2019_v1/`.
-From the repository root, with the project's geospatial Python environment:
+From the repository root, with the project's geospatial Python environment,
+continue with the same `REVIEW` directory. The historical class summary used by
+the first audit is in the retained archive; extract only the two needed files.
+These commands read the retained full runs and write new review results under
+`data/outputs/`; they do not replace the published evidence in this folder.
 
 ```sh
-DATA=data/urban_mental_health
+DATA=data
 OUT=$DATA/outputs/varun_lookup_matched_2019_v1
+mkdir -p "$DATA/archive/extracted"
+tar -xzf "$DATA/archive/historical_pilots_through_2026-10-27.tar.gz" -C "$DATA/archive/extracted" \
+  pilots/us_national_technical_2019_v1/run_002/class_population_summary.csv \
+  pilots/us_national_technical_2019_v1/run_002/national_summary.json
 export PROJ_DATA="$(python -c 'import sys; print(sys.base_prefix + "/share/proj")')"
-python scripts/03_checks/audit_varun_inputs.py "$DATA" . docs/evidence/data/varun_2026_10
-python scripts/03_checks/check_varun_population_mosaic.py "$DATA" docs/evidence/data/varun_2026_10/population_mosaic_us_urban_cell_audit.json
-python scripts/03_checks/summarize_varun_lookup_runs.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" docs/evidence/data/varun_2026_10
-python scripts/03_checks/check_varun_landcover.py "$DATA" docs/evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json
+python scripts/03_checks/audit_varun_inputs.py "$DATA" . "$REVIEW"
+python scripts/03_checks/check_varun_population_mosaic.py "$DATA" "$REVIEW/population_mosaic_us_urban_cell_audit.json"
+python scripts/03_checks/summarize_varun_lookup_runs.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" "$REVIEW"
+python scripts/03_checks/check_varun_landcover.py "$DATA" "$REVIEW/land_cover_us_urban_cell_audit.json"
 python scripts/03_checks/summarize_varun_factorial.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" \
   "$OUT/varun_landcover_us_derived_lookup" "$OUT/varun_landcover_varun_lookup" \
-  docs/evidence/data/varun_2026_10/source_lookup_factorial_summary.json
+  "$REVIEW/source_lookup_factorial_summary.json"
 ```
 
 For a fresh paired run, choose a new `OUT` directory and run:

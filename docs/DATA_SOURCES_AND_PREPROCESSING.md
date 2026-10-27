@@ -56,9 +56,11 @@ file's history, not its scientific role or approval status. For example,
 unchanged, 2018 PPP-labelled source table; it is not a validated model cost.
 
 Keep originals unchanged, record transformations in `manifests/`, and give
-each run a fresh output directory. The current file and checksum register is
-`manifests/current_data_inventory_2026-10-21.json`; it supersedes the 16 October
-pilot inventory. The 21 October partial-download cleanup is recorded in
+each run a fresh output directory. `manifests/current_data_inventory_2026-10-21.json`
+is the 21 October file and checksum snapshot; it predates the lookup move and
+contiguous-US boundary derivatives. Read it with the [input migration](../config/input_evidence_migration_2026-10-27.json)
+and `manifests/contiguous_us_scope_2026-10-27.json` for the current layout and
+scope. The 21 October partial-download cleanup is recorded in
 `manifests/data_cleanup_2026-10-21.json`.
 
 ## Folder retention review (27 October 2026)
@@ -106,11 +108,11 @@ give the source links, processing choices, checks and unresolved provenance.
 | Category | Source location | Selected derivative or parameter | Provenance record |
 | --- | --- | --- | --- |
 | **Land cover** | `raw/glc_fcs30d/` ([Zenodo](https://zenodo.org/records/15063683)); Varun’s supplied 2019 global mosaic under `raw/collaborator/varun_2026-10/` | `processed/lulc_2019_us/` (band 20 of 114 annual tiles); owner mosaic retained unchanged | `manifests/glc_us_tiles/`; [source comparison](evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json); [processing details](#1-land-cover) |
-| **Land-cover-to-NDVI lookup: US-derived** | 2019 Landsat 7/8 NDVI and GLC_FCS30D classes on the US urban calibration domain | `data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv`; version-controlled sensitivity input | [Class comparison figure](evidence/glc_fcs30d_lookup_comparison.png), [comparison data](evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv), and [method details](#2-ndvi-exposure-inputs) |
+| **Land-cover-to-NDVI lookup: US-derived** | 2019 Landsat 7/8 NDVI and GLC_FCS30D classes on the US urban calibration domain | `processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv`; version-controlled sensitivity input | [Class comparison figure](evidence/glc_fcs30d_lookup_comparison.png), [comparison data](evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv), and [method details](#2-ndvi-exposure-inputs) |
 | **Land-cover-to-NDVI lookup: Varun** | `raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv` | Use as the alternative judgment-based parameterization; choose exactly one lookup per class-based run | Source checksum, Varun's October 2026 clarification, and [method details](#2-ndvi-exposure-inputs) |
 | **Direct NDVI exposure** | Landsat 7/8 in Earth Engine | Direct annual-median 2019 NDVI sampled on WorldPop cells | Published batch evidence; [method details](#2-ndvi-exposure-inputs) |
 | **Population** | Current US [WorldPop](https://hub.worldpop.org/geodata/summary?id=75977) raster; Varun's supplied mosaic under `raw/collaborator/varun_2026-10/worldpop/` | US raster used directly; mosaic retained for reproduction tests | `raw/worldpop/README.md` and current inventory manifest; [grid and comparison](#3-population) |
-| **Urban boundaries** | [GUPPD](https://doi.org/10.7927/brq1-xc29) source in `raw/guppd/`; Varun's prepared GeoPackage in `raw/collaborator/varun_2026-10/` | `processed/guppd_us_excluding_hawaii.gpkg` | Owner-layer comparison in [review evidence](evidence/data/varun_2026_10/urban_boundaries_audit.json); [selection details](#4-urban-polygons) |
+| **Urban boundaries** | [GUPPD](https://doi.org/10.7927/brq1-xc29) source in `raw/guppd/`; Varun's prepared GeoPackage in `raw/collaborator/varun_2026-10/` | Active contiguous-US input: `processed/guppd_us_contiguous.gpkg`; older Alaska-inclusive runs used `processed/guppd_us_excluding_hawaii.gpkg` | `manifests/contiguous_us_scope_2026-10-27.json`; owner-layer comparison in [review evidence](evidence/data/varun_2026_10/urban_boundaries_audit.json); [selection details](#4-urban-polygons) |
 | **Health parameters** | `processed/effect_size.xlsx`; GBD table in `processed/` | Liu et al. OR, 2019 all-age country prevalence, and separately declared `p0` | GBD import manifest and model run manifest; [definitions](#5-health-inputs) |
 | **Valuation** | `processed/data_cost_mental_health.csv`; Varun's workbook in `raw/collaborator/varun_2026-10/` | `processed/data_cost_mental_health_US_2019_USD.csv` with conversion audit | `manifests/cost_conversion_2019_usd.json`; [cost basis and limits](#6-costs-and-valuation) |
 
