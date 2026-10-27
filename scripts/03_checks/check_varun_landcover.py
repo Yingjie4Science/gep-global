@@ -1,6 +1,6 @@
 """Compare Varun's global 2019 GLC raster with local 2019 Zenodo tiles on US model cells.
 
-Usage: python scripts/check_varun_landcover.py DATA_ROOT OUTPUT_JSON [--limit N]
+Usage: python scripts/03_checks/check_varun_landcover.py DATA_ROOT OUTPUT_JSON [--limit N]
 """
 import argparse
 import collections

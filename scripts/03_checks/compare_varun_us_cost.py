@@ -1,6 +1,6 @@
 """Revalue four saved US technical runs at Varun's supplied US cost rate.
 
-Usage: python scripts/compare_varun_us_cost.py SCENARIO_JSON COST_XLSX OUTPUT_JSON
+Usage: python scripts/03_checks/compare_varun_us_cost.py SCENARIO_JSON COST_XLSX OUTPUT_JSON
 This changes valuation only; cases and conditional OR limits are copied from
 the four saved runs. The owner workbook does not document PPP status or scope.
 """

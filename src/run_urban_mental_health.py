@@ -139,7 +139,7 @@ def main():
             'country_prevalence': p.country_prevalence_table_path,
             'country_crosswalk': p.country_crosswalk_path,
         },
-        source_dir=Path(__file__).resolve().parent,
+        source_dir=Path(__file__).resolve().parents[1],
         outputs={name: project_dir / name for name in output_names},
         parameters={
             'baseline_prevalence': baseline_prevalence,

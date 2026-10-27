@@ -25,7 +25,7 @@ def download(image,path,qc,bands):
     with mem.open() as src:dst.write(src.read(),window=Window(0,row,width,h))
  temp.replace(path)
 def prefetch(c,a):
- d=a.data_root/'pilots/expanded_2019_v1'/c['label'];out=d/'cloud_readback';out.mkdir(exist_ok=True)
+ d=a.data_root/'outputs/sf_minneapolis_2019_v1'/c['label'];out=d/'cloud_readback';out.mkdir(exist_ok=True)
  with rasterio.open(a.data_root/'raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif') as src:
   win=rasterio.windows.from_bounds(*c['bounds'],transform=src.transform);x0=max(0,math.floor(win.col_off)-2);y0=max(0,math.floor(win.row_off)-2);x1=math.ceil(win.col_off+win.width)+2;y1=math.ceil(win.row_off+win.height)+2
   qc={'pilot_shape':[y1-y0,x1-x0],'pilot_transform':list(src.window_transform(Window(x0,y0,x1-x0,y1-y0)))[:6]}
@@ -36,7 +36,7 @@ def prefetch(c,a):
  (out/'grid.json').write_text(json.dumps(qc,indent=2)+'\n');print('GEE source readback complete',c['label'],flush=True)
 
 def process(c,a):
- d=a.data_root/'pilots/expanded_2019_v1'/c['label'];inputs=d/'inputs';result=d/'comparison.json'
+ d=a.data_root/'outputs/sf_minneapolis_2019_v1'/c['label'];inputs=d/'inputs';result=d/'comparison.json'
  if result.exists():return True
  plan=json.loads((a.data_root/'manifests/glc_us_download_plan.json').read_text())['tiles'];needed=[r for r in plan if Path(r['member']).name in c['required_tiles']]
  if any(not (a.data_root/'manifests/glc_us_tiles'/(Path(r['member']).name+'.json')).exists() or json.loads((a.data_root/'manifests/glc_us_tiles'/(Path(r['member']).name+'.json')).read_text()).get('status')!='verified' for r in needed):return False
@@ -46,7 +46,7 @@ def process(c,a):
  if not (inputs/'input_qc.json').exists():
   if len(needed)!=1:raise ValueError('This bounded test requires one source tile; add a documented mosaic for multi-tile cities')
   lc=a.data_root/'processed/lulc_2019_us'/Path(needed[0]['member']).name.replace('20002022','2019')
-  run([a.local_python,a.repo/'scripts/prepare_local_pilot.py',a.data_root,'--city-id',c['city_id'],'--land-cover',lc,'--output',inputs])
+  run([a.local_python,a.repo/'scripts/01_inputs/prepare_local_pilot.py',a.data_root,'--city-id',c['city_id'],'--land-cover',lc,'--output',inputs])
  qc=json.loads((inputs/'input_qc.json').read_text());city=gpd.read_file(inputs/'city.gpkg')
  if (d/'cloud_readback/grid.json').exists():
   grid=json.loads((d/'cloud_readback/grid.json').read_text());assert grid['pilot_shape']==qc['pilot_shape'] and grid['pilot_transform']==qc['pilot_transform']
@@ -59,7 +59,7 @@ def process(c,a):
  common=['--lookup',lookup,'--effects',a.data_root/'processed/effect_size.xlsx','--prevalence',a.prevalence,'--crosswalk',a.repo/'config/us_country_crosswalk.csv','--cost',a.data_root/'processed/data_cost_mental_health_US_2019_USD.csv']
  for output,lc in [('local_outputs',None),('matched_cloud_outputs',inputs/'land_cover_gee.tif')]:
   if not (d/output/'run_record.json').exists():
-   command=[a.local_python,a.repo/'scripts/run_local_pilot.py',inputs,*common,'--output',d/output]
+   command=[a.local_python,a.repo/'scripts/02_models/run_local_pilot.py',inputs,*common,'--output',d/output]
    if lc:command+=['--land-cover',lc]
    run(command)
  valid=[{'lcCode':int(r['lc_code']),'ndvi':float(r['lc_ndvi'])} for r in csv.DictReader(lookup.open()) if r['lc_ndvi']]
@@ -96,16 +96,16 @@ def process(c,a):
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('data_root',type=Path);p.add_argument('--repo',type=Path,required=True);p.add_argument('--gee-repo',type=Path,required=True);p.add_argument('--local-python',type=Path,required=True);p.add_argument('--prevalence',type=Path,required=True);p.add_argument('--wait',action='store_true');p.add_argument('--prefetch-only',action='store_true');a=p.parse_args();ee.Initialize(project='natcap-gep')
- root=a.data_root/'pilots/expanded_2019_v1';root.mkdir(parents=True,exist_ok=True)
+ root=a.data_root/'outputs/sf_minneapolis_2019_v1';root.mkdir(parents=True,exist_ok=True)
  plan_path=root/'test_plan.json'
  if not plan_path.exists():
-  boundaries=gpd.read_file(a.data_root/'processed/guppd_us_excluding_hawaii.gpkg');tiles=json.loads((a.data_root/'manifests/glc_us_download_plan.json').read_text())['tiles'];cities=[]
-  for label,id in {'tucson':'30_12305','portland_maine':'30_12572','anchorage':'23_87444','new_york':'30_12545'}.items():
+  boundaries=gpd.read_file(a.data_root/'processed/guppd_us_contiguous.gpkg');tiles=json.loads((a.data_root/'manifests/glc_us_download_plan.json').read_text())['tiles'];cities=[]
+  for label,id in {'san_francisco':'30_12257','minneapolis':'30_12427'}.items():
    d=root/label;d.mkdir(exist_ok=True);city=boundaries[boundaries.id==id].copy();assert len(city)==1;city.to_file(d/'city.geojson',driver='GeoJSON')
    buffer=city.to_crs(city.estimate_utm_crs());buffer.geometry=buffer.buffer(5000);buffer.to_crs(4326).to_file(d/'lookup_aoi.geojson',driver='GeoJSON')
    xmin,ymin,xmax,ymax=city.total_bounds;needed=[Path(t['member']).name for t in tiles if t['bounds'][0]<xmax and t['bounds'][2]>xmin and t['bounds'][1]<ymax and t['bounds'][3]>ymin]
    cities.append({'label':label,'city_id':id,'city_name':str(city.iloc[0].CIESIN_NAME),'bounds':list(city.total_bounds),'required_tiles':needed})
-  plan_path.write_text(json.dumps({'selection_rationale':'Dry inland, humid coastal, high latitude, and large cross-state urban areas. GUPPD features are not municipality definitions.','cities':cities},indent=2)+'\n')
+  plan_path.write_text(json.dumps({'selection_rationale':'Coastal and inland contiguous-US test areas requested by the project owner. GUPPD features are not municipality definitions.','cities':cities},indent=2)+'\n')
  cities=json.loads(plan_path.read_text())['cities']
  for c in cities:
   d=root/c['label'];lookup=d/'lookup/lookup_candidate.csv'
@@ -122,7 +122,7 @@ def main():
    try:
     if not process(c,a):pending.append(c['label'])
    except Exception as e:
-    (a.data_root/'pilots/expanded_2019_v1'/c['label']/'failure.json').write_text(json.dumps({'error':repr(e)},indent=2)+'\n');raise
+    (a.data_root/'outputs/sf_minneapolis_2019_v1'/c['label']/'failure.json').write_text(json.dumps({'error':repr(e)},indent=2)+'\n');raise
   if not pending:break
   if pending!=locals().get('previous_pending'):print('Waiting for verified tiles/lookups:',pending,flush=True)
   previous_pending=pending

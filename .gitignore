@@ -12,7 +12,8 @@ build/
 # IDEs
 .vscode/
 .idea/
-.cursor/  # Cursor AI IDE settings
+# Cursor AI IDE settings
+.cursor/
 
 # System
 .DS_Store
@@ -30,7 +31,8 @@ Thumbs.db
 *.tif
 *.tiff
 *.img
-*.vrt  # GDAL virtual raster (intermediate, not for tracking)
+# GDAL virtual raster intermediates
+*.vrt
 *.aux.xml  # GDAL statistics sidecar files
 *.ovr  # GDAL overview files
 *.shp
@@ -40,7 +42,8 @@ Thumbs.db
 *.sbn
 *.sbx
 *.gpkg
-*.geojson  # small config geojsons can be force-added with git add -f
+# Small config GeoJSONs can be explicitly force-added
+*.geojson
 
 # ---- Output CSVs (pipeline results) ----
 # Pattern matches timestamped project output directories
@@ -52,3 +55,12 @@ urban_mental_health_*/
 # Ignore conda package cache
 .conda/
 pkgs/
+# Local verification and editable-install artifacts
+.pytest_cache/
+.local/
+.venv/
+
+# Large/local project inputs and historical snapshots outside Git
+/data/
+/archive/
+/.envs/

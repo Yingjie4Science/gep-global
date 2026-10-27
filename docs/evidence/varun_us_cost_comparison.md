@@ -33,7 +33,7 @@ Varun file 3,309. Their unique areas differ by only **1.02 km²** (three local
 features with zero modeled population/cases), so the boundary-area difference
 does not explain the large lookup-driven case difference. See the
 [area audit](data/varun_2026_10/us_urban_area_audit.json) and its
-[reproduction script](../../scripts/audit_us_urban_area.py).
+[reproduction script](../../scripts/03_checks/audit_us_urban_area.py).
 
 ### Why SNAPP's own national total is much larger
 
@@ -130,25 +130,25 @@ Reproduce the [machine-readable comparison](data/varun_2026_10/us_cost_rate_comp
 from the repository root in the project's spreadsheet-capable Python environment:
 
 ```sh
-python scripts/compare_varun_us_cost.py \
+python scripts/03_checks/compare_varun_us_cost.py \
   docs/evidence/data/varun_2026_10/source_lookup_factorial_summary.json \
-  ../data/urban_mental_health/raw/collaborator/varun_2026-10/treatment_cost.xlsx \
+  data/raw/collaborator/varun_2026-10/treatment_cost.xlsx \
   docs/evidence/data/varun_2026_10/us_cost_rate_comparison.json
 ```
 
 The JSON records input hashes, exact rates, full dollar values, and the
 conditional OR-limit valuations. The four underlying full run receipts remain
-in `../data/urban_mental_health/pilots/varun_lookup_matched_2019_v1/`.
+in `data/outputs/varun_lookup_matched_2019_v1/`.
 
 For the SNAPP scenario, reproduce the [three-rate comparison](data/varun_2026_10/snapp_us_cost_comparison.json)
 with the sibling SNAPP checkout:
 
 ```sh
-python scripts/compare_snapp_us_cost.py \
+python scripts/03_checks/compare_snapp_us_cost.py \
   docs/evidence/data/varun_2026_10/source_lookup_factorial_summary.json \
   docs/evidence/data/varun_2026_10/us_cost_rate_comparison.json \
-  ../../SNAPP/docs/cost_studies.csv \
-  ../../SNAPP/docs/societal_cost_of_depression.md \
+  ../SNAPP/docs/cost_studies.csv \
+  ../SNAPP/docs/societal_cost_of_depression.md \
   docs/evidence/data/varun_2026_10/snapp_us_cost_comparison.json
 ```
 
@@ -159,11 +159,11 @@ in the linked primary paper if the SNAPP checkout is not available.
 To reproduce the boundary-area audit with the sibling SNAPP checkout, run:
 
 ```sh
-python scripts/audit_us_urban_area.py \
-  ../data/urban_mental_health/processed/guppd_us_excluding_hawaii.gpkg \
-  ../data/urban_mental_health/processed/varun_us_excluding_hawaii.gpkg \
-  ../../SNAPP/data/national/counties.gpkg \
-  ../../SNAPP/config/regions.csv \
+python scripts/03_checks/audit_us_urban_area.py \
+  data/processed/guppd_us_excluding_hawaii.gpkg \
+  data/processed/varun_us_excluding_hawaii.gpkg \
+  ../SNAPP/data/national/counties.gpkg \
+  ../SNAPP/config/regions.csv \
   docs/evidence/data/varun_2026_10/us_urban_area_audit.json
 ```
 

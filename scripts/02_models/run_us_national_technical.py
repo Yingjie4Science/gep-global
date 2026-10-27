@@ -24,7 +24,7 @@ from rasterio.features import geometry_mask
 from rasterio.windows import Window, from_bounds
 from rasterio.warp import Resampling, reproject
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'src'))
 import effect_size_uncertainty
 from prevalence_inputs import resolve_country_rates
 
@@ -137,7 +137,7 @@ def main():
         raise ValueError('Cost row must explicitly declare United States, 2019 USD and no PPP adjustment')
     cost_per_case = float(cost_row['cost_per_case'])
 
-    cities_path = args.urban_boundaries or args.data_root / 'processed/guppd_us_excluding_hawaii.gpkg'
+    cities_path = args.urban_boundaries or args.data_root / 'processed/guppd_us_contiguous.gpkg'
     population_path = args.population_raster or args.data_root / 'raw/worldpop/usa_pop_2019_CN_100m_R2025A_v1.tif'
     plan_path = args.data_root / 'manifests/glc_us_download_plan.json'
     cities = gpd.read_file(cities_path)
@@ -292,12 +292,12 @@ def main():
     outputs = [args.output_dir / name for name in [
         'urban_feature_results.csv', 'class_population_summary.csv', 'national_summary.json', 'national_summary.csv']]
     record = {
-        'git_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=Path(__file__).resolve().parents[1], text=True).strip(),
+        'git_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=Path(__file__).resolve().parents[2], text=True).strip(),
         'python': sys.version,
         'input_sha256': {str(path): sha256(path) for path in inputs},
         'source_sha256': {
-            'scripts/run_us_national_technical.py': sha256(Path(__file__)),
-            'effect_size_uncertainty.py': sha256(Path(__file__).resolve().parents[1] / 'effect_size_uncertainty.py'),
+            'scripts/02_models/run_us_national_technical.py': sha256(Path(__file__)),
+            'src/effect_size_uncertainty.py': sha256(Path(__file__).resolve().parents[2] / 'src/effect_size_uncertainty.py'),
         },
         'output_sha256': {path.name: sha256(path) for path in outputs},
         'land_cover_tile_count': len(tile_specs),

@@ -1,6 +1,6 @@
 """Apply the SNAPP Greenberg-2019 US cost anchor to four saved case runs.
 
-Usage: python scripts/compare_snapp_us_cost.py FACTORIAL_JSON EXISTING_COST_JSON
+Usage: python scripts/03_checks/compare_snapp_us_cost.py FACTORIAL_JSON EXISTING_COST_JSON
        SNAPP_COST_STUDIES_CSV SNAPP_NOTE_MD OUTPUT_JSON
 
 This is valuation postprocessing. It does not rerun or change cases.

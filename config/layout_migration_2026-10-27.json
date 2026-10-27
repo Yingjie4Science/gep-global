@@ -1,0 +1,219 @@
+{
+  "date": "2026-10-27",
+  "base_commit": "908deff709c8001915d60dbe6ea13279f7d11a1f",
+  "purpose": "Group executable workflows and shared modules; leave published numerical evidence and external raw data in place.",
+  "moves": [
+    {
+      "old_path": "scripts/fetch_glc_fcs30d_tile.py",
+      "new_path": "scripts/01_inputs/fetch_glc_fcs30d_tile.py",
+      "sha256_before": "d53a550fd6f649a6678776f9a573ee588e6a3f78ea308cc73a873f1e2496283d",
+      "sha256_after": "d53a550fd6f649a6678776f9a573ee588e6a3f78ea308cc73a873f1e2496283d"
+    },
+    {
+      "old_path": "scripts/fetch_glc_fcs30d_us.py",
+      "new_path": "scripts/01_inputs/fetch_glc_fcs30d_us.py",
+      "sha256_before": "59100e50c79bc8161291413a0071ae0fa1930e3a7203729cdebc7f7f426ebf3d",
+      "sha256_after": "59100e50c79bc8161291413a0071ae0fa1930e3a7203729cdebc7f7f426ebf3d"
+    },
+    {
+      "old_path": "scripts/download_with_ranges.py",
+      "new_path": "scripts/01_inputs/download_with_ranges.py",
+      "sha256_before": "4ece1b6147abd862771ca0380c757bf35d9383b07d467c7a9ba603172110617e",
+      "sha256_after": "4ece1b6147abd862771ca0380c757bf35d9383b07d467c7a9ba603172110617e"
+    },
+    {
+      "old_path": "scripts/prepare_guppd_us.py",
+      "new_path": "scripts/01_inputs/prepare_guppd_us.py",
+      "sha256_before": "8952f85927f5f454f64e3955a94adc81f7b9a88fee042c021abd8309a44acb03",
+      "sha256_after": "8952f85927f5f454f64e3955a94adc81f7b9a88fee042c021abd8309a44acb03"
+    },
+    {
+      "old_path": "scripts/prepare_varun_us_boundaries.py",
+      "new_path": "scripts/01_inputs/prepare_varun_us_boundaries.py",
+      "sha256_before": "65e6dd866b2981ec7c3a5503872f69d65e74417d25d08ae7d37d0e8216ad2570",
+      "sha256_after": "f7f46cb3a37348766ea99f2ba5142960c7ed041d0ac41d89525c0a3ddac74b45"
+    },
+    {
+      "old_path": "scripts/prepare_local_pilot.py",
+      "new_path": "scripts/01_inputs/prepare_local_pilot.py",
+      "sha256_before": "4cb9455b4fbf883ec5594d4e0ade418912243e97e7fd32b0f8e47aff611f9104",
+      "sha256_after": "4cb9455b4fbf883ec5594d4e0ade418912243e97e7fd32b0f8e47aff611f9104"
+    },
+    {
+      "old_path": "scripts/convert_costs_2019_usd.py",
+      "new_path": "scripts/01_inputs/convert_costs_2019_usd.py",
+      "sha256_before": "b4a1580f0634ea49a3837ce93224ee87df996cf43c991af1ca5b415bafc7ac54",
+      "sha256_after": "b4a1580f0634ea49a3837ce93224ee87df996cf43c991af1ca5b415bafc7ac54"
+    },
+    {
+      "old_path": "scripts/derive_glc_ndvi_2019_gee.js",
+      "new_path": "scripts/01_inputs/derive_glc_ndvi_2019_gee.js",
+      "sha256_before": "aace908b91fbcb3bcee2c874f509b1c3134966a451aae26d05269de82604c9bc",
+      "sha256_after": "aace908b91fbcb3bcee2c874f509b1c3134966a451aae26d05269de82604c9bc"
+    },
+    {
+      "old_path": "scripts/build_pooled_us_lookup.py",
+      "new_path": "scripts/01_inputs/build_pooled_us_lookup.py",
+      "sha256_before": "29544c108ace06090f2ab8634b7b714792a72d1d6c191deede9557f08070629a",
+      "sha256_after": "29544c108ace06090f2ab8634b7b714792a72d1d6c191deede9557f08070629a"
+    },
+    {
+      "old_path": "scripts/monitor_us_local_completion.py",
+      "new_path": "scripts/01_inputs/monitor_us_local_completion.py",
+      "sha256_before": "11fd9751e8e7e0ac6fa50976dd681ce38e72ccf7185e49cc382bcc09f6c9bcba",
+      "sha256_after": "f12bce37a8985f00f50a1be42d915f087a92640ab0e3a58fd845658c59962185"
+    },
+    {
+      "old_path": "scripts/run_us_national_technical.py",
+      "new_path": "scripts/02_models/run_us_national_technical.py",
+      "sha256_before": "85a551d44efa4480bceca87659adbf56dee9ec0834a9d17d86a48df021fb7bae",
+      "sha256_after": "caf22c02edf60aae5fd12afc3b2c06fb68176c7f75f3d370022ff639d87d3143"
+    },
+    {
+      "old_path": "scripts/run_local_pilot.py",
+      "new_path": "scripts/02_models/run_local_pilot.py",
+      "sha256_before": "2028d5f31dbfa5bd2b006705918e7ea34d5789bf29bca3a45b9b205c9b7b00cd",
+      "sha256_after": "9f22c6b22403916b8102502e183ef188c57ea008be3bdc94f047beccb6a737b8"
+    },
+    {
+      "old_path": "scripts/run_expanded_city_tests.py",
+      "new_path": "scripts/02_models/run_expanded_city_tests.py",
+      "sha256_before": "4cb33cc8c1207eaa6b85a6921347d20a67aaff25a5f891b4e7cfbce5104ebe83",
+      "sha256_after": "a929f344a0381330b9fdf381fa3f8ae5ebd0d692aaba9d32fb537fd9acd4b62d"
+    },
+    {
+      "old_path": "scripts/check_us_boundaries.py",
+      "new_path": "scripts/03_checks/check_us_boundaries.py",
+      "sha256_before": "155af2efbe9a94b6fe4c5df12eeced29faf1e1666d39f990881981edd2b890fd",
+      "sha256_after": "155af2efbe9a94b6fe4c5df12eeced29faf1e1666d39f990881981edd2b890fd"
+    },
+    {
+      "old_path": "scripts/check_us_land_cover_coverage.py",
+      "new_path": "scripts/03_checks/check_us_land_cover_coverage.py",
+      "sha256_before": "1d7cdcdfacb1c90a5530b7c1c2fbb5ef73c0603a0e399dbe714a5d00d4655d11",
+      "sha256_after": "1d7cdcdfacb1c90a5530b7c1c2fbb5ef73c0603a0e399dbe714a5d00d4655d11"
+    },
+    {
+      "old_path": "scripts/verify_land_cover_acquisition.py",
+      "new_path": "scripts/03_checks/verify_land_cover_acquisition.py",
+      "sha256_before": "cffb72f03e55285fba010c566646437019781dfba0dfb56acfca8c01c8a3dfde",
+      "sha256_after": "cffb72f03e55285fba010c566646437019781dfba0dfb56acfca8c01c8a3dfde"
+    },
+    {
+      "old_path": "scripts/validate_zenodo_lookup_city_grids.py",
+      "new_path": "scripts/03_checks/validate_zenodo_lookup_city_grids.py",
+      "sha256_before": "5651487566379041043eaabc4cfce9edc012727003101771ff9e209a6d69efa7",
+      "sha256_after": "5651487566379041043eaabc4cfce9edc012727003101771ff9e209a6d69efa7"
+    },
+    {
+      "old_path": "scripts/audit_varun_inputs.py",
+      "new_path": "scripts/03_checks/audit_varun_inputs.py",
+      "sha256_before": "8dd1cd66f79a2ac7c4f122f26c38f94c19ca68524609b89d6308913a302fc6cf",
+      "sha256_after": "17bdb136a0e4ba2744a3ae47098cd0f795184283d4fa4c5c371668d05a7c2347"
+    },
+    {
+      "old_path": "scripts/check_varun_landcover.py",
+      "new_path": "scripts/03_checks/check_varun_landcover.py",
+      "sha256_before": "95bad9d5bc603a25dc3d37482e801caf2d95f560d7faf365fddeeae2d14b55f6",
+      "sha256_after": "8c65a646c4f862653d6ec8b9854cb8b9e75aed285a0a8d06fdd8781413014abe"
+    },
+    {
+      "old_path": "scripts/check_varun_population_mosaic.py",
+      "new_path": "scripts/03_checks/check_varun_population_mosaic.py",
+      "sha256_before": "5017dd6339bdc5567d49d1340e905bd5d17c2cae7838474394fcee653001073e",
+      "sha256_after": "28e17f5ea67c6516e064b99771adab0d5eaa45d027eaa015bb0fb19ce0c6f75d"
+    },
+    {
+      "old_path": "scripts/audit_us_urban_area.py",
+      "new_path": "scripts/03_checks/audit_us_urban_area.py",
+      "sha256_before": "48ea73d560d9ee898dc27b0f7e6bc970515245c82572c17beebfe1b81a4fe627",
+      "sha256_after": "55cc80467e00a28cdc6ea995babf9bf982c164f56b7e0e4ce20a8f455c789048"
+    },
+    {
+      "old_path": "scripts/compare_pilot_results.py",
+      "new_path": "scripts/03_checks/compare_pilot_results.py",
+      "sha256_before": "2714127dd48629506ca214062a11fabdf770215c20a3b33f57c6dcd5ca14b12b",
+      "sha256_after": "2714127dd48629506ca214062a11fabdf770215c20a3b33f57c6dcd5ca14b12b"
+    },
+    {
+      "old_path": "scripts/summarize_varun_factorial.py",
+      "new_path": "scripts/03_checks/summarize_varun_factorial.py",
+      "sha256_before": "a4b6c326fff5a43ca9abe4213abc4d5f7a57207445bf2d216b054f4953490f0f",
+      "sha256_after": "a4b6c326fff5a43ca9abe4213abc4d5f7a57207445bf2d216b054f4953490f0f"
+    },
+    {
+      "old_path": "scripts/summarize_varun_lookup_runs.py",
+      "new_path": "scripts/03_checks/summarize_varun_lookup_runs.py",
+      "sha256_before": "89a2c32a01496bed25a918de4c39c36b906a04801b387f112943f6ec92648329",
+      "sha256_after": "dbea0c9db78ed67b36d1cfa02652468d1903bc81d3bf59e63f3469432b00c2aa"
+    },
+    {
+      "old_path": "scripts/compare_varun_us_cost.py",
+      "new_path": "scripts/03_checks/compare_varun_us_cost.py",
+      "sha256_before": "cc9f3764a2617a1f0d37d682922ad131125e0ef6123dc765255968078d7818a1",
+      "sha256_after": "4983a8bb73796784bff90e6713a8f69ec7dbef52bd446aa0d31b01b0ce30cfbc"
+    },
+    {
+      "old_path": "scripts/compare_snapp_us_cost.py",
+      "new_path": "scripts/03_checks/compare_snapp_us_cost.py",
+      "sha256_before": "1153e974c31d9c7c720cd6fd2c332f6aebd327dd7a2bff143708f8388835a1cd",
+      "sha256_after": "e47093280297f181b606ff11d84e97d0823f0620b70acaf500bb16612191dc0b"
+    },
+    {
+      "old_path": "scripts/render_us_direct_ndvi_report.py",
+      "new_path": "scripts/04_reports/render_us_direct_ndvi_report.py",
+      "sha256_before": "892cde0f20de04b85d01b60b2c72577903386cd6b53816c470334050016530da",
+      "sha256_after": "892cde0f20de04b85d01b60b2c72577903386cd6b53816c470334050016530da"
+    },
+    {
+      "old_path": "prevalence_inputs.py",
+      "new_path": "src/prevalence_inputs.py",
+      "sha256_before": "663d9b1ed8a0aa14efeef57c3d0ae757bbca74c353d43ebd9df07a18aad53577",
+      "sha256_after": "663d9b1ed8a0aa14efeef57c3d0ae757bbca74c353d43ebd9df07a18aad53577"
+    },
+    {
+      "old_path": "vector_attributes.py",
+      "new_path": "src/vector_attributes.py",
+      "sha256_before": "bc68f2f624530a76976823bd50ce374874cb0cd5d3f27b261d12737e8cac7812",
+      "sha256_after": "bc68f2f624530a76976823bd50ce374874cb0cd5d3f27b261d12737e8cac7812"
+    },
+    {
+      "old_path": "cost_basis.py",
+      "new_path": "src/cost_basis.py",
+      "sha256_before": "1e183a9a7f681db9a8b42d374868802ae0a5d6aad7bac03b08a25cfdaf315f5d",
+      "sha256_after": "1e183a9a7f681db9a8b42d374868802ae0a5d6aad7bac03b08a25cfdaf315f5d"
+    },
+    {
+      "old_path": "urban_mental_health_tasks.py",
+      "new_path": "src/urban_mental_health_tasks.py",
+      "sha256_before": "3b33b11e0924eb60771f9ae91cbe1c619ac07ae26a72632a9ee8f6d7a03c387d",
+      "sha256_after": "3b33b11e0924eb60771f9ae91cbe1c619ac07ae26a72632a9ee8f6d7a03c387d"
+    },
+    {
+      "old_path": "run_urban_mental_health.py",
+      "new_path": "src/run_urban_mental_health.py",
+      "sha256_before": "9f986f5caa45a671237d1efad037f2b50390f684536f786ca4829c5b64fc0c98",
+      "sha256_after": "f411ee807933ddc66b67372a061adadf8dd67baba56e76095b83376ed774e54c"
+    },
+    {
+      "old_path": "effect_size_uncertainty.py",
+      "new_path": "src/effect_size_uncertainty.py",
+      "sha256_before": "a34fbf0ff4d3db7973ad5ea099547a9dbf9ad6f3d1028dc95b9b4a5aea2500cb",
+      "sha256_after": "a34fbf0ff4d3db7973ad5ea099547a9dbf9ad6f3d1028dc95b9b4a5aea2500cb"
+    },
+    {
+      "old_path": "urban_mental_health_functions.py",
+      "new_path": "src/urban_mental_health_functions.py",
+      "sha256_before": "65ccce4183ab84e48c8e2b4f9e014c0e04917e5aad76705586e98891e83a630f",
+      "sha256_after": "65ccce4183ab84e48c8e2b4f9e014c0e04917e5aad76705586e98891e83a630f"
+    },
+    {
+      "old_path": "run_provenance.py",
+      "new_path": "src/run_provenance.py",
+      "sha256_before": "2e27b407e45ef1a7e90368a1c67dc1065ffb188b3d261f3d332f8067dcb20d95",
+      "sha256_after": "1b4854c643d1f38464c2440e97da79877e6be34263becdba0816885b3f205e11"
+    }
+  ],
+  "historical_path_note": "Paths inside old run manifests describe the historical checkout; resolve them using this map or its base commit.",
+  "history_snapshot": "docs/archive/DECISIONS_THROUGH_2026-10-25.md"
+}

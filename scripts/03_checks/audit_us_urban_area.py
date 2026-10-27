@@ -1,6 +1,6 @@
 """Audit unique GUPPD area for the two saved US boundary inputs.
 
-Usage: python scripts/audit_us_urban_area.py LOCAL_GPKG VARUN_GPKG
+Usage: python scripts/03_checks/audit_us_urban_area.py LOCAL_GPKG VARUN_GPKG
        SNAPP_COUNTIES_GPKG SNAPP_REGIONS_CSV OUTPUT_JSON
 Requires geopandas and shapely (the project's InVEST environment has both).
 """

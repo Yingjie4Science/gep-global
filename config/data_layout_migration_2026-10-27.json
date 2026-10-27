@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-27",
+  "reason": "Single-project data root; remove redundant urban_mental_health path layer",
+  "from": "data/urban_mental_health/",
+  "to": "data/",
+  "subfolders_moved": [
+    "raw",
+    "processed",
+    "manifests",
+    "outputs",
+    "archive"
+  ],
+  "before_after_counts_and_bytes": {
+    "raw": {
+      "files": 143,
+      "bytes": 45554967820
+    },
+    "processed": {
+      "files": 124,
+      "bytes": 2654199648
+    },
+    "manifests": {
+      "files": 132,
+      "bytes": 907904
+    },
+    "outputs": {
+      "files": 20,
+      "bytes": 3978926
+    },
+    "archive": {
+      "files": 1,
+      "bytes": 100468615
+    }
+  },
+  "verified_key_file_sha256": {
+    "processed/guppd_us_contiguous.gpkg": "23b7a99f72b78cd6b5cb22c016f9a6a584f4961a16bab2f1effc333bbb87bf82",
+    "processed/varun_us_contiguous.gpkg": "64d74167911d3e6847115e99009c5cc9b7df2b3a2bdbddc08877818df23c6866",
+    "manifests/contiguous_us_scope_2026-10-27.json": "13046db908c8d8a2f4513febd537d0caf5a5241846afff9bf0256201edffb794",
+    "archive/historical_pilots_through_2026-10-27.tar.gz": "f350d5008d39bcc01392a3844f068f09b809810a5a617e36cf833395fa2bbe16"
+  },
+  "source_and_published_receipts_policy": "Original files were moved without changing contents; historical receipt paths are translated by config/data_layout_migration_2026-10-27.json."
+}

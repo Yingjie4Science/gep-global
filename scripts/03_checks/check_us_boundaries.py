@@ -6,7 +6,7 @@ from shapely.geometry import shape
 from shapely.strtree import STRtree
 from pyproj import Geod
 ap=argparse.ArgumentParser();ap.add_argument('data_root',type=Path);args=ap.parse_args()
-source=args.data_root/'processed/guppd_us_excluding_hawaii.gpkg'
+source=args.data_root/'processed/guppd_us_contiguous.gpkg'
 with fiona.open(source) as f: rows=list(f)
 geoms=[shape(f['geometry']) for f in rows];tree=STRtree(geoms);geod=Geod(ellps='WGS84');pairs=[]
 for i,g in enumerate(geoms):

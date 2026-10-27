@@ -1,3 +1,5 @@
+> Historical full outputs are now in `data/archive/historical_pilots_through_2026-10-27.tar.gz` under `pilots/us_national_technical_2019_v1/`; commands below retain their original paths.
+
 # 2019 US windowed technical run
 
 Executed 17 October 2026. This is a nationwide **technical integration result**, not a production epidemiological estimate. The lookup remains exploratory and the monetary result remains a mood-disorder societal-cost proxy.
@@ -15,14 +17,14 @@ Executed 17 October 2026. This is a nationwide **technical integration result**,
 `build_pooled_us_lookup.py` sums raw NDVI-area, squared-NDVI-area, valid-area and class-area terms from Fort Morgan, Tucson, Portland, Anchorage and New York. It does not average city means equally. `run_us_national_technical.py` processes each source feature in a bounded WorldPop window and reads only intersecting verified land-cover tiles; it does not construct a dense national raster. It records input, source, output and per-tile-manifest hashes.
 
 ```sh
-python scripts/build_pooled_us_lookup.py DATA_ROOT \
+python scripts/01_inputs/build_pooled_us_lookup.py DATA_ROOT \
   DATA_ROOT/pilots/us_national_technical_2019_v1/lookup
 
-python scripts/run_us_national_technical.py DATA_ROOT \
+python scripts/02_models/run_us_national_technical.py DATA_ROOT \
   DATA_ROOT/pilots/us_national_technical_2019_v1/run_002 \
   --lookup DATA_ROOT/pilots/us_national_technical_2019_v1/lookup/pooled_lookup_candidate.csv \
   --effects DATA_ROOT/processed/effect_size.xlsx \
-  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --prevalence data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
   --crosswalk config/us_country_crosswalk.csv \
   --cost DATA_ROOT/processed/data_cost_mental_health_US_2019_USD.csv
 ```

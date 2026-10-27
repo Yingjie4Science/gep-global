@@ -1,3 +1,5 @@
+> Historical four-city outputs are now in `data/archive/historical_pilots_through_2026-10-27.tar.gz` under `pilots/expanded_2019_v1/`. New bounded tests use San Francisco or Minneapolis.
+
 # Expanded 2019 US local tests
 
 Started 17 October 2026. This is an execution and source-sensitivity check, not epidemiological validation. Original Fort Morgan outputs are preserved.
@@ -23,7 +25,7 @@ The acquisition uses `fetch_glc_fcs30d_us.py`, `GEP_DOWNLOAD_TRANSPORT=curl`, `G
 
 After acquisition, run `verify_land_cover_acquisition.py DATA_ROOT OUTPUT_JSON` to independently re-read raw/output hashes and deterministic band-20 extraction windows. Run `check_us_land_cover_coverage.py DATA_ROOT OUTPUT_DIRECTORY` to inspect actual land-cover support for all 3,312 source urban units, on native population cell centres. Per-city population values must not be summed because the source polygons can overlap.
 
-All expanded run files stay under `data/urban_mental_health/pilots/expanded_2019_v1`. The scientific constants remain prevalence 0.0424332878, p0=0.115, OR0.931 (0.887–0.977) per0.1NDVI, and the positive-NDVI-to-zero counterfactual. The USD calculation is an exploratory 2019 USD non-PPP mood-disorder societal-cost proxy. Confidence limits propagate the effect-size CI only.
+All expanded run files stay under `data/pilots/expanded_2019_v1`. The scientific constants remain prevalence 0.0424332878, p0=0.115, OR0.931 (0.887–0.977) per0.1NDVI, and the positive-NDVI-to-zero counterfactual. The USD calculation is an exploratory 2019 USD non-PPP mood-disorder societal-cost proxy. Confidence limits propagate the effect-size CI only.
 
 ## Executed results — 17 October 2026
 

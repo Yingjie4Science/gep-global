@@ -1,0 +1,86 @@
+{
+  "updated": "2026-10-27",
+  "policy": "Register completed evidence here; track current work only in docs/DECISIONS_AND_TODOS.md. Archived JSON manifests retain historical paths.",
+  "runs": [
+    {
+      "id": "us-direct-2019",
+      "role": "primary US conditional estimate",
+      "status": "completed; published",
+      "method": "Direct 2019 Landsat annual-median NDVI on WorldPop cells",
+      "entrypoint": "Companion invest-gee/urban_mental_health cloud workflow",
+      "report": "docs/evidence/us_direct_ndvi_production_run.md",
+      "evidence": "docs/evidence/data/us_direct_ndvi_2019_v1/national_summary.json",
+      "receipts": "docs/evidence/data/us_direct_ndvi_2019_v1/direct_ndvi_batch_manifest.json"
+    },
+    {
+      "id": "us-method-comparison-2019",
+      "role": "eight common-support method sensitivities",
+      "status": "completed; published",
+      "method": "Exposure x prevalence x case-reference equation",
+      "entrypoint": "Companion invest-gee/urban_mental_health cloud workflow",
+      "report": "docs/evidence/us_direct_ndvi_production_run.md",
+      "evidence": "docs/evidence/data/us_method_comparison_2019_v2_common/national_comparison.json",
+      "receipts": "docs/evidence/data/us_method_comparison_2019_v2_common/method_comparison_manifest.json"
+    },
+    {
+      "id": "varun-source-lookup-2019",
+      "role": "four technical source/lookup sensitivities",
+      "status": "completed; published",
+      "method": "Two categorical rasters x two NDVI lookups",
+      "entrypoint": "scripts/02_models/run_us_national_technical.py",
+      "report": "docs/evidence/data/varun_2026_10/README.md",
+      "evidence": "docs/evidence/data/varun_2026_10/source_lookup_factorial_summary.json",
+      "external_full_outputs": "data/outputs/varun_lookup_matched_2019_v1/"
+    },
+    {
+      "id": "us-cost-rates-2019",
+      "role": "conditional valuation postprocessing",
+      "status": "completed; published",
+      "method": "Three per-case rates on unchanged four-run cases",
+      "entrypoint": "scripts/03_checks/compare_snapp_us_cost.py",
+      "report": "docs/evidence/varun_us_cost_comparison.md",
+      "evidence": "docs/evidence/data/varun_2026_10/snapp_us_cost_comparison.json"
+    },
+    {
+      "id": "us-study-area-audit",
+      "role": "geographic scope inspection",
+      "status": "completed; published",
+      "method": "Dissolved EPSG:5070 footprints; SNAPP county IDs matched to locked list",
+      "entrypoint": "scripts/03_checks/audit_us_urban_area.py",
+      "report": "docs/evidence/varun_us_cost_comparison.md",
+      "evidence": "docs/evidence/data/varun_2026_10/us_urban_area_audit.json"
+    },
+    {
+      "id": "expanded-city-tests-2019",
+      "role": "historical local/cloud technical gate",
+      "status": "completed; historical",
+      "method": "Four city source and matched-cell checks",
+      "entrypoint": "scripts/02_models/run_expanded_city_tests.py",
+      "report": "docs/evidence/expanded_city_tests.md",
+      "evidence": "docs/evidence/expanded_city_comparisons.json",
+      "external_full_outputs": "data/archive/historical_pilots_through_2026-10-27.tar.gz",
+      "archive_member": "pilots/expanded_2019_v1/"
+    },
+    {
+      "id": "fort-morgan-pilot-2019",
+      "role": "historical pilot",
+      "status": "completed; historical",
+      "method": "Bounded early local/cloud pilot",
+      "entrypoint": "scripts/02_models/run_local_pilot.py",
+      "report": "docs/evidence/fort_morgan_pilot.md",
+      "evidence": "docs/evidence/fort_morgan_pilot_comparison.json",
+      "local_inputs_status": "Deleted by owner request 2026-10-27; published evidence remains in Git"
+    },
+    {
+      "id": "liu-p0-review",
+      "role": "research evidence; transported parameters remain unresolved",
+      "status": "review documented; follow-up open in task register",
+      "method": "Study/outcome extraction and p0 applicability review",
+      "entrypoint": "manual literature review",
+      "report": "docs/evidence/liu_2023_ndvi_p0_review.md",
+      "evidence": "docs/evidence/liu_2023_ndvi_study_extraction.csv"
+    }
+  ],
+  "active_scope": "48 contiguous states plus DC; excludes Alaska, Hawaii and territories",
+  "scope_transition": "2026-10-27: new boundaries prepared; historical national results below include Alaska; contiguous-US result pending"
+}

@@ -21,18 +21,18 @@ not used. The three current-only polygons have zero modeled population.
   class-population calculation and varies lookup, prevalence and health equation.
 
 The full run files and hashes are preserved outside Git at
-`../data/urban_mental_health/pilots/varun_lookup_matched_2019_v1/`.
+`data/outputs/varun_lookup_matched_2019_v1/`.
 From the repository root, with the project's geospatial Python environment:
 
 ```sh
-DATA=../data/urban_mental_health
-OUT=$DATA/pilots/varun_lookup_matched_2019_v1
-export PROJ_DATA="$(python -c 'import sys; print(sys.prefix + "/share/proj")')"
-python scripts/audit_varun_inputs.py "$DATA" . docs/evidence/data/varun_2026_10
-python scripts/check_varun_population_mosaic.py "$DATA" docs/evidence/data/varun_2026_10/population_mosaic_us_urban_cell_audit.json
-python scripts/summarize_varun_lookup_runs.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" docs/evidence/data/varun_2026_10
-python scripts/check_varun_landcover.py "$DATA" docs/evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json
-python scripts/summarize_varun_factorial.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" \
+DATA=data/urban_mental_health
+OUT=$DATA/outputs/varun_lookup_matched_2019_v1
+export PROJ_DATA="$(python -c 'import sys; print(sys.base_prefix + "/share/proj")')"
+python scripts/03_checks/audit_varun_inputs.py "$DATA" . docs/evidence/data/varun_2026_10
+python scripts/03_checks/check_varun_population_mosaic.py "$DATA" docs/evidence/data/varun_2026_10/population_mosaic_us_urban_cell_audit.json
+python scripts/03_checks/summarize_varun_lookup_runs.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" docs/evidence/data/varun_2026_10
+python scripts/03_checks/check_varun_landcover.py "$DATA" docs/evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json
+python scripts/03_checks/summarize_varun_factorial.py "$OUT/us_derived_lookup" "$OUT/varun_lookup" \
   "$OUT/varun_landcover_us_derived_lookup" "$OUT/varun_landcover_varun_lookup" \
   docs/evidence/data/varun_2026_10/source_lookup_factorial_summary.json
 ```
@@ -40,17 +40,17 @@ python scripts/summarize_varun_factorial.py "$OUT/us_derived_lookup" "$OUT/varun
 For a fresh paired run, choose a new `OUT` directory and run:
 
 ```sh
-OUT=$DATA/pilots/varun_lookup_matched_2019_v2
-python scripts/run_us_national_technical.py "$DATA" "$OUT/us_derived_lookup" \
+OUT=$DATA/outputs/varun_lookup_matched_2019_v2
+python scripts/02_models/run_us_national_technical.py "$DATA" "$OUT/us_derived_lookup" \
   --lookup docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv \
   --effects "$DATA/processed/effect_size.xlsx" \
-  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --prevalence data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
   --crosswalk config/us_country_crosswalk.csv \
   --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv"
-python scripts/run_us_national_technical.py "$DATA" "$OUT/varun_lookup" \
+python scripts/02_models/run_us_national_technical.py "$DATA" "$OUT/varun_lookup" \
   --lookup "$DATA/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv" \
   --effects "$DATA/processed/effect_size.xlsx" \
-  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --prevalence data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
   --crosswalk config/us_country_crosswalk.csv \
   --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv"
 ```
@@ -61,23 +61,23 @@ outputs before replacing these evidence files.
 For the owner-raster pair, the saved derivative boundary subset is
 `$DATA/processed/varun_us_excluding_hawaii.gpkg`; its selection and checksum are
 in `$DATA/manifests/varun_us_boundary_subset_2026-10-21.json`. Rebuild that
-subset with `scripts/prepare_varun_us_boundaries.py` using a *new* output path.
+subset with `scripts/01_inputs/prepare_varun_us_boundaries.py` using a *new* output path.
 Then run the national technical script twice:
 
 ```sh
-python scripts/run_us_national_technical.py "$DATA" "$OUT/varun_landcover_us_derived_lookup" \
+python scripts/02_models/run_us_national_technical.py "$DATA" "$OUT/varun_landcover_us_derived_lookup" \
   --lookup docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv \
   --effects "$DATA/processed/effect_size.xlsx" \
-  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --prevalence data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
   --crosswalk config/us_country_crosswalk.csv \
   --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv" \
   --population-raster "$DATA/raw/collaborator/varun_2026-10/worldpop/100m_2019_global-mosaic.tif" \
   --urban-boundaries "$DATA/processed/varun_us_excluding_hawaii.gpkg" \
   --land-cover-mosaic "$DATA/raw/collaborator/varun_2026-10/lulc_glc_fcs30d_2019.tif"
-python scripts/run_us_national_technical.py "$DATA" "$OUT/varun_landcover_varun_lookup" \
+python scripts/02_models/run_us_national_technical.py "$DATA" "$OUT/varun_landcover_varun_lookup" \
   --lookup "$DATA/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv" \
   --effects "$DATA/processed/effect_size.xlsx" \
-  --prevalence ../depression_prevalence_review/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --prevalence data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
   --crosswalk config/us_country_crosswalk.csv \
   --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv" \
   --population-raster "$DATA/raw/collaborator/varun_2026-10/worldpop/100m_2019_global-mosaic.tif" \

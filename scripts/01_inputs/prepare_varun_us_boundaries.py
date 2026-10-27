@@ -1,6 +1,6 @@
 """Select non-Hawaii US polygons from Varun's unchanged prepared GUPPD layer.
 
-Usage: python scripts/prepare_varun_us_boundaries.py DATA_ROOT OUTPUT_GPKG OUTPUT_JSON
+Usage: python scripts/01_inputs/prepare_varun_us_boundaries.py DATA_ROOT OUTPUT_GPKG OUTPUT_JSON
 """
 import argparse
 import collections

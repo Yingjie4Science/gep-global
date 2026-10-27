@@ -1,3 +1,5 @@
+> The local `pilots/fort_morgan_2019/` working folder was deleted at the project owner’s request on 27 October 2026. This published historical report and small Git evidence remain; a fresh bounded test should use San Francisco or Minneapolis.
+
 # Fort Morgan 2019: first local and Earth Engine pilot
 
 Completed 16 October 2026. **Ready as a bounded technical pilot, with scientific caveats.** This checks execution and implementation fidelity for one urban polygon; it does not validate causal benefits, country totals, or a Bhutan endpoint.
@@ -37,7 +39,7 @@ An optional local sensitivity multiplies the contrast by **10,999.206774445318 i
 
 ## Reproduction and artifacts
 
-Data folder, relative to `gep-global`: `data/urban_mental_health/pilots/fort_morgan_2019/`.
+Data folder, relative to `gep-global`: `data/pilots/fort_morgan_2019/`.
 
 - `input_qc.json`: source checksum, metadata, read-window checks, population totals and output hashes.
 - `lookup/`: candidate CSV and complete source/scene/QA/coverage evidence.
@@ -47,7 +49,7 @@ Data folder, relative to `gep-global`: `data/urban_mental_health/pilots/fort_mor
 - `pilot_comparison.json` / `.csv`: cell-level checks and three-run table; `native_lc_source_check.json`: native-grid source diagnosis.
 - `pilot_diagnostics.png`: inspected population, source-disagreement and case-equivalent maps. Labels and color bars were visually reviewed; this is a static diagnostic, not a public-app UI test.
 
-Scripts in this repo: `scripts/prepare_local_pilot.py`, `scripts/run_local_pilot.py`, `scripts/compare_pilot_results.py`. Scripts in `invest-gee/urban_mental_health`: `serialize_lookup.cjs`, `run_lookup.py`, `prepare_pilot_cloud_inputs.py`, `run_real_pilot.py`, `check_native_land_cover.py`. The lookup reproduction note in that repository contains the exact EE execution steps. Every new local run requires a fresh output directory; original inputs are preserved.
+Scripts in this repo: `scripts/01_inputs/prepare_local_pilot.py`, `scripts/02_models/run_local_pilot.py`, `scripts/03_checks/compare_pilot_results.py`. Scripts in `invest-gee/urban_mental_health`: `serialize_lookup.cjs`, `run_lookup.py`, `prepare_pilot_cloud_inputs.py`, `run_real_pilot.py`, `check_native_land_cover.py`. The lookup reproduction note in that repository contains the exact EE execution steps. Every new local run requires a fresh output directory; original inputs are preserved.
 
 Use the isolated pilot Python environment with `PROJ_DATA` and `GDAL_DATA` set to its geospatial base environment's `share/proj` and `share/gdal` directories. Setting these paths resolved the earlier GDAL/PROJ resource warnings. The environment inherits that existing base; it is not a self-contained portable installation. Record resolved package versions and supply the reference inputs before reproducing elsewhere.
 

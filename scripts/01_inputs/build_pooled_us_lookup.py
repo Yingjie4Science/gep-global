@@ -1,4 +1,4 @@
-"""Pool raw 2019 lookup sums from five reviewed US technical-test AOIs.
+"""Pool raw 2019 lookup sums from explicitly supplied reviewed AOIs.
 
 This creates an exploratory multi-region lookup for a nationwide technical run.
 It is not a production US lookup or a validation against local Zenodo classes.
@@ -25,13 +25,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('data_root', type=Path)
     parser.add_argument('output_dir', type=Path)
+    parser.add_argument('--lookup', type=Path, action='append', required=True,
+                        help='Reviewed regional lookup CSV; repeat for each region')
     args = parser.parse_args()
-    sources = [
-        args.data_root / 'pilots/fort_morgan_2019/lookup/lookup_candidate.csv',
-        *sorted((args.data_root / 'pilots/expanded_2019_v1').glob('*/lookup/lookup_candidate.csv')),
-    ]
-    if len(sources) != 5 or not all(path.is_file() for path in sources):
-        raise FileNotFoundError(f'Expected five completed lookup tables, found {sources}')
+    sources = args.lookup
+    if len(sources) < 2 or not all(path.is_file() for path in sources):
+        raise FileNotFoundError(f'Expected at least two completed lookup tables, found {sources}')
 
     grouped = defaultdict(list)
     source_records = []
@@ -40,7 +39,7 @@ def main():
         source_records.append({
             'relative_path': str(path.relative_to(args.data_root)),
             'sha256': sha256(path),
-            'region': path.parents[1].name if path.parents[1].name != 'fort_morgan_2019' else 'fort_morgan',
+            'region': path.parents[1].name,
         })
         for row in rows:
             valid_area = float(row.get('valid_area_m2') or 0)
@@ -71,11 +70,11 @@ def main():
             'ndvi2_area_sum': ndvi2_sum,
             'year': 2019,
             'temporal_statistic': 'annual median of valid 2019 Landsat 7 and 8 NDVI',
-            'spatial_statistic': 'area-weighted pooled mean across five bounded technical-test AOIs',
+            'spatial_statistic': 'area-weighted pooled mean across explicitly supplied bounded test AOIs',
             'status': 'exploratory_multiregion_technical_lookup',
         })
 
-    coverage_path = args.data_root / 'pilots/us_local_qc_2019_v1/city_land_cover_coverage.csv'
+    coverage_path = args.data_root / 'manifests/us_local_qc_2019_v1/city_land_cover_coverage.csv'
     observed = set()
     with coverage_path.open(newline='') as source:
         for row in csv.DictReader(source):
@@ -91,7 +90,7 @@ def main():
     evidence = {
         'created_utc': datetime.now(timezone.utc).isoformat(),
         'scientific_status': (
-            'Exploratory five-region lookup for a nationwide technical run; '
+            'Exploratory pooled-region lookup for a nationwide technical run; '
             'not a production US lookup and not validated against the local Zenodo classification snapshot.'
         ),
         'pooling_rule': 'Sum raw NDVI-area, squared-NDVI-area, valid-area and class-area terms; never average region means equally.',

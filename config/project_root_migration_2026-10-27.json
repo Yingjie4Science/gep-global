@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-27",
+  "before": "urban-mental-health-gep-fork/",
+  "after": "gep-global/",
+  "head_before_after": "908deff709c8001915d60dbe6ea13279f7d11a1f",
+  "backup": "Local private temporary snapshot, outside Git",
+  "method": "Moved repository contents including .git one level up; preserved data, prevalence and archive folders in place",
+  "historical_relative_paths_from_old_checkout": {
+    "../data/urban_mental_health/": "data/",
+    "../../SNAPP/": "../SNAPP/"
+  },
+  "frozen_evidence_policy": "Published JSON receipts remain byte-identical; translate recorded relative paths using this map when locating unchanged inputs from the new root.",
+  "subsequent_data_flattening": "See config/data_layout_migration_2026-10-27.json",
+  "subsequent_health_input_split": "See config/health_input_migration_2026-10-27.json for each original health file"
+}

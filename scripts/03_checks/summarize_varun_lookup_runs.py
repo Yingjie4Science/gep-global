@@ -1,6 +1,6 @@
 """Compare two completed runs of run_us_national_technical.py on matched US support.
 
-Usage: python scripts/summarize_varun_lookup_runs.py DERIVED_RUN VARUN_RUN OUTPUT_DIR
+Usage: python scripts/03_checks/summarize_varun_lookup_runs.py DERIVED_RUN VARUN_RUN OUTPUT_DIR
 """
 import argparse
 import csv

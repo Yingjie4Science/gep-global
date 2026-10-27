@@ -1,6 +1,6 @@
 """Compare the supplied mosaic and current WorldPop raster on all active US urban cell centres.
 
-Usage: python scripts/check_varun_population_mosaic.py DATA_ROOT OUTPUT_JSON
+Usage: python scripts/03_checks/check_varun_population_mosaic.py DATA_ROOT OUTPUT_JSON
 """
 import argparse
 import hashlib

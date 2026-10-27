@@ -12,7 +12,7 @@ from rasterio.warp import reproject,Resampling
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('data_root',type=Path);p.add_argument('output',type=Path);a=p.parse_args();root=a.data_root;a.output.mkdir(parents=True,exist_ok=True)
- cities=gpd.read_file(root/'processed/guppd_us_excluding_hawaii.gpkg');plan=json.loads((root/'manifests/glc_us_download_plan.json').read_text())['tiles'];tiles=[]
+ cities=gpd.read_file(root/'processed/guppd_us_contiguous.gpkg');plan=json.loads((root/'manifests/glc_us_download_plan.json').read_text())['tiles'];tiles=[]
  for r in plan:
   status=root/'manifests/glc_us_tiles'/(Path(r['member']).name+'.json')
   if status.exists() and json.loads(status.read_text()).get('status')=='verified':tiles.append((r['bounds'],root/'processed/lulc_2019_us'/Path(r['member']).name.replace('20002022','2019')))

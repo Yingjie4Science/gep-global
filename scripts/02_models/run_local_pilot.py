@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np,pandas as pd,rasterio
 from rasterio.features import geometry_mask
 import geopandas as gpd
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'src'))
 import urban_mental_health_functions as model
 from prevalence_inputs import resolve_country_rates
 
@@ -54,6 +54,6 @@ def main():
  pd.DataFrame([summary]).to_csv(o/'pilot_summary.csv',index=False)
  sources=[args.lookup,args.effects,args.prevalence,args.crosswalk,d/'population_2019.tif',land_path,d/'city.gpkg']
  if args.cost:sources.append(args.cost)
- report={'summary':summary,'inputs':{str(x):sha(x) for x in sources},'python':platform.python_version(),'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=Path(__file__).resolve().parents[1],text=True).strip(),'source_hashes':{n:sha(Path(__file__).resolve().parents[1]/n) for n in ['urban_mental_health_functions.py','effect_size_uncertainty.py','scripts/run_local_pilot.py']},'outputs':{x.name:sha(x) for x in o.iterdir() if x.suffix in ['.tif','.csv']}}
+ report={'summary':summary,'inputs':{str(x):sha(x) for x in sources},'python':platform.python_version(),'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=Path(__file__).resolve().parents[2],text=True).strip(),'source_hashes':{n:sha(Path(__file__).resolve().parents[2]/n) for n in ['src/urban_mental_health_functions.py','src/effect_size_uncertainty.py','scripts/02_models/run_local_pilot.py']},'outputs':{x.name:sha(x) for x in o.iterdir() if x.suffix in ['.tif','.csv']}}
  (o/'run_record.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(summary,indent=2))
 if __name__=='__main__':main()

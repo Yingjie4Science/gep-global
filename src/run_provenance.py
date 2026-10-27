@@ -9,14 +9,16 @@ import subprocess
 
 
 SOURCE_FILES = (
-    'run_urban_mental_health.py',
-    'urban_mental_health_tasks.py',
-    'urban_mental_health_functions.py',
-    'effect_size_uncertainty.py',
-    'cost_basis.py',
-    'prevalence_inputs.py',
-    'run_provenance.py',
+    'src/run_urban_mental_health.py',
+    'src/urban_mental_health_tasks.py',
+    'src/urban_mental_health_functions.py',
+    'src/effect_size_uncertainty.py',
+    'src/cost_basis.py',
+    'src/prevalence_inputs.py',
+    'src/run_provenance.py',
+    'src/vector_attributes.py',
     'environment.yml',
+    'pyproject.toml',
 )
 
 

@@ -9,6 +9,21 @@ import run_provenance
 
 
 class ProvenanceTests(unittest.TestCase):
+    def test_manifest_finds_reorganized_checkout_sources(self):
+        source_root = Path(run_provenance.__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / 'result.csv'
+            output.write_text('value\n1\n')
+            path = run_provenance.write_manifest(
+                project_dir=tmp, inputs={}, source_dir=source_root,
+                outputs={'result': output}, parameters={'test': 'layout'},
+            )
+            manifest = json.loads(path.read_text())
+            self.assertIn('src/effect_size_uncertainty.py', manifest['source_files'])
+            self.assertIn('pyproject.toml', manifest['source_files'])
+            for record in manifest['source_files'].values():
+                self.assertTrue(Path(record['path']).is_file())
+
     def test_manifest_records_exact_input_and_output_hashes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

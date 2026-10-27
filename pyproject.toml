@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "urban-mental-health-gep"
+version = "0.1.0"
+description = "Reproducible urban mental-health GEP model and technical comparisons"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+umh-global = "run_urban_mental_health:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["cost_basis", "effect_size_uncertainty", "prevalence_inputs", "run_provenance", "run_urban_mental_health", "urban_mental_health_functions", "urban_mental_health_tasks", "vector_attributes"]

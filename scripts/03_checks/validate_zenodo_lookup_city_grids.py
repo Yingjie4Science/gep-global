@@ -116,7 +116,7 @@ def main():
     args = parser.parse_args()
     ee.Initialize(project=args.project)
     risk_ratio = args.odds_ratio / (1 - args.p0 + args.p0 * args.odds_ratio)
-    root = args.data_root / 'pilots/expanded_2019_v1'
+    root = args.data_root / 'outputs/sf_minneapolis_2019_v1'
     summaries = []
     city_dirs = [path for path in root.iterdir() if (path / 'inputs/input_qc.json').is_file()]
     def grid_cells(path):

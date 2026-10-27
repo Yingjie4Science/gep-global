@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-27",
+  "scope": "Repository organization; no new health-model result",
+  "unit_tests_passed": 14,
+  "preserved_published_evidence_files": 38,
+  "checks": [
+    "Offline structure, syntax, local links and run registry",
+    "Wheel build and installed umh-global --help",
+    "Cost comparison JSON matches published result",
+    "Study-area audit JSON matches published result with documented PROJ_DATA",
+    "Old and relocated report renderers produce identical Markdown from the same inputs"
+  ],
+  "not_performed": [
+    "Fresh Conda environment solve",
+    "Full national or global model rerun",
+    "Earth Engine execution or deployment"
+  ],
+  "runtime_record": "runtime_versions_2026-10-27.json"
+}
