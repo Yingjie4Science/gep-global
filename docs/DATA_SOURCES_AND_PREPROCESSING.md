@@ -8,31 +8,34 @@ New boundary derivatives are `processed/guppd_us_contiguous.gpkg` and
 
 ## Data folder structure
 
-The repository root is `gep-global/`. The active US data are directly in
-`data/`, which is ignored by Git:
+The repository root is `gep-global/`. The active US data and the small,
+version-controlled model inputs are organized as follows:
 
 ```text
-data/
-├── raw/                 original downloads and collaborator-supplied files
-│   ├── glc_fcs30d/      114 annual land-cover source tiles
-│   ├── worldpop/        complete 2019 US population raster
-│   ├── guppd/           original urban-boundary package
-│   ├── cost_conversion/ saved exchange-rate and price-index inputs
-│   └── collaborator/varun_2026-10/
-│       └── glc_fcs30d_attribute_table_processed_updated.csv  Varun's run lookup
-├── processed/           prepared inputs and historical source files
-│   └── lulc_2019_us/    114 one-band 2019 land-cover tiles
-├── manifests/           source, checksum, processing and validation records
-├── outputs/             retained comparison runs
-└── archive/             verified historical run bundle
+gep-global/
+├── data/                                      large/local data; ignored by Git
+│   ├── raw/                                   original and collaborator files
+│   │   ├── glc_fcs30d/                        114 annual land-cover source tiles
+│   │   ├── worldpop/                          complete 2019 US population raster
+│   │   ├── guppd/                             original urban-boundary package
+│   │   ├── cost_conversion/                   exchange-rate and price-index inputs
+│   │   └── collaborator/varun_2026-10/
+│   │       └── glc_fcs30d_attribute_table_processed_updated.csv
+│   │                                               Varun's judgment-based run lookup
+│   ├── processed/                             prepared model inputs
+│   │   └── lulc_2019_us/                      114 one-band 2019 land-cover tiles
+│   ├── manifests/                             checksums, processing and QA records
+│   ├── outputs/                               retained comparison runs
+│   └── archive/                               verified historical run bundle
+└── docs/evidence/data/us_method_comparison_2019_v2_common/
+    └── glc_fcs30d_attribute_table_us_2019.csv US-derived 2019 lookup; tracked by Git
 ```
 
-The other major land-cover-to-NDVI input is small and version-controlled with
-the published evidence rather than duplicated under ignored local data:
-`docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv`.
-It is the US-derived 2019 sensitivity lookup. The model must record which lookup
-path and checksum it used; the two tables are alternative inputs, not revisions
-of the same empirical dataset.
+Both lookup tables are major model inputs. The US-derived table is shown outside
+`data/` because it is small and version-controlled with its published evidence;
+Varun's collaborator-supplied table remains unchanged under ignored `data/raw/`.
+The model must record which lookup path and checksum it used. These are
+alternative parameterizations, not revisions of the same empirical dataset.
 
 The validated 2019 GBD country table is at
 `data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv`.
@@ -95,7 +98,8 @@ give the source links, processing choices, checks and unresolved provenance.
 | Category | Source location | Selected derivative or parameter | Provenance record |
 | --- | --- | --- | --- |
 | **Land cover** | `raw/glc_fcs30d/` ([Zenodo](https://zenodo.org/records/15063683)); Varun’s supplied 2019 global mosaic under `raw/collaborator/varun_2026-10/` | `processed/lulc_2019_us/` (band 20 of 114 annual tiles); owner mosaic retained unchanged | `manifests/glc_us_tiles/`; [source comparison](evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json); [processing details](#1-land-cover) |
-| **Land-cover-to-NDVI lookup** | Varun's `raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv`; Landsat 7/8 and GLC_FCS30D used for the project table | `docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv`; choose exactly one lookup per class-based run | [Class comparison figure](evidence/glc_fcs30d_lookup_comparison.png), [comparison data](evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv), source checksums, and [method details](#2-ndvi-exposure-inputs) |
+| **Land-cover-to-NDVI lookup: US-derived** | 2019 Landsat 7/8 NDVI and GLC_FCS30D classes on the US urban calibration domain | `docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv`; version-controlled sensitivity input | [Class comparison figure](evidence/glc_fcs30d_lookup_comparison.png), [comparison data](evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv), and [method details](#2-ndvi-exposure-inputs) |
+| **Land-cover-to-NDVI lookup: Varun** | `raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv` | Use as the alternative judgment-based parameterization; choose exactly one lookup per class-based run | Source checksum, Varun's October 2026 clarification, and [method details](#2-ndvi-exposure-inputs) |
 | **Direct NDVI exposure** | Landsat 7/8 in Earth Engine | Direct annual-median 2019 NDVI sampled on WorldPop cells | Published batch evidence; [method details](#2-ndvi-exposure-inputs) |
 | **Population** | Current US [WorldPop](https://hub.worldpop.org/geodata/summary?id=75977) raster; Varun's supplied mosaic under `raw/collaborator/varun_2026-10/worldpop/` | US raster used directly; mosaic retained for reproduction tests | `raw/worldpop/README.md` and current inventory manifest; [grid and comparison](#3-population) |
 | **Urban boundaries** | [GUPPD](https://doi.org/10.7927/brq1-xc29) source in `raw/guppd/`; Varun's prepared GeoPackage in `raw/collaborator/varun_2026-10/` | `processed/guppd_us_excluding_hawaii.gpkg` | Owner-layer comparison in [review evidence](evidence/data/varun_2026_10/urban_boundaries_audit.json); [selection details](#4-urban-polygons) |
