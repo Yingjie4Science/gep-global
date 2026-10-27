@@ -39,7 +39,7 @@ An optional local sensitivity multiplies the contrast by **10,999.206774445318 i
 
 ## Reproduction and artifacts
 
-Data folder, relative to `gep-global`: `data/pilots/fort_morgan_2019/`.
+Historical working-data location: `data/pilots/fort_morgan_2019/` (deleted on 27 October 2026). The artifact list below describes that historical run; those local files are no longer available. The retained numerical evidence and diagnostic figure are alongside this archived report.
 
 - `input_qc.json`: source checksum, metadata, read-window checks, population totals and output hashes.
 - `lookup/`: candidate CSV and complete source/scene/QA/coverage evidence.
@@ -53,7 +53,7 @@ Scripts in this repo: `scripts/01_inputs/prepare_local_pilot.py`, `scripts/02_mo
 
 Use the isolated pilot Python environment with `PROJ_DATA` and `GDAL_DATA` set to its geospatial base environment's `share/proj` and `share/gdal` directories. Setting these paths resolved the earlier GDAL/PROJ resource warnings. The environment inherits that existing base; it is not a self-contained portable installation. Record resolved package versions and supply the reference inputs before reproducing elsewhere.
 
-## Next steps
+## Historical next steps (superseded; see current task register)
 
 1. Resolve/pin the land-cover source before expanding comparable results. Keep both current products and their difference evidence.
 2. Extend beyond this small city: contrasting vegetation/climate/urban forms, then Alaska. Review rare classes, seasonal coverage, p0 sensitivity and direct-NDVI versus class-lookup differences.

@@ -77,7 +77,7 @@ All3,312 GUPPD US urban areas excluding Hawaii have been uploaded to the Earth E
 
 ## Executed pilot — 16 October 2026
 
-The population file has arrived. Local Python and GEE Fort Morgan pilots are complete; all 877 modeled city cells pass the matched-input comparison. The real NDVI lookup and private pilot boundary asset are available. **Land-cover sources differ at native resolution**, so national expansion requires an explicit source choice. See [pilot evidence, reproduction and remaining work](../evidence/fort_morgan_pilot.md). This supersedes earlier missing-population, unexecuted-lookup and runtime-blocked entries below. Public Bhutan app integration and scientific validation remain pending.
+The population file has arrived. Local Python and GEE Fort Morgan pilots are complete; all 877 modeled city cells pass the matched-input comparison. The real NDVI lookup and private pilot boundary asset are available. **Land-cover sources differ at native resolution**, so national expansion requires an explicit source choice. See [pilot evidence, reproduction and remaining work](fort_morgan_2019/fort_morgan_pilot.md). This supersedes earlier missing-population, unexecuted-lookup and runtime-blocked entries below. Public Bhutan app integration and scientific validation remain pending.
 
 
 Updated 16 October 2026. The current readiness checklist below supersedes historical acquisition notes later in this file.

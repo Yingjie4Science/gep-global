@@ -40,9 +40,9 @@ gep-global/
 ├── config/                   country crosswalk, run registry and layout history
 ├── docs/                     data guide, reproduction guide and current tasks
 │   ├── evidence/             published reports and small numerical snapshots
-│   └── archive/              dated decisions, retained for context
+│   └── archive/              dated decisions and retired Fort Morgan pilot evidence
 ├── tests/                    model and provenance regression checks
-├── data/                     raw, processed, manifests, outputs and archive (ignored by Git)
+├── data/                     raw, processed, manifests, outputs and archive
 └── archive/                  local early project snapshots (ignored by Git)
 ```
 
@@ -51,7 +51,8 @@ authoritative input inventory, and the task register is the sole current
 owner/status list. Full local comparisons are in `data/outputs/`; older runs are in
 `data/archive/`. The [data path migration](config/data_layout_migration_2026-10-27.json)
 resolves paths in historical receipts.
-The ignored data folder must be supplied separately for a new clone.
+The small US-derived lookup in `data/processed/ndvi_lookup/` is tracked by Git.
+The remaining local data must be supplied separately for a new clone.
 Its original IHME export is under `data/raw/ihme_gbd_2023/`; the model-ready
 2019 country table is under `data/processed/`.
 

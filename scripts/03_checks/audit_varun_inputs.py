@@ -91,7 +91,7 @@ def sensitivity(data, repo):
     classes = data / 'archive/extracted/pilots/us_national_technical_2019_v1/run_002/class_population_summary.csv'
     prior = data / 'archive/extracted/pilots/us_national_technical_2019_v1/run_002/national_summary.json'
     owner = data / 'raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv'
-    derived = repo / 'docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv'
+    derived = repo / 'data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv'
     with classes.open(newline='') as f:
         rows = list(csv.DictReader(f))
     owner_map, derived_map = lookup(owner), lookup(derived)

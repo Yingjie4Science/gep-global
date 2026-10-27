@@ -31,6 +31,15 @@ def check():
         if (ROOT / item['old_path']).exists():
             errors.append(f"Obsolete duplicate executable remains: {item['old_path']}")
     evidence = json.loads((ROOT / 'config/published_evidence_checksums.json').read_text())['files']
+    input_migration = json.loads((ROOT / 'config/input_evidence_migration_2026-10-27.json').read_text())
+    for item in input_migration['moves']:
+        target = ROOT / item['new_path']
+        if (ROOT / item['old_path']).exists():
+            errors.append(f"Obsolete input/evidence copy remains: {item['old_path']}")
+        if not target.is_file():
+            errors.append(f"Missing input/evidence destination: {item['new_path']}")
+        elif target.suffix != '.md' and hashlib.sha256(target.read_bytes()).hexdigest() != item['sha256']:
+            errors.append(f"Moved input/evidence bytes changed: {item['new_path']}")
     for name, expected in evidence.items():
         path = ROOT / name
         if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:

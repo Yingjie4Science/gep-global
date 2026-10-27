@@ -12,30 +12,38 @@ The repository root is `gep-global/`. The active US data and the small,
 version-controlled model inputs are organized as follows:
 
 ```text
-gep-global/
-├── data/                                      large/local data; ignored by Git
-│   ├── raw/                                   original and collaborator files
-│   │   ├── glc_fcs30d/                        114 annual land-cover source tiles
-│   │   ├── worldpop/                          complete 2019 US population raster
-│   │   ├── guppd/                             original urban-boundary package
-│   │   ├── cost_conversion/                   exchange-rate and price-index inputs
-│   │   └── collaborator/varun_2026-10/
-│   │       └── glc_fcs30d_attribute_table_processed_updated.csv
-│   │                                               Varun's judgment-based run lookup
-│   ├── processed/                             prepared model inputs
-│   │   └── lulc_2019_us/                      114 one-band 2019 land-cover tiles
-│   ├── manifests/                             checksums, processing and QA records
-│   ├── outputs/                               retained comparison runs
-│   └── archive/                               verified historical run bundle
-└── docs/evidence/data/us_method_comparison_2019_v2_common/
-    └── glc_fcs30d_attribute_table_us_2019.csv US-derived 2019 lookup; tracked by Git
+data/
+├── raw/                              unchanged downloads and collaborator files
+│   ├── glc_fcs30d/                   annual land-cover source tiles
+│   ├── worldpop/                     2019 population raster
+│   ├── guppd/                        original urban-boundary package
+│   ├── cost_conversion/              exchange-rate and price-index sources
+│   └── collaborator/varun_2026-10/
+│       └── glc_fcs30d_attribute_table_processed_updated.csv  Varun lookup
+├── processed/                        prepared model inputs
+│   ├── ndvi_lookup/
+│   │   └── glc_fcs30d_attribute_table_us_2019.csv            US-derived lookup
+│   ├── lulc_2019_us/                 one-band 2019 land-cover tiles
+│   └── ...                           prevalence, costs and selected boundaries
+├── manifests/                        source, processing, checksum and QA records
+├── outputs/                          retained local comparison runs
+└── archive/                          historical working-data bundle
 ```
 
-Both lookup tables are major model inputs. The US-derived table is shown outside
-`data/` because it is small and version-controlled with its published evidence;
-Varun's collaborator-supplied table remains unchanged under ignored `data/raw/`.
-The model must record which lookup path and checksum it used. These are
-alternative parameterizations, not revisions of the same empirical dataset.
+The US-derived lookup is a small, Git-tracked input in `data/processed/ndvi_lookup/`.
+All other local data remain ignored by Git. Varun's supplied lookup stays in
+`data/raw/` with its original file unchanged. Select one lookup per class-based
+run and record its path and checksum. Both tables remain sensitivity inputs;
+their calibration domains and methods differ.
+
+Published reports and numerical output snapshots belong in `docs/evidence/`.
+The retired Fort Morgan report, diagnostic figure and four numerical/source-check
+files are grouped in `docs/archive/fort_morgan_2019/` (six files total, including
+the report). Its local working data were deleted at the owner's request.
+The [lookup and historical-evidence migration](../config/input_evidence_migration_2026-10-27.json)
+maps previous paths to current files and preserves their original checksums.
+Original run receipts and bundled checksum lists retain historical path strings;
+resolve them through that migration record when inspecting old runs.
 
 The validated 2019 GBD country table is at
 `data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv`.
@@ -98,7 +106,7 @@ give the source links, processing choices, checks and unresolved provenance.
 | Category | Source location | Selected derivative or parameter | Provenance record |
 | --- | --- | --- | --- |
 | **Land cover** | `raw/glc_fcs30d/` ([Zenodo](https://zenodo.org/records/15063683)); Varun’s supplied 2019 global mosaic under `raw/collaborator/varun_2026-10/` | `processed/lulc_2019_us/` (band 20 of 114 annual tiles); owner mosaic retained unchanged | `manifests/glc_us_tiles/`; [source comparison](evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json); [processing details](#1-land-cover) |
-| **Land-cover-to-NDVI lookup: US-derived** | 2019 Landsat 7/8 NDVI and GLC_FCS30D classes on the US urban calibration domain | `docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv`; version-controlled sensitivity input | [Class comparison figure](evidence/glc_fcs30d_lookup_comparison.png), [comparison data](evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv), and [method details](#2-ndvi-exposure-inputs) |
+| **Land-cover-to-NDVI lookup: US-derived** | 2019 Landsat 7/8 NDVI and GLC_FCS30D classes on the US urban calibration domain | `data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv`; version-controlled sensitivity input | [Class comparison figure](evidence/glc_fcs30d_lookup_comparison.png), [comparison data](evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv), and [method details](#2-ndvi-exposure-inputs) |
 | **Land-cover-to-NDVI lookup: Varun** | `raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv` | Use as the alternative judgment-based parameterization; choose exactly one lookup per class-based run | Source checksum, Varun's October 2026 clarification, and [method details](#2-ndvi-exposure-inputs) |
 | **Direct NDVI exposure** | Landsat 7/8 in Earth Engine | Direct annual-median 2019 NDVI sampled on WorldPop cells | Published batch evidence; [method details](#2-ndvi-exposure-inputs) |
 | **Population** | Current US [WorldPop](https://hub.worldpop.org/geodata/summary?id=75977) raster; Varun's supplied mosaic under `raw/collaborator/varun_2026-10/worldpop/` | US raster used directly; mosaic retained for reproduction tests | `raw/worldpop/README.md` and current inventory manifest; [grid and comparison](#3-population) |

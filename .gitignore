@@ -61,6 +61,11 @@ pkgs/
 .venv/
 
 # Large/local project inputs and historical snapshots outside Git
-/data/
+/data/*
+!/data/processed/
+/data/processed/*
+!/data/processed/ndvi_lookup/
+/data/processed/ndvi_lookup/*
+!/data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv
 /archive/
 /.envs/

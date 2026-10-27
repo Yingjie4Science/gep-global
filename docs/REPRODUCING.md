@@ -112,7 +112,7 @@ the current two-city orchestration writes under `outputs/sf_minneapolis_2019_v1/
 
 ```sh
 RUN=$DATA/outputs/us_lookup_review_v1
-python scripts/02_models/run_us_national_technical.py "$DATA" "$RUN"   --lookup docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv   --effects "$DATA/processed/effect_size.xlsx"   --prevalence "$GBD"   --crosswalk config/us_country_crosswalk.csv   --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv"
+python scripts/02_models/run_us_national_technical.py "$DATA" "$RUN"   --lookup data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv   --effects "$DATA/processed/effect_size.xlsx"   --prevalence "$GBD"   --crosswalk config/us_country_crosswalk.csv   --cost "$DATA/processed/data_cost_mental_health_US_2019_USD.csv"
 ```
 
 Inspect `run_record.json`, `national_summary.json`,
@@ -149,7 +149,7 @@ published report:
 ```sh
 REPORT=$DATA/outputs/report_review_v1
 mkdir "$REPORT"
-python scripts/04_reports/render_us_direct_ndvi_report.py   docs/evidence/data/us_direct_ndvi_2019_v1/national_summary.json   docs/evidence/data/us_direct_ndvi_2019_v1/state_summary.csv   "$REPORT/direct_ndvi_report.md"   --comparison-summary docs/evidence/data/us_method_comparison_2019_v2_common/national_comparison.json   --comparison-scenarios docs/evidence/data/us_method_comparison_2019_v2_common/scenario_comparison.csv   --lookup-table docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv   --lookup-manifest docs/evidence/data/us_method_comparison_2019_v2_common/lookup_manifest.json
+python scripts/04_reports/render_us_direct_ndvi_report.py   docs/evidence/data/us_direct_ndvi_2019_v1/national_summary.json   docs/evidence/data/us_direct_ndvi_2019_v1/state_summary.csv   "$REPORT/direct_ndvi_report.md"   --comparison-summary docs/evidence/data/us_method_comparison_2019_v2_common/national_comparison.json   --comparison-scenarios docs/evidence/data/us_method_comparison_2019_v2_common/scenario_comparison.csv   --lookup-table data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv   --lookup-manifest docs/evidence/data/us_method_comparison_2019_v2_common/lookup_manifest.json
 ```
 
 This creates a review copy; optional historical technical diagnostics require the

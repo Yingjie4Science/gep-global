@@ -35,7 +35,7 @@ Rebuild the comparison from the repository root:
 
 ```sh
 python scripts/04_reports/plot_lookup_comparison.py \
-  docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv \
+  data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv \
   data/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv \
   docs/evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv \
   docs/evidence/glc_fcs30d_lookup_comparison.png \
@@ -64,7 +64,7 @@ For a fresh paired run, choose a new `OUT` directory and run:
 ```sh
 OUT=$DATA/outputs/varun_lookup_matched_2019_v2
 python scripts/02_models/run_us_national_technical.py "$DATA" "$OUT/us_derived_lookup" \
-  --lookup docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv \
+  --lookup data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv \
   --effects "$DATA/processed/effect_size.xlsx" \
   --prevalence data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
   --crosswalk config/us_country_crosswalk.csv \
@@ -88,7 +88,7 @@ Then run the national technical script twice:
 
 ```sh
 python scripts/02_models/run_us_national_technical.py "$DATA" "$OUT/varun_landcover_us_derived_lookup" \
-  --lookup docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv \
+  --lookup data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv \
   --effects "$DATA/processed/effect_size.xlsx" \
   --prevalence data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
   --crosswalk config/us_country_crosswalk.csv \

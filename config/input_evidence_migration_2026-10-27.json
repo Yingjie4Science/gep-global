@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-27",
+  "purpose": "Place the selected lookup with model inputs and retire Fort Morgan evidence together.",
+  "policy": "Numeric evidence bytes and original run receipts preserved; current code and documentation use new paths.",
+  "moves": [
+    {
+      "old_path": "docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv",
+      "new_path": "data/processed/ndvi_lookup/glc_fcs30d_attribute_table_us_2019.csv",
+      "sha256": "4d2f654319a1a937efcb23eb9846c0d997b60485e8f8af053ff665c4d2b45702"
+    },
+    {
+      "old_path": "docs/evidence/fort_morgan_native_lc_source_check.json",
+      "new_path": "docs/archive/fort_morgan_2019/fort_morgan_native_lc_source_check.json",
+      "sha256": "d9a6d9242c23c36991ccdccabe9c7beddc92e10e056cfb17b387bd2a99e96e18"
+    },
+    {
+      "old_path": "docs/evidence/fort_morgan_pilot.md",
+      "new_path": "docs/archive/fort_morgan_2019/fort_morgan_pilot.md",
+      "sha256": "489a24256e1b15339444813751cf4ce9e01b67f6444abf52a22063c9e3f4bd14"
+    },
+    {
+      "old_path": "docs/evidence/fort_morgan_pilot_comparison.csv",
+      "new_path": "docs/archive/fort_morgan_2019/fort_morgan_pilot_comparison.csv",
+      "sha256": "e5bf5f6e16efd61a29c13a3be96a9c9735ab1cd829fd82b9c41b6805c806c0f6"
+    },
+    {
+      "old_path": "docs/evidence/fort_morgan_pilot_comparison.json",
+      "new_path": "docs/archive/fort_morgan_2019/fort_morgan_pilot_comparison.json",
+      "sha256": "048ebe642a57ad1947771ca4340a13904adb7ee0daa0b827a948cafcfd522edf"
+    },
+    {
+      "old_path": "docs/evidence/fort_morgan_pilot_diagnostics.png",
+      "new_path": "docs/archive/fort_morgan_2019/fort_morgan_pilot_diagnostics.png",
+      "sha256": "30d18f1c89412c2e6abf388bbd3e14a6be37a7c609effd2b73843a1202354a40"
+    },
+    {
+      "old_path": "docs/evidence/fort_morgan_pilot_summary.csv",
+      "new_path": "docs/archive/fort_morgan_2019/fort_morgan_pilot_summary.csv",
+      "sha256": "8e96aabad893a9b9a7db0c729dbaaef3eb97937920cafdb729927c719c06712d"
+    }
+  ]
+}

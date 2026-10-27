@@ -67,8 +67,8 @@
       "status": "completed; historical",
       "method": "Bounded early local/cloud pilot",
       "entrypoint": "scripts/02_models/run_local_pilot.py",
-      "report": "docs/evidence/fort_morgan_pilot.md",
-      "evidence": "docs/evidence/fort_morgan_pilot_comparison.json",
+      "report": "docs/archive/fort_morgan_2019/fort_morgan_pilot.md",
+      "evidence": "docs/archive/fort_morgan_2019/fort_morgan_pilot_comparison.json",
       "local_inputs_status": "Deleted by owner request 2026-10-27; published evidence remains in Git"
     },
     {
