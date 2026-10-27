@@ -25,7 +25,7 @@ The [parameter rows](https://github.com/NatCapTEEMs/global_invest_dev/blob/f3059
 
 ## Two-city urban-coverage demonstration
 
-The figures compare one **level-30 GUPPD urban region** for each named city with GHS-SMOD codes 21+ **within 10 km of that GUPPD polygon**. The San Francisco feature covers the wider Bay Area, and the Minneapolis feature includes Saint Paul; neither is a municipal boundary. The buffer makes nearby SMOD additions visible but can include other adjacent settlements. Values are therefore a bounded comparison, not a city-level allocation or a national extrapolation.
+The figures compare one **level-30 GUPPD urban region** for each named city with GHS-SMOD codes 21+ inside that polygon and nearby. GHS-SMOD is a national raster mask, so it has no polygon corresponding exactly to a named GUPPD city. We used the polygon **plus a 10 km buffer as a local comparison window** to display nearby included cells without counting distant urban areas. Ten kilometres is a pragmatic, arbitrary window: SMOD-only area and population totals depend on it, and the blue SMOD outline is clipped at its edge. Neither Chiara’s national model nor our GUPPD model uses this buffer as an urban definition. The San Francisco feature covers the wider Bay Area, and the Minneapolis feature includes Saint Paul; neither is a municipal boundary. The within-GUPPD overlap is less sensitive to the window than the added-area totals. This example is not a city-level allocation or a national extrapolation.
 
 | Region | GUPPD area | SMOD 21+ area | Area added net | GUPPD population | SMOD 21+ population | Population added net |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -33,6 +33,8 @@ The figures compare one **level-30 GUPPD urban region** for each named city with
 | Minneapolis–Saint Paul | 1,286 km² | 2,053 km² | **+59.6%** | 1.95 million | 2.63 million | **+34.7%** |
 
 Most GUPPD population is also in SMOD 21+: **99.4%** in the Bay Area region and **98.5%** in Minneapolis–Saint Paul on the common WorldPop population grid. The extra SMOD-only areas contain about **0.53 million** and **0.71 million** people, respectively; GUPPD-only areas contain about 0.03 million in each. These are support differences, not predicted depression cases. The mapped SMOD-only areas include suburban/peri-urban cells and, in the Bay Area buffer, some separate urban-centre cells.
+
+Both maps draw the **GUPPD polygon in solid black** and the **GHS-SMOD 21+ raster-cell boundary in dashed blue**. The latter is clipped at the buffer edge.
 
 ![San Francisco Bay Area GHS-SMOD classes and overlap with GUPPD](figures/smod_guppd_san_francisco.png)
 

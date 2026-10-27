@@ -24,12 +24,13 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
+from matplotlib.lines import Line2D
 import numpy as np
 import rasterio
-from rasterio.features import geometry_mask
+from rasterio.features import geometry_mask, shapes
 from rasterio.warp import Resampling, reproject
 from rasterio.windows import from_bounds
-from shapely.geometry import box, mapping
+from shapely.geometry import box, mapping, shape
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / 'data'
@@ -116,16 +117,26 @@ def plot_city(path: Path, label: str, smod, src, polygon, in_buffer, in_guppd, i
     extent = (src.bounds.left, src.bounds.right,
               src.bounds.bottom, src.bounds.top)
     fig, axes = plt.subplots(1, 2, figsize=(12.6, 7.2))
-    fig.subplots_adjust(left=0.03, right=0.97, top=0.87, bottom=0.22, wspace=0.07)
+    fig.subplots_adjust(left=0.03, right=0.97, top=0.87, bottom=0.27, wspace=0.07)
     class_cmap = ListedColormap(['#e8ecef', '#e8d65a', '#db9a51', '#a66555', '#c94e4e', '#ffffff'])
     overlap_cmap = ListedColormap(['#e8ecef', '#227b80', '#ed9a37', '#7d5eaf', '#ffffff'])
     axes[0].imshow(class_image, cmap=class_cmap, vmin=0, vmax=5,
                    interpolation='nearest', extent=extent, origin='upper')
     axes[1].imshow(overlap, cmap=overlap_cmap, vmin=0, vmax=4,
                    interpolation='nearest', extent=extent, origin='upper')
-    boundary = gpd.GeoSeries([polygon], crs=5070).boundary
+    # Vectorize the selected SMOD cells so its outline follows actual 1 km cell
+    # edges. This is the mask clipped to the 10 km display window, not a named city.
+    smod_polygons = [shape(geometry) for geometry, value in shapes(
+        in_smod.astype('uint8'), mask=in_smod, transform=src.transform)
+        if value == 1]
+    smod_boundary = gpd.GeoSeries(smod_polygons, crs=5070).boundary
+    guppd_boundary = gpd.GeoSeries([polygon], crs=5070).boundary
     for ax in axes:
-        boundary.plot(ax=ax, color='#17212b', linewidth=1.2)
+        smod_boundary.plot(ax=ax, color='#1d4ed8', linewidth=1.1,
+                           linestyle='--', zorder=4)
+        guppd_boundary.plot(ax=ax, color='#17212b', linewidth=1.3, zorder=5)
+        ax.set_xlim(src.bounds.left, src.bounds.right)
+        ax.set_ylim(src.bounds.bottom, src.bounds.top)
         ax.set_aspect('equal')
         ax.set_xticks([])
         ax.set_yticks([])
@@ -143,14 +154,21 @@ def plot_city(path: Path, label: str, smod, src, polygon, in_buffer, in_guppd, i
         ('#7d5eaf', 'GUPPD only')]], loc='upper center', bbox_to_anchor=(0.5, -0.02), ncol=2,
         fontsize=8.4, frameon=False)
     fig.suptitle(label, fontsize=17, weight='bold')
+    fig.legend(handles=[
+        Line2D([0], [0], color='#17212b', linewidth=1.5,
+               label='GUPPD polygon boundary'),
+        Line2D([0], [0], color='#1d4ed8', linewidth=1.5, linestyle='--',
+               label='GHS-SMOD 21+ cell boundary'),
+    ], loc='lower center', bbox_to_anchor=(0.5, 0.15), ncol=2,
+        frameon=False, fontsize=9.2)
     fig.text(0.5, 0.10,
-             f"Within 10 km of GUPPD: GUPPD {area['guppd']:,.0f} km² / "
+             f"GUPPD + 10 km buffer: GUPPD {area['guppd']:,.0f} km² / "
              f"{population['guppd']/1e6:.2f}m people; SMOD 21+ "
              f"{area['smod_21_plus']:,.0f} km² / {population['smod_21_plus']/1e6:.2f}m people",
              ha='center', fontsize=10.5, weight='bold')
     fig.text(0.5, 0.055,
              '2020 GHS-SMOD • 2019 GUPPD • 2019 WorldPop • 1 km area grid • '
-             'dark outline = GUPPD • buffered comparison, not municipal limits',
+             'SMOD outline is clipped at window edge • not municipal limits',
              ha='center', fontsize=8.5, color='#495463')
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=200, bbox_inches='tight', facecolor='white')
