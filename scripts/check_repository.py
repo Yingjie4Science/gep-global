@@ -38,8 +38,20 @@ def check():
             errors.append(f"Obsolete input/evidence copy remains: {item['old_path']}")
         if not target.is_file():
             errors.append(f"Missing input/evidence destination: {item['new_path']}")
-        elif target.suffix != '.md' and hashlib.sha256(target.read_bytes()).hexdigest() != item['sha256']:
+        elif hashlib.sha256(target.read_bytes()).hexdigest() != item.get('current_sha256', item.get('sha256')):
             errors.append(f"Moved input/evidence bytes changed: {item['new_path']}")
+    moved_paths = {item['old_path']: item['new_path'] for item in input_migration['moves']}
+    for checksum_file in (ROOT / 'docs/evidence/data').glob('*/checksums.sha256'):
+        for line in checksum_file.read_text().splitlines():
+            if not line.strip():
+                continue
+            expected, old_name = line.split(None, 1)
+            name = moved_paths.get(old_name.strip(), old_name.strip())
+            target = ROOT / name
+            if not target.is_file() and '/' not in name:
+                target = checksum_file.parent / name
+            if not target.is_file() or hashlib.sha256(target.read_bytes()).hexdigest() != expected:
+                errors.append(f'Historical checksum mismatch: {checksum_file.relative_to(ROOT)} -> {name}')
     for name, expected in evidence.items():
         path = ROOT / name
         if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:

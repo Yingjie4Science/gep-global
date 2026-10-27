@@ -16,7 +16,8 @@
     {
       "old_path": "docs/evidence/fort_morgan_pilot.md",
       "new_path": "docs/archive/fort_morgan_2019/fort_morgan_pilot.md",
-      "sha256": "489a24256e1b15339444813751cf4ce9e01b67f6444abf52a22063c9e3f4bd14"
+      "original_sha256": "489a24256e1b15339444813751cf4ce9e01b67f6444abf52a22063c9e3f4bd14",
+      "current_sha256": "4dcdd66e7691473054448bc4f07c1c7e5aa9e78af36c0ba63c627d2cf41f70f5"
     },
     {
       "old_path": "docs/evidence/fort_morgan_pilot_comparison.csv",

@@ -1,5 +1,5 @@
 """Render the concise US direct-NDVI production report from verified summaries."""
-import argparse,csv,json
+import argparse,csv,json,os,re
 from pathlib import Path
 
 p=argparse.ArgumentParser(description=__doc__)
@@ -189,5 +189,16 @@ The four-city gate reproduced the earlier direct-grid estimates exactly for Port
 
 The 95% limits propagate only the published effect-size interval. They hold `p0`, prevalence, population, NDVI, geographic membership and cost fixed. The exposure-response estimate and `p0` are transported assumptions; the all-age GBD prevalence matches the all-age population denominator but is not an adult current-MDD endpoint. GUPPD features represent physical urban extents rather than municipal boundaries. The cost factor is broader than depression treatment cost, so the dollar result is an exploratory societal-value proxy. A later Monte Carlo analysis should jointly vary the effect, `p0`, prevalence, exposure and cost inputs.
 """
+def resolve_report_links(match):
+    target = match.group(1)
+    if target.startswith(('#', 'http:', 'https:')):
+        return match.group(0)
+    source = (Path(__file__).resolve().parents[2] / 'docs/evidence' / target).resolve()
+    if not source.exists():
+        return match.group(0)
+    relative = os.path.relpath(source, a.output.resolve().parent)
+    return '](' + relative + ')'
+
+text = re.sub(r'\]\(([^)]+)\)', resolve_report_links, text)
 a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(text)
 print(a.output)
