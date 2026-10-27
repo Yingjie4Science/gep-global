@@ -1,0 +1,79 @@
+{
+  "source": "JRC/GHSL/P2023A/GHS_SMOD_V2-0/2020",
+  "source_year": 2020,
+  "area_grid": "EPSG:5070, 1000 m; cell-centre membership",
+  "comparison_buffer_m": 10000,
+  "population": "2019 WorldPop constrained R2025A v1, native 100 m; SMOD nearest-neighbour sampled at population cells",
+  "input_sha256": {
+    "guppd": "23b7a99f72b78cd6b5cb22c016f9a6a584f4961a16bab2f1effc333bbb87bf82",
+    "worldpop": "8b0ef7a8994d7686e49298f4d5f0b5129460e053d92ad6ec9eef5a300f5cc66c"
+  },
+  "cities": {
+    "san_francisco": {
+      "label": "San Francisco Bay Area",
+      "guppd_id": "30_12257",
+      "guppd_vector_area_km2": 1714.0216245223014,
+      "area_km2": {
+        "guppd": 1723.0,
+        "smod_21_plus": 2145.0,
+        "both": 1630.0,
+        "smod_only": 515.0,
+        "guppd_only": 93.0
+      },
+      "population_people": {
+        "guppd": 5279447.160199386,
+        "smod_21_plus": 5782805.798714427,
+        "both": 5249920.723627168,
+        "smod_only": 532885.075087259,
+        "guppd_only": 29526.436572220482
+      },
+      "smod_class_km2_inside_guppd": {
+        "21": 67.0,
+        "22": 0.0,
+        "23": 7.0,
+        "30": 1556.0
+      },
+      "smod_class_km2_smod_only": {
+        "21": 306.0,
+        "22": 20.0,
+        "23": 32.0,
+        "30": 157.0
+      },
+      "smod_crop_sha256": "7355961657783cf1a7f608872e6d02fa118ae402b6e2e608b790316ec1101b16",
+      "figure": "docs/evidence/figures/smod_guppd_san_francisco.png"
+    },
+    "minneapolis": {
+      "label": "Minneapolis\u2013Saint Paul",
+      "guppd_id": "30_12427",
+      "guppd_vector_area_km2": 1287.9896621676207,
+      "area_km2": {
+        "guppd": 1286.0,
+        "smod_21_plus": 2053.0,
+        "both": 1182.0,
+        "smod_only": 871.0,
+        "guppd_only": 104.0
+      },
+      "population_people": {
+        "guppd": 1953129.460863208,
+        "smod_21_plus": 2630298.143366127,
+        "both": 1924487.9045311203,
+        "smod_only": 705810.2388350061,
+        "guppd_only": 28641.556332086766
+      },
+      "smod_class_km2_inside_guppd": {
+        "21": 440.0,
+        "22": 62.0,
+        "23": 98.0,
+        "30": 582.0
+      },
+      "smod_class_km2_smod_only": {
+        "21": 678.0,
+        "22": 137.0,
+        "23": 56.0,
+        "30": 0.0
+      },
+      "smod_crop_sha256": "298b7fc1fb74972aca435c6ba8f03dea94e5fb80ebb3d4a45e15c90ca9e262d3",
+      "figure": "docs/evidence/figures/smod_guppd_minneapolis.png"
+    }
+  }
+}

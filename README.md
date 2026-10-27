@@ -18,6 +18,7 @@ include all input or model uncertainty.
 | --- | --- |
 | Understand the result and method | [Production report](docs/evidence/us_direct_ndvi_production_run.md) |
 | Compare Varun, project and SNAPP values and study areas | [Cost and area comparison](docs/evidence/varun_us_cost_comparison.md) |
+| Compare Chiara’s global_invest method and two urban masks | [Chiara comparison and city maps](docs/evidence/chiara_global_invest_comparison.md) |
 | Reproduce a calculation or resume a workflow | [Reproduction guide](docs/REPRODUCING.md) |
 | Locate data, source links and preprocessing | [Data guide](docs/DATA_SOURCES_AND_PREPROCESSING.md) |
 | See what is open, who owns it and the next action | [Current decisions and tasks](docs/DECISIONS_AND_TODOS.md) |

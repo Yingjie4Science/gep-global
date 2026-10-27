@@ -17,6 +17,7 @@ data/
 │   ├── glc_fcs30d/                   annual land-cover source tiles
 │   ├── worldpop/                     2019 population raster
 │   ├── guppd/                        original urban-boundary package
+│   ├── ghs_smod/                     2020 settlement-mask comparison crops
 │   ├── cost_conversion/              exchange-rate and price-index sources
 │   └── collaborator/varun_2026-10/
 │       └── glc_fcs30d_attribute_table_processed_updated.csv  Varun lookup
@@ -343,6 +344,8 @@ model population. The [boundary audit](evidence/data/varun_2026_10/urban_boundar
 and `scripts/03_checks/audit_varun_inputs.py` record IDs, levels, source geometry and
 checksums. The owner's exact global selection rule remains a provenance request,
 not a blocker for the matched US lookup test.
+
+The separate [GHS-SMOD/GUPPD two-city comparison](evidence/chiara_global_invest_comparison.md#two-city-urban-coverage-demonstration) uses 2020 JRC settlement classes 21+ as a geography sensitivity. Its small Earth Engine crops are kept under ignored `raw/ghs_smod/2020_two_city_crops/`; the reproducible script and published figures are linked in that comparison. GHS-SMOD is not an input to the current GUPPD production run.
 
 ## 5. Health inputs
 
