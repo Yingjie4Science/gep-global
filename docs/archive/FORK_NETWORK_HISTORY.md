@@ -2,7 +2,7 @@
 
 This repository began as a fork of [Observarun/urban-mental-health-gep](https://github.com/Observarun/urban-mental-health-gep). GitHub renamed the fork from `Yingjie4Science/urban-mental-health-gep` to `Yingjie4Science/gep-global` on 2026-10-27. The source repository remains recorded as the local `upstream` remote for provenance; it is not a data source for current model results.
 
-GitHub's **Leave fork network** operation removes pull request records. The two merged pull requests below were recorded before detachment. Their merged commits remain in Git history.
+On 2026-10-27, GitHub reported this repository as standalone (`fork: false`, no parent). The two merged pull requests below were recorded before detachment. Their merged commits remain in Git history.
 
 | PR | Purpose | Merged (UTC) | Merge commit |
 | --- | --- | --- | --- |
