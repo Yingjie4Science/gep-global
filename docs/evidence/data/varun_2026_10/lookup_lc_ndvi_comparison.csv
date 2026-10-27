@@ -1,0 +1,36 @@
+lc_code,lc_label,us_derived_lc_ndvi,varun_judgment_lc_ndvi,varun_minus_us,comparison_status
+10,Rainfed cropland,0.627747921381595,0.35,-0.277747921381595,matched
+11,Herbaceous cover cropland,0.5076141337902209,0.3,-0.20761413379022092,matched
+12,Tree or shrub cover (Orchard) cropland,,0.6,,US 2019 NDVI unavailable
+20,Irrigated cropland,0.6404868646887693,0.45,-0.19048686468876924,matched
+51,Open evergreen broadleaved forest,0.6871134883161193,0.75,0.06288651168388071,matched
+52,Closed evergreen broadleaved forest,0.7398684355663808,0.8,0.06013156443361922,matched
+61,Open deciduous broadleaved forest (0.15<fc<0.4),0.6557498482937146,0.65,-0.00574984829371461,matched
+62,Closed deciduous broadleaved forest (fc>0.4),0.7062562275699104,0.78,0.07374377243008967,matched
+71,Open evergreen needle-leaved forest (0.15< fc <0.4),0.37911677159577023,0.65,0.2708832284042298,matched
+72,Closed evergreen needle-leaved forest (fc >0.4),0.6655462563071918,0.7,0.03445374369280818,matched
+81,Open deciduous needle-leaved forest (0.15< fc <0.4),0.7547116972989991,0.6,-0.15471169729899914,matched
+82,Closed deciduous needle-leaved forest (fc >0.4),0.6446248179486315,0.65,0.005375182051368554,matched
+91,Open mixed leaf forest (broadleaved and needle-leaved),0.5772233310590509,0.68,0.10277666894094917,matched
+92,Closed mixed leaf forest (broadleaved and needle-leaved),,0.72,,US 2019 NDVI unavailable
+120,Shrubland,0.23893285041989726,0.4,0.16106714958010276,matched
+121,Evergreen shrubland,0.6595870217417813,0.45,-0.2095870217417813,matched
+122,Deciduous shrubland,0.7402464368138844,0.35,-0.3902464368138844,matched
+130,Grassland,0.5751771344138497,0.35,-0.22517713441384968,matched
+140,Lichens and mosses,0.22557031038439218,0.15,-0.07557031038439219,matched
+150,Sparse vegetation (fc<0.15),0.6612244760410508,0.2,-0.4612244760410508,matched
+152,Sparse shrubland (fc<0.15),,0.2,,US 2019 NDVI unavailable
+153,Sparse herbaceous (fc<0.15),0.5994556479192827,0.15,-0.4494556479192827,matched
+181,Swamp,0.7033430800865227,0.5,-0.2033430800865227,matched
+182,Marsh,0.5855865016458611,0.4,-0.1855865016458611,matched
+183,Flooded flat,0.03287723252685049,0.3,0.2671227674731495,matched
+184,Saline,,0.1,,US 2019 NDVI unavailable
+185,Mangrove,0.7361136769140925,0.65,-0.08611367691409244,matched
+186,Salt marsh,0.44128747418685665,0.35,-0.09128747418685668,matched
+187,Tidal flat,-0.028389464137523288,0.05,0.07838946413752329,matched
+190,Impervious surfaces,0.3917029732795305,0.2,-0.1917029732795305,matched
+200,Bare areas,0.09239262288258407,0.05,-0.042392622882584066,matched
+201,Consolidated bare areas,,0.03,,US 2019 NDVI unavailable
+202,Unconsolidated bare areas,,0.07,,US 2019 NDVI unavailable
+210,Water body,-0.08402856219089792,-0.1,-0.015971437809102082,matched
+220,Permanent ice and snow,,0.0,,US 2019 NDVI unavailable

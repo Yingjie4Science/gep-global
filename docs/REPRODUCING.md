@@ -221,6 +221,7 @@ network, disk or cloud resources; they are never launched by the offline checker
 | `03_checks/compare_varun_us_cost.py` | Owner versus project rates on saved cases. |
 | `03_checks/compare_snapp_us_cost.py` | Add the explicit 2019-dollar SNAPP MDD sensitivity. |
 | `04_reports/render_us_direct_ndvi_report.py` | Render published-summary evidence as Markdown. |
+| `04_reports/plot_lookup_comparison.py` | Compare the US-derived and Varun land-cover-to-NDVI tables; write the paired CSV, summary and figure. |
 
 Paths in this catalog are under `scripts/`. Shared model modules live in `src/`;
 `run_provenance.py` records source/input/output hashes and `vector_attributes.py`

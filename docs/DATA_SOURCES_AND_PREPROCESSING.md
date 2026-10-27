@@ -18,13 +18,21 @@ data/
 │   ├── worldpop/        complete 2019 US population raster
 │   ├── guppd/           original urban-boundary package
 │   ├── cost_conversion/ saved exchange-rate and price-index inputs
-│   └── collaborator/varun_2026-10/  unchanged land cover, lookup, population, boundaries and costs
+│   └── collaborator/varun_2026-10/
+│       └── glc_fcs30d_attribute_table_processed_updated.csv  Varun's run lookup
 ├── processed/           prepared inputs and historical source files
 │   └── lulc_2019_us/    114 one-band 2019 land-cover tiles
 ├── manifests/           source, checksum, processing and validation records
 ├── outputs/             retained comparison runs
 └── archive/             verified historical run bundle
 ```
+
+The other major land-cover-to-NDVI input is small and version-controlled with
+the published evidence rather than duplicated under ignored local data:
+`docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv`.
+It is the US-derived 2019 sensitivity lookup. The model must record which lookup
+path and checksum it used; the two tables are alternative inputs, not revisions
+of the same empirical dataset.
 
 The validated 2019 GBD country table is at
 `data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv`.
@@ -87,7 +95,8 @@ give the source links, processing choices, checks and unresolved provenance.
 | Category | Source location | Selected derivative or parameter | Provenance record |
 | --- | --- | --- | --- |
 | **Land cover** | `raw/glc_fcs30d/` ([Zenodo](https://zenodo.org/records/15063683)); Varun’s supplied 2019 global mosaic under `raw/collaborator/varun_2026-10/` | `processed/lulc_2019_us/` (band 20 of 114 annual tiles); owner mosaic retained unchanged | `manifests/glc_us_tiles/`; [source comparison](evidence/data/varun_2026_10/land_cover_us_urban_cell_audit.json); [processing details](#1-land-cover) |
-| **NDVI exposure** | Landsat 7/8 in Earth Engine; Varun's confirmed run lookup in `raw/collaborator/varun_2026-10/` | Direct 2019 NDVI in Earth Engine; derived lookup in `docs/evidence/data/us_method_comparison_2019_v2_common/` | Published batch evidence and collaborator-file checksums; [method details](#2-ndvi-exposure-inputs) |
+| **Land-cover-to-NDVI lookup** | Varun's `raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv`; Landsat 7/8 and GLC_FCS30D used for the project table | `docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv`; choose exactly one lookup per class-based run | [Class comparison figure](evidence/glc_fcs30d_lookup_comparison.png), [comparison data](evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv), source checksums, and [method details](#2-ndvi-exposure-inputs) |
+| **Direct NDVI exposure** | Landsat 7/8 in Earth Engine | Direct annual-median 2019 NDVI sampled on WorldPop cells | Published batch evidence; [method details](#2-ndvi-exposure-inputs) |
 | **Population** | Current US [WorldPop](https://hub.worldpop.org/geodata/summary?id=75977) raster; Varun's supplied mosaic under `raw/collaborator/varun_2026-10/worldpop/` | US raster used directly; mosaic retained for reproduction tests | `raw/worldpop/README.md` and current inventory manifest; [grid and comparison](#3-population) |
 | **Urban boundaries** | [GUPPD](https://doi.org/10.7927/brq1-xc29) source in `raw/guppd/`; Varun's prepared GeoPackage in `raw/collaborator/varun_2026-10/` | `processed/guppd_us_excluding_hawaii.gpkg` | Owner-layer comparison in [review evidence](evidence/data/varun_2026_10/urban_boundaries_audit.json); [selection details](#4-urban-polygons) |
 | **Health parameters** | `processed/effect_size.xlsx`; GBD table in `processed/` | Liu et al. OR, 2019 all-age country prevalence, and separately declared `p0` | GBD import manifest and model run manifest; [definitions](#5-health-inputs) |
@@ -182,11 +191,31 @@ and signed NDVI from −0.10 to 0.80, recorded to at most two decimal places.
 It has no class counts, uncertainty, exclusion rule, generation method or
 temporal/geographic metadata.
 
+In his October 2026 email, Varun clarified that he assigned the `lc_ndvi`
+values largely by judgment, informed by general remote-sensing literature on
+typical NDVI ranges and by internal class ordering (for example, open canopy
+below closed canopy and irrigated cropland above rainfed cropland). He described
+0.20 for impervious surfaces as likely near the top of a plausible range because
+mixed pixels can contain vegetation, and was open to lowering it. He cited
+[Moula et al. (2025), arXiv:2509.01628](https://arxiv.org/abs/2509.01628), a
+Google Earth Engine NDVI-thresholding application using Sentinel-2 and Landsat
+median composites. That paper provides broad NDVI-thresholding context; it does
+not document generation or validation of this 35-class lookup. Therefore record
+the table as a **judgment-based, literature-informed parameterization**, with
+Varun's ordering rules as face-validity checks rather than empirical calibration.
+
 Against the 28 supported classes in the independently derived US urban 2019
 table, its unweighted class-value mean absolute difference is **0.164 NDVI**,
 RMSE **0.205**, and mean signed difference **−0.084** (Varun minus US). The
 largest class gaps are sparse vegetation (−0.461), sparse herbaceous (−0.449)
 and deciduous shrubland (−0.390). Impervious surfaces are 0.20 versus 0.392.
+The [paired class plot](evidence/glc_fcs30d_lookup_comparison.png) shows both
+lookup values and Varun-minus-US differences; its machine-readable source is
+[`lookup_lc_ndvi_comparison.csv`](evidence/data/varun_2026_10/lookup_lc_ndvi_comparison.csv).
+Varun's value is lower for **18 of 28** matched classes and higher for 10; seven
+US classes lack valid 2019 calibration NDVI and are shown as unavailable.
+
+![Paired land-cover-to-NDVI values and Varun-minus-US differences for 35 GLC_FCS30D classes](evidence/glc_fcs30d_lookup_comparison.png)
 These comparisons show a material exposure-assignment difference, not which
 table is more accurate: the US values are in-sample urban estimates, and rare
 classes have weak support. We ran it as a **separate original-lookup

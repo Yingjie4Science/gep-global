@@ -1,0 +1,28 @@
+{
+  "us_lookup": "docs/evidence/data/us_method_comparison_2019_v2_common/glc_fcs30d_attribute_table_us_2019.csv",
+  "us_lookup_sha256": "4d2f654319a1a937efcb23eb9846c0d997b60485e8f8af053ff665c4d2b45702",
+  "varun_lookup": "data/raw/collaborator/varun_2026-10/glc_fcs30d_attribute_table_processed_updated.csv",
+  "varun_lookup_sha256": "a00968fd800ccb1214635509a193f0b426d43c801c374a0d9b4bbfe1b3cd5fab",
+  "classes_total": 35,
+  "classes_compared": 28,
+  "classes_without_us_2019_ndvi": [
+    12,
+    92,
+    152,
+    184,
+    201,
+    202,
+    220
+  ],
+  "excluded_fill_codes": [
+    0,
+    250
+  ],
+  "varun_lower_count": 18,
+  "varun_higher_count": 10,
+  "equal_count": 0,
+  "mean_signed_difference_varun_minus_us": -0.08382640024087033,
+  "mean_absolute_difference": 0.16359997544285038,
+  "rmse": 0.20527194776797705,
+  "interpretation": "Descriptive comparison of lookup assignments; it does not establish which lookup is more accurate."
+}
