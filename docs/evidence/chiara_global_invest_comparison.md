@@ -34,7 +34,7 @@ The figures compare one **level-30 GUPPD urban region** for each named city with
 
 Most GUPPD population is also in SMOD 21+: **99.4%** in the Bay Area region and **98.5%** in Minneapolis–Saint Paul on the common WorldPop population grid. The extra SMOD-only areas contain about **0.53 million** and **0.71 million** people, respectively; GUPPD-only areas contain about 0.03 million in each. These are support differences, not predicted depression cases. The mapped SMOD-only areas include suburban/peri-urban cells and, in the Bay Area buffer, some separate urban-centre cells.
 
-Both maps draw the **GUPPD polygon in solid black** and the **GHS-SMOD 21+ raster-cell boundary in dashed blue**. The latter is clipped at the buffer edge.
+Both maps draw the **GUPPD polygon in solid black** and the **GHS-SMOD 21+ raster-cell boundary in dashed magenta with a thin white halo**. The latter is clipped at the buffer edge.
 
 ![San Francisco Bay Area GHS-SMOD classes and overlap with GUPPD](figures/smod_guppd_san_francisco.png)
 

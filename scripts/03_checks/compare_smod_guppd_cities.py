@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
+import matplotlib.patheffects as path_effects
 import numpy as np
 import rasterio
 from rasterio.features import geometry_mask, shapes
@@ -132,8 +133,12 @@ def plot_city(path: Path, label: str, smod, src, polygon, in_buffer, in_guppd, i
     smod_boundary = gpd.GeoSeries(smod_polygons, crs=5070).boundary
     guppd_boundary = gpd.GeoSeries([polygon], crs=5070).boundary
     for ax in axes:
-        smod_boundary.plot(ax=ax, color='#1d4ed8', linewidth=1.1,
+        smod_boundary.plot(ax=ax, color='#c2185b', linewidth=1.25,
                            linestyle='--', zorder=4)
+        ax.collections[-1].set_path_effects([
+            path_effects.Stroke(linewidth=2.6, foreground='white'),
+            path_effects.Normal(),
+        ])
         guppd_boundary.plot(ax=ax, color='#17212b', linewidth=1.3, zorder=5)
         ax.set_xlim(src.bounds.left, src.bounds.right)
         ax.set_ylim(src.bounds.bottom, src.bounds.top)
@@ -157,7 +162,7 @@ def plot_city(path: Path, label: str, smod, src, polygon, in_buffer, in_guppd, i
     fig.legend(handles=[
         Line2D([0], [0], color='#17212b', linewidth=1.5,
                label='GUPPD polygon boundary'),
-        Line2D([0], [0], color='#1d4ed8', linewidth=1.5, linestyle='--',
+        Line2D([0], [0], color='#c2185b', linewidth=1.7, linestyle='--',
                label='GHS-SMOD 21+ cell boundary'),
     ], loc='lower center', bbox_to_anchor=(0.5, 0.15), ncol=2,
         frameon=False, fontsize=9.2)
