@@ -15,6 +15,14 @@ from datetime import date
 from pathlib import Path
 
 
+GBD_2023_CITATION = (
+    'Global Burden of Disease Collaborative Network. Global Burden of Disease '
+    'Study 2023 (GBD 2023) Results. Seattle, United States: Institute for '
+    'Health Metrics and Evaluation (IHME), 2024. Available from '
+    'https://vizhub.healthdata.org/gbd-results/.'
+)
+
+
 def normalize(value):
     return str(value).strip().casefold()
 
@@ -34,7 +42,17 @@ def main():
     parser.add_argument('--source-url', required=True, help='IHME request-details URL')
     parser.add_argument('--retrieved-on', required=True, help='Local retrieval date, YYYY-MM-DD')
     parser.add_argument('--archive', type=Path, help='Original IHME ZIP, retained for provenance')
+    parser.add_argument('--manifest', type=Path,
+                        help='Receipt path; defaults to the output path with .manifest.json')
+    parser.add_argument('--source-citation',
+                        help='Citation supplied with the IHME download')
     args = parser.parse_args()
+
+    source_citation = args.source_citation
+    if not source_citation and args.gbd_release.strip() == 'GBD 2023':
+        source_citation = GBD_2023_CITATION
+    if not source_citation:
+        parser.error('--source-citation is required for releases other than GBD 2023')
 
     if args.expected_locations < 1 or not 1990 <= args.estimate_year <= 2100:
         parser.error('Expected locations must be positive and estimate year must be plausible')
@@ -115,19 +133,23 @@ def main():
     manifest = {
         'source_url': args.source_url,
         'retrieved_on': args.retrieved_on,
-        'input_path': str(args.input.resolve()),
+        'source_citation': source_citation,
+        'input_path': args.input.as_posix(),
         'input_sha256': sha256(args.input),
-        'archive_path': str(args.archive.resolve()) if args.archive else None,
+        'archive_path': args.archive.as_posix() if args.archive else None,
         'archive_sha256': sha256(args.archive) if args.archive else None,
         'input_rows': len(rows),
-        'output_path': str(args.output.resolve()),
+        'output_path': args.output.as_posix(),
         'output_rows': len(output),
         'gbd_release': args.gbd_release,
         'selection': expected,
         'conversion': 'Rate per 100,000 divided by 100,000 to get population fraction',
-        'location_check': 'Country/territory status and polygon join still require review',
+        'location_check': ('Extraction validated; model-specific country joins require '
+                           'a separately reviewed crosswalk'),
     }
-    args.output.with_suffix('.manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    manifest_path = args.manifest or args.output.with_suffix('.manifest.json')
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(manifest, indent=2) + '\n')
     print(f'Validated {len(output)} locations; output: {args.output}')
 
 

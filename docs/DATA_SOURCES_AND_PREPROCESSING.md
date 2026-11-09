@@ -363,7 +363,20 @@ created from `raw/ihme_gbd_2023/` by
 and validation receipt are preserved. The table is the locally validated [IHME GBD Results](https://vizhub.healthdata.org/gbd-results/) GBD
 2023 release table for 2019, both sexes, all ages, crude depressive-disorders
 prevalence (204 locations), joined by reviewed country crosswalk to all-age
-WorldPop. The original script at commit `f1822e2` explicitly sets
+WorldPop. The tracked import
+[receipt](../data/manifests/gbd_2023_2019_depressive_disorders_country_prevalence.manifest.json)
+records the exact result request, retrieval date, selected dimensions, row count,
+conversion rule and SHA-256 hashes; the raw CSV and ZIP remain local.
+
+Use the citation supplied with the IHME download:
+
+> Global Burden of Disease Collaborative Network. *Global Burden of Disease
+> Study 2023 (GBD 2023) Results*. Seattle, United States: Institute for Health
+> Metrics and Evaluation (IHME), 2024. Available from
+> <https://vizhub.healthdata.org/gbd-results/>.
+
+The **release is GBD 2023** and the **estimate year is 2019**; do not describe
+this input as a GBD 2019 release. The original script at commit `f1822e2` explicitly sets
 `baseline_prevalence_rate = 0.05` for every country. Retain this fixed 5% as a
 second, labelled original-method sensitivity; it is an adult WHO approximate
 rate applied to an all-age denominator, not a country estimate. Never silently

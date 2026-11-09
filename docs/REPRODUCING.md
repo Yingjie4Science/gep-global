@@ -57,7 +57,9 @@ GBD=data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv
 
 The raw GBD CSV and ZIP are in `data/raw/ihme_gbd_2023/`; the
 validated table and saved import receipt are in `data/processed/` and
-`data/manifests/`. The import script is `scripts/01_inputs/import_gbd_depressive_disorders.py`.
+`data/manifests/`. The formal citation supplied with the download is preserved
+in `data/raw/ihme_gbd_2023/citation.txt` and repeated in the tracked receipt and
+data guide. The import script is `scripts/01_inputs/import_gbd_depressive_disorders.py`.
 Use explicit paths if your checkout has a different parent layout. Large inputs
 are not stored in Git. Keep original downloads and collaborator files under
 `raw/`; derivatives under `processed/`; source/QA records under `manifests/`.
@@ -68,6 +70,19 @@ Use fresh output names for any new run. To inspect archived national or city fil
 `$DATA/archive/extracted/` when a historical script needs its original path.
 The archive checksum and each preserved file hash are in
 `$DATA/manifests/pilot_reorganization_2026-10-27.json`. Pick a new run-directory name whenever inputs or assumptions change.
+
+Rebuild and validate the GBD table with:
+
+```sh
+python scripts/01_inputs/import_gbd_depressive_disorders.py \
+  --input data/raw/ihme_gbd_2023/IHME-GBD_2023_DATA-c1431a53-1.csv \
+  --archive data/raw/ihme_gbd_2023/IHME-GBD_2023_DATA-c1431a53-1.zip \
+  --output data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv \
+  --manifest data/manifests/gbd_2023_2019_depressive_disorders_country_prevalence.manifest.json \
+  --gbd-release 'GBD 2023' --estimate-year 2019 \
+  --expected-locations 204 --retrieved-on 2026-10-07 \
+  --source-url https://vizhub.healthdata.org/gbd-results/result/c1431a534b1726c9d2392bafb05a66f6
+```
 
 | Goal | Inputs needed | Workflow and output |
 | --- | --- | --- |

@@ -1,0 +1,24 @@
+{
+  "source_url": "https://vizhub.healthdata.org/gbd-results/result/c1431a534b1726c9d2392bafb05a66f6",
+  "retrieved_on": "2026-10-07",
+  "source_citation": "Global Burden of Disease Collaborative Network. Global Burden of Disease Study 2023 (GBD 2023) Results. Seattle, United States: Institute for Health Metrics and Evaluation (IHME), 2024. Available from https://vizhub.healthdata.org/gbd-results/.",
+  "input_path": "data/raw/ihme_gbd_2023/IHME-GBD_2023_DATA-c1431a53-1.csv",
+  "input_sha256": "3914f7ec30b38d4900c280330d28f5f4603436435dcb1ccc69beea9c5229432b",
+  "archive_path": "data/raw/ihme_gbd_2023/IHME-GBD_2023_DATA-c1431a53-1.zip",
+  "archive_sha256": "c084fe7fdb42ebe44e618d1078b2ef604ff6830712e0e4e7132132880212cb04",
+  "input_rows": 204,
+  "output_path": "data/processed/gbd_2023_2019_depressive_disorders_country_prevalence.csv",
+  "output_rows": 204,
+  "gbd_release": "GBD 2023",
+  "selection": {
+    "population_group_name": "all population",
+    "measure_name": "prevalence",
+    "sex_name": "both",
+    "age_name": "all ages",
+    "cause_name": "depressive disorders",
+    "metric_name": "rate",
+    "year": "2019"
+  },
+  "conversion": "Rate per 100,000 divided by 100,000 to get population fraction",
+  "location_check": "Extraction validated; model-specific country joins require a separately reviewed crosswalk"
+}

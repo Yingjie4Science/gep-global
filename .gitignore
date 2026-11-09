@@ -62,6 +62,14 @@ pkgs/
 
 # Large/local project inputs and historical snapshots outside Git
 /data/*
+!/data/raw/
+/data/raw/*
+!/data/raw/ihme_gbd_2023/
+/data/raw/ihme_gbd_2023/*
+!/data/raw/ihme_gbd_2023/citation.txt
+!/data/manifests/
+/data/manifests/*
+!/data/manifests/gbd_2023_2019_depressive_disorders_country_prevalence.manifest.json
 !/data/processed/
 /data/processed/*
 !/data/processed/ndvi_lookup/
